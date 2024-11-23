@@ -1,0 +1,47 @@
+.hands-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  margin-top: 20px;
+}
+
+.hand {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.finger {
+  width: 20px;
+  height: 60px;
+  background-color: #4a5568;
+  border-radius: 10px 10px 0 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.thumb {
+  width: 40px;
+  height: 20px;
+  background-color: #4a5568;
+  border-radius: 10px;
+}
+
+.current-key {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.finger.bg-blue-500 {
+  background-color: #3182ce;
+}
+
+.thumb.active {
+  background-color: #3182ce;
+}
