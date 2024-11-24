@@ -13,6 +13,7 @@ const Menu: React.FC<MenuProps> = ({ onLevelPractice, onCreateText, onPlayGame }
       <button 
         onClick={onLevelPractice} 
         className="menu-button mb-4 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition duration-300"
+         aria-label="Iniciar práctica por niveles"
       >
         Practicar por Niveles
       </button>

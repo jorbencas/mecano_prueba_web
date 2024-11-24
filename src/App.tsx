@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import TypingArea from './components/TypingArea'; // Asegúrate de importar correctamente tu componente TypingArea
-import Keyboard from './components/Keyboard'; // Asegúrate de importar correctamente tu componente Keyboard
 import Menu from './components/Menu'; // Asegúrate de importar tu nuevo componente Menu
 import Levels from './components/Levels'; // Asegúrate de importar tu nuevo componente Levels
 import CreateText from './components/CreateText'; // Importar el nuevo componente para crear texto
