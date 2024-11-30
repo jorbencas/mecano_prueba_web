@@ -3,41 +3,55 @@ import { motion, useAnimation } from 'framer-motion';
 import ErrorModal from './ErrorModal';
 import Stats from './Stats';
 
-// Importa los sonidos
-import correctSound from '../public/sounds/correct.mp3';
-import errorSound from '../public/sounds/error.mp3';
-
 const levels = [
-  { keys: ['a', 's', 'd', 'f'], name: "Nivel 1: Fila base izquierda", speed: 1000, errorLimit: 5 },
+  { keys: ['a', 's', 'd', 'f'], name: "Nivel 1: Fila base izquierda", speed: 1000, errorLimit: 10 },
   { keys: ['j', 'k', 'l', 'ñ'], name: "Nivel 2: Fila base derecha", speed: 900, errorLimit: 5 },
   { keys: ['q', 'w', 'e', 'r'], name: "Nivel 3: Fila superior izquierda", speed: 800, errorLimit: 5 },
   { keys: ['u', 'i', 'o', 'p'], name: "Nivel 4: Fila superior derecha", speed: 700, errorLimit: 5 },
   { keys: ['a', 's', 'd', 'f', 'j', 'k', 'l', 'ñ', 'q', 'w', 'e', 'r', 'u', 'i', 'o', 'p'], name: "Nivel 5: Todas las letras", speed: 600, errorLimit: 5 },
 ];
 
-const FallingLetter = ({ letter, onRemove }) => {
+interface FallingLetter {
+  id: number;
+  char: string;
+  x: number;
+  color: string;
+}
+
+interface ErrorItem {
+  expected: string;
+  actual: string;
+}
+
+const FallingLetter: React.FC<{ letter : FallingLetter , onRemove: () => void }> = ({ letter, onRemove }) => {
   const controls = useAnimation();
 
-  useEffect(() => {
+   useEffect(() => {
     controls.start({
-      y: window.innerHeight,
+      y: '100%', // Caer hasta el fondo del contenedor
       rotate: Math.random() * 360 - 180,
       transition: {
         duration: 5 + Math.random() * 2,
-        ease: "easeIn",
-        y: { type: "spring", stiffness: 50, damping: 10 }
+        ease: "linear"
       }
     });
   }, [controls]);
 
   return (
     <motion.div
-      className="absolute w-10 h-10 flex items-center justify-center text-xl font-bold border-2 border-black rounded"
+      className="absolute text-xl font-bold"
       style={{
-        left: letter.x,
+        left: `${letter.x}%`, // Usar porcentaje para la posición horizontal
+        top: 0, // Iniciar desde la parte superior
         backgroundColor: letter.color,
+        width: '40px',
+        height: '40px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '90%'
       }}
-      initial={{ y: -50 }}
+      initial={{ y: '-10%' }}
       animate={controls}
       onAnimationComplete={onRemove}
     >
@@ -46,22 +60,22 @@ const FallingLetter = ({ letter, onRemove }) => {
   );
 };
 
-const PlayGame = ({ onBack }) => {
+const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [level, setLevel] = useState(0);
-  const [fallingLetters, setFallingLetters] = useState([]);
-  const [score, setScore] = useState(0);
+const [fallingLetters, setFallingLetters] = useState<FallingLetter[]>([]);  const [score, setScore] = useState(0);
   const [errors, setErrors] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
-  const [errorList, setErrorList] = useState([]);
+const [errorList, setErrorList] = useState<ErrorItem[]>([]);
+
 
   const playCorrectSound = () => {
-    new Audio(correctSound).play();
+    new Audio( '../public/sounds/correct.mp3').play();
   };
 
   const playErrorSound = () => {
-    new Audio(errorSound).play();
+    new Audio('../public/sounds/error.mp3').play();
   };
 
   const addLetter = useCallback(() => {
@@ -70,11 +84,15 @@ const PlayGame = ({ onBack }) => {
       const newLetter = {
         id: Date.now(),
         char: keys[Math.floor(Math.random() * keys.length)],
-        x: Math.random() * (window.innerWidth - 50),
-        color: `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`,
+        x: Math.random() * 90 + 5, // Genera un valor entre 5% y 95%
+         color: `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`,
       };
-      setFallingLetters(prev => [...prev, newLetter]);
-    }
+ setFallingLetters((prev) => {
+      if (prev.length < 5) {
+        return [...prev, newLetter];
+      }
+      return prev;
+    });    }
   }, [level, fallingLetters.length]);
 
   useEffect(() => {
@@ -91,7 +109,7 @@ const PlayGame = ({ onBack }) => {
     }
   }, [errors, level]);
 
-  const handleKeyPress = useCallback((event) => {
+  const handleKeyPress = useCallback((event: KeyboardEvent) => {
     if (!gameStarted || gameOver) return;
 
     const pressedKey = event.key.toLowerCase();
@@ -103,7 +121,11 @@ const PlayGame = ({ onBack }) => {
       playCorrectSound();
     } else {
       setErrors(prev => prev + 1);
-      setErrorList(prev => [...prev, { expected: "cualquiera", actual: pressedKey }].slice(-5));
+      setErrorList((prev:  ErrorItem[]) => {
+        const expectedChars = fallingLetters.map(l => l.char).join(', ');
+        const newError = { expected: expectedChars, actual: pressedKey };
+        return [newError, ...prev.slice(0, 4)];
+      });
       playErrorSound();
     }
   }, [gameStarted, gameOver, fallingLetters]);
@@ -128,8 +150,8 @@ const PlayGame = ({ onBack }) => {
     setShowStatsModal(true);
   };
 
-  const removeLetter = (id) => {
-    setFallingLetters(prev => prev.filter(letter => letter.id !== id));
+  const removeLetter = (id: number) => {
+    setFallingLetters(prev => prev.filter(letter => letter?.id !== id));
     setErrors(prev => prev + 1);
     playErrorSound();
   };
