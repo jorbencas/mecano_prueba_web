@@ -36,21 +36,21 @@ const Stats: React.FC<StatsProps> = ({
     const seconds = timeInSeconds % 60;
     return `${minutes} min ${seconds} s`;
   };
-console.log(sourceComponent);
+
   return (
-    <div className="relative">
+    <div className="relative p-4">
       {/* Interpretación de resultados */}
       <div className="mt-4 text-center mb-4">
         <p className={`font-bold ${levelCompleted ? 'text-green-600' : 'text-red-600'}`}>
           {sourceComponent === "CreateText" 
-  ? (errorList.length > 0 ? "El texto presenta errores" : "Se ha completado el texto")
-  : (levelCompleted 
-      ? "¡Nivel completado con éxito!" 
-      : "No se ha completado el nivel")}
+            ? (errorList.length > 0 ? "El texto presenta errores" : "Se ha completado el texto")
+            : (levelCompleted 
+                ? "¡Nivel completado con éxito!" 
+                : "No se ha completado el nivel")}
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Columna de Rendimiento */}
         <div className="bg-blue-50 p-4 rounded-lg">
           <h3 className="text-lg font-semibold mb-3 text-blue-700">Rendimiento</h3>
@@ -85,13 +85,13 @@ console.log(sourceComponent);
             <div className="flex justify-between">
               <span className="text-gray-600">Errores:</span>
               <span className={`font-bold ${errors === 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {errors} / {errorLimit} {/* Mostrar límite de errores */}
+                {errors} / {errorLimit}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Tiempo:</span>
               <span className="font-bold text-purple-600">
-                {formatElapsedTime(elapsedTime)} {/* Mostrar tiempo formateado */}
+                {formatElapsedTime(elapsedTime)}
               </span>
             </div>
           </div>
@@ -125,8 +125,8 @@ console.log(sourceComponent);
         </div>
       )}
 
-      {/* Mostrar requisitos para pasar al siguiente nivel si no es desde CreateText */}
-      {sourceComponent !== "CreateText" && (
+      {/* Mostrar requisitos para pasar al siguiente nivel si es desde PlayGame */}
+      {sourceComponent === "PlayGame" && (
         <div className="mt-4 bg-yellow-50 p-4 rounded-lg">
           <h3 className="font-semibold mb-2 text-lg">Requisitos para Pasar al Siguiente Nivel</h3> {/* Eliminar el ":" */}
           <ul className="list-disc list-inside space-y-1 text-gray-700">
@@ -139,29 +139,27 @@ console.log(sourceComponent);
 
       {/* Botones para cerrar el modal */}
       {sourceComponent === "CreateText" && (
-          <button onClick={onRepeatLevel} 
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-            Cerrar
-          </button>
+        <button onClick={onRepeatLevel} 
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+          Cerrar
+        </button>
       )}
 
       {sourceComponent !== "CreateText" && (
         <>
           {/* Botón para repetir el nivel */}
-              <button onClick={onRepeatLevel} 
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-                Repetir Nivel
-              </button>
-
+          <button onClick={onRepeatLevel} 
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+            Repetir Nivel
+          </button>
 
           {/* Botón para avanzar al siguiente nivel */}
-              {levelCompleted && (
-                <button onClick={onNextLevel} 
-                  className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">
-                  Siguiente Nivel
-                </button>
-              )}
-
+          {levelCompleted && (
+            <button onClick={onNextLevel} 
+              className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">
+              Siguiente Nivel
+            </button>
+          )}
         </>
       )}
     </div>
