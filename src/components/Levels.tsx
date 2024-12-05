@@ -4,7 +4,8 @@
   import Stats from './Stats';
   import Hands from './Hands';
   import ErrorModal from './ErrorModal';
-
+  import MenuLevels from "./MenuLevels";
+  
   interface LevelsProps {
     onBack: () => void; // Función para volver al menú principal
   }
@@ -23,7 +24,7 @@
   ];
 
   const Levels: React.FC<LevelsProps> = ({ onBack }) => {
-    const [level, setLevel] = useState(1);
+    const [level, setLevel] = useState(0);
     const [text, setText] = useState('');
     const [nextKey, setNextKey] = useState('');
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -187,28 +188,16 @@
     };
 
     return (
-      <div className="container mx-auto p-4 flex">
-        <div className="w-1/4 pr-4">
-          <div className="mt-6">
-            <h2 className="text-2xl font-bold mb-2">Niveles</h2>
-            <ul className="space-y-2">
-              {levels.map((lvl,index) => (
-                <li key={index} className={`p-2 rounded cursor-pointer ${index +1 === level ? 'bg-blue-500 text-white' : 'bg-gray-100 hover:bg-gray-200'}`} onClick={() =>setLevel(index +1)}>
-                  {lvl.name}
-                </li>
-              ))}
-            </ul>
-            {/* Botón para regresar al menú principal */}
-            <button 
-              onClick={onBack} 
-              className="mt-4 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600"
-            >
-              Regresar al Menú Principal
-            </button>
-          </div>
-        </div>
-        <div className="w-3/4">
-          <h1 className="text-3xl font-bold mb-4">Práctica de Mecanografía</h1>
+    <div className="container mx-auto p-4 flex flex-col lg:flex-row">
+      <MenuLevels 
+        source="Levels" 
+        onBack={onBack} // Llama a la función para volver al menú
+        onLevelChange={(newLevel) => setLevel(newLevel)} 
+        currentLevel={level - 1}
+        levels={levels}
+      />
+        <div className="w-full lg:w-3/4">
+        <h1 className="text-3xl font-bold mb-4">Práctica de Mecanografía</h1>
           <TypingArea
             text={text}
             currentIndex={currentIndex}
@@ -216,6 +205,7 @@
             wpm={wpm}
             accuracy={accuracy}
             errors={errors}
+            source="Levels"
           />
           <Keyboard activeKey={nextKey} levelKeys={levels[level -1].keys} />
           <Hands nextKey={nextKey} />
@@ -243,8 +233,8 @@
               <h2 className="text-xl font-bold mb-2">Límite de Errores Alcanzado</h2>
               <p>{errorMessage}</p>
               {/* Botón para reintentar el nivel */}
-              <button onClick={closeErrorModal} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-                Reintentar Nivel
+              <button onClick={closeErrorModal}  className="mt-4 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600">
+              Reintentar Nivel
               </button>
             </div>
           </ErrorModal>

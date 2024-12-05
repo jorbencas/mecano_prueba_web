@@ -126,7 +126,7 @@ const Stats: React.FC<StatsProps> = ({
       )}
 
       {/* Mostrar requisitos para pasar al siguiente nivel si es desde PlayGame */}
-      {sourceComponent === "PlayGame" && (
+      {(sourceComponent === "Levels" || sourceComponent === "PlayGame")  && (
         <div className="mt-4 bg-yellow-50 p-4 rounded-lg">
           <h3 className="font-semibold mb-2 text-lg">Requisitos para Pasar al Siguiente Nivel</h3> {/* Eliminar el ":" */}
           <ul className="list-disc list-inside space-y-1 text-gray-700">

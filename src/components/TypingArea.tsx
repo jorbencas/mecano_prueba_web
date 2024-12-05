@@ -7,55 +7,41 @@ interface TypingAreaProps {
   wpm: number;
   accuracy: number;
   errors: { [key: number]: { expected: string; actual: string } };
+  source?: string;
 }
 
-const TypingArea: React.FC<TypingAreaProps> = ({ text, currentIndex, onKeyPress, wpm, accuracy, errors }) => {
-  
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+const TypingArea: React.FC<TypingAreaProps> = ({ text, currentIndex, onKeyPress, wpm, accuracy, errors, source }) => {
+
+useEffect(() => {
+  const handleKeyPress = (event: KeyboardEvent) => {
+    if (event.key === text[currentIndex]) {
       onKeyPress(event.key);
-    };
+    }
+  };
 
-    // Agregar event listener para capturar teclas
-    document.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keydown', handleKeyPress);
 
-    // Limpiar el event listener al desmontar el componente
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [onKeyPress]);
+  return () => {
+    window.removeEventListener('keydown', handleKeyPress);
+  };
+}, [onKeyPress]);
 
   return (
     <div className="typing-area">
-      <p className="text-2xl border-2 border-gray-300 rounded-lg p-4 bg-pastel-green mb-4">
-        {text.split('').map((char, index) => {
-          if (index < currentIndex) {
-            // Colorear los caracteres ya escritos
-            return (
-              <span key={index} className="text-green-500">
-                {char}
-              </span>
-            );
-          } else if (index === currentIndex) {
-            // Resaltar la letra actual que se debe escribir
-            return (
-              <span key={index} className="font-bold text-blue-500">
-                {char}
-              </span>
-            );
-          } else {
-            // Letras aún no escritas
-            return (
-              <span key={index}>
-                {char}
-              </span>
-            );
-          }
-        })}
+      <p className={`text-lg sm:text-xl lg:text-2xl border-2 border-gray-300 rounded-lg p-4 bg-green-100 mb-4 
+        ${source === 'CreateText' ? 'min-h-[6rem] h-auto whitespace-pre-wrap break-words' : ''}`}>
+        {text.split('').map((char, index) => (
+          <span key={index} className={
+            index < currentIndex ? "text-green-500" :
+            index === currentIndex ? "font-bold text-blue-500" : ""
+          }>
+            {char}
+          </span>
+        ))}
       </p>
-      <div className="flex justify-between">
-        <p className="inline-block mr-4 text-lg">WPM: {wpm}</p>
-        <p className="inline-block mr-4 text-lg">Precisión: {accuracy}%</p>
+      <div className="flex flex-col sm:flex-row justify-between">
+        <p className="inline-block mr-0 sm:mr-4 text-lg">WPM: {wpm}</p>
+        <p className="inline-block mr-0 sm:mr-4 text-lg">Precisión: {accuracy}%</p>
         <p className="inline-block text-lg">Errores: {Object.keys(errors).length}</p>
       </div>
     </div>

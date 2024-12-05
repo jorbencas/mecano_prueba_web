@@ -2,13 +2,14 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import ErrorModal from './ErrorModal';
 import Stats from './Stats';
+import MenuLevels from './MenuLevels';
 
 const levels = [
-  { keys: ['a', 's', 'd', 'f'], name: "Nivel 1: Fila base izquierda", speed: 1000, errorLimit: 10, wpmGoal: 50, minLetters: 30, maxLetters: 5 },
-  { keys: ['j', 'k', 'l', 'ñ'], name: "Nivel 2: Fila base derecha", speed: 900, errorLimit: 5, wpmGoal: 60, minLetters: 40, maxLetters: 6 },
-  { keys: ['q', 'w', 'e', 'r'], name: "Nivel 3: Fila superior izquierda", speed: 800, errorLimit: 5, wpmGoal: 70, minLetters: 50, maxLetters: 7 },
-  { keys: ['u', 'i', 'o', 'p'], name: "Nivel 4: Fila superior derecha", speed: 700, errorLimit: 5, wpmGoal: 80, minLetters: 60, maxLetters: 8 },
-  { keys: ['a', 's', 'd', 'f', 'j', 'k', 'l', 'ñ', 'q', 'w', 'e', 'r', 'u', 'i', 'o', 'p'], name: "Nivel 5: Todas las letras", speed: 600, errorLimit: 5, wpmGoal: 90, minLetters: 70, maxLetters: 9 },
+  { keys: ['a', 's', 'd', 'f'], name: "Nivel 1: Fila base izquierda", speed: 1000, errorLimit: 10, wpmGoal: 50, minLetters: 30, maxLetters: 5, text: "" },
+  { keys: ['j', 'k', 'l', 'ñ'], name: "Nivel 2: Fila base derecha", speed: 900, errorLimit: 5, wpmGoal: 60, minLetters: 40, maxLetters: 6, text: "" },
+  { keys: ['q', 'w', 'e', 'r'], name: "Nivel 3: Fila superior izquierda", speed: 800, errorLimit: 5, wpmGoal: 70, minLetters: 50, maxLetters: 7,  text: "" },
+  { keys: ['u', 'i', 'o', 'p'], name: "Nivel 4: Fila superior derecha", speed: 700, errorLimit: 5, wpmGoal: 80, minLetters: 60, maxLetters: 8,  text: "" },
+  { keys: ['a', 's', 'd', 'f', 'j', 'k', 'l', 'ñ', 'q', 'w', 'e', 'r', 'u', 'i', 'o', 'p'], name: "Nivel 5: Todas las letras", speed: 600, errorLimit: 5, wpmGoal: 90, minLetters: 70, maxLetters: 9,  text: "" },
 ];
 
 interface FallingLetter {
@@ -92,7 +93,7 @@ const FallingLetterComponent: React.FC<{
 };
 
 const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-   const [level, setLevel] = useState(0);
+   const [level, setLevel] = useState(1);
    const [fallingLetters, setFallingLetters] = useState<FallingLetter[]>([]);
    const [score, setScore] = useState(0);
    const [errors, setErrors] = useState(0);
@@ -104,7 +105,7 @@ const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
    const [lettersTypedCount, setLettersTypedCount] = useState(0);
    const [showMenu, setShowMenu] = useState(false);
    const [time, setTime] = useState(0);
-  
+    const [currentLevel, setCurrentLevel] = useState(1);
    const containerRef = useRef<HTMLDivElement>(null);
 
    // Audio
@@ -191,6 +192,17 @@ const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
      }
    },[gameStarted , gameOver , gamePaused , fallingLetters , level , endGame]);
 
+   const handleLevelChange = (newLevel: number) => {
+  setLevel(newLevel); // Ajustar el índice del nivel (los niveles comienzan en 1, pero el array en 0)
+  setCurrentLevel(newLevel);
+  setFallingLetters([]); // Limpiar las letras actuales
+  setScore(0); // Reiniciar la puntuación
+  setErrors(0); // Reiniciar los errores
+  setTime(0); // Reiniciar el tiempo
+  setGameStarted(false); // Detener el juego actual
+  setShowMenu(true); // Mostrar el menú para iniciar el nuevo nivel
+};
+  
    // Efecto para manejar la tecla presionada
    useEffect(() =>{
      window.addEventListener('keydown' , handleKeyPress);
@@ -251,6 +263,7 @@ const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       playErrorSound(); 
     },[gameOver , gamePaused , endGame]);
 
+
     // Formatear tiempo transcurrido
     const formatTime= (seconds : number) =>{
       const minutes= Math.floor(seconds /60); 
@@ -264,17 +277,13 @@ const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <h1 className="text-3xl font-bold mb-4">Juego de Letras Cayendo</h1>
         
         <div className="flex flex-col md:flex-row">
-          {/* Columna izquierda para los niveles */}
-          <div className="w-full md:w-1/4 pr-4 mb-4 md:m-0">
-            <h2 className="text-2xl font-bold mb-2">Niveles</h2>
-            <ul className="space-y-2">
-              {levels.map((lvl,index) => (
-                <li key={index} className={`p-2 rounded cursor-pointer ${index === level ? 'bg-blue-500 text-white' : index < level ? 'bg-green-500 text-white cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`} onClick={() => !gameStarted && index <= level &&setLevel(index)}>
-                  {lvl.name}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <MenuLevels 
+         source="PlayGame" 
+        onLevelChange={handleLevelChange} 
+        currentLevel={currentLevel} 
+        onBack={onBack} 
+        levels={levels} // Pasar niveles aqu
+      />
 
           {/* Columna derecha para el juego y la información */}
           <div className="w-full md:w-3/4">
@@ -282,7 +291,6 @@ const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
               {(showMenu || (!gameStarted && !gameOver)) && (
                 <>
                   <button onClick={startGame} className="mr-2 px-4 py-2 bg-green-500 text-white rounded">Iniciar Juego</button>
-                  <button onClick={onBack} className="px-4 py-2 bg-blue-500 text-white rounded">Volver al Menú</button>
                 </>
               )}
               {gameStarted && !gameOver && !gamePaused && (

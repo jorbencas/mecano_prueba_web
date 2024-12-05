@@ -35,21 +35,20 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ isOpen, onClose, children }) =>
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div 
         className="modal-backdrop fixed inset-0 bg-black opacity-50" 
         onClick={handleBackdropClick}
       ></div>
-      <div className="bg-white rounded-lg shadow-lg w-1/3 relative z-10">
-        {/* Botón para cerrar como una X grande */}
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-md relative z-10">
         <button
           className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-xl"
           onClick={onClose}
           aria-label="Cerrar"
         >
-          &times; {/* Este es el símbolo de la "X" */}
+          &times;
         </button>
-        <div className="p-4">
+        <div >
           {children}
         </div>
       </div>
@@ -58,5 +57,3 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ isOpen, onClose, children }) =>
 };
 
 export default ErrorModal;
-
-
