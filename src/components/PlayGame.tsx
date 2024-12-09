@@ -93,7 +93,7 @@ const FallingLetterComponent: React.FC<{
 };
 
 const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-   const [level, setLevel] = useState(1);
+   const [level, setLevel] = useState(0);
    const [fallingLetters, setFallingLetters] = useState<FallingLetter[]>([]);
    const [score, setScore] = useState(0);
    const [errors, setErrors] = useState(0);
@@ -105,7 +105,7 @@ const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
    const [lettersTypedCount, setLettersTypedCount] = useState(0);
    const [showMenu, setShowMenu] = useState(false);
    const [time, setTime] = useState(0);
-    const [currentLevel, setCurrentLevel] = useState(1);
+    const [currentLevel, setCurrentLevel] = useState(0);
    const containerRef = useRef<HTMLDivElement>(null);
 
    // Audio
@@ -278,12 +278,12 @@ const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         
         <div className="flex flex-col md:flex-row">
           <MenuLevels 
-         source="PlayGame" 
-        onLevelChange={handleLevelChange} 
-        currentLevel={currentLevel} 
-        onBack={onBack} 
-        levels={levels} // Pasar niveles aqu
-      />
+            source="PlayGame" 
+            onLevelChange={handleLevelChange} 
+            currentLevel={currentLevel} 
+            onBack={onBack} 
+            levels={levels} // Pasar niveles aqu
+          />
 
           {/* Columna derecha para el juego y la información */}
           <div className="w-full md:w-3/4">
