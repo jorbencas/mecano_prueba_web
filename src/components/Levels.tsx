@@ -49,7 +49,7 @@
 
     // Función para generar texto aleatorio basado en las teclas del nivel actual
       const generateText = () => {
-          const currentLevel = levels[level - 1];
+          const currentLevel = levels[level];
           let newText = generateRandomText(currentLevel.keys, 50);
           setText(newText);
           setNextKey(newText[0].toLowerCase());
@@ -78,7 +78,7 @@
         const currentWpm = Math.round(wordsTyped / elapsedMinutes);
         const timeTaken = Math.round((Date.now() - startTime) /1000 );
         setElapsedTime(timeTaken);
-        const levelCompleted = currentWpm >= levels[level -1].wpmGoal && accuracy >=95;
+        const levelCompleted = currentWpm >= levels[level].wpmGoal && accuracy >=95;
         setLevelCompleted(levelCompleted);
         if (levelCompleted && !completedLevels.includes(level)) {
           setCompletedLevels(prev => [...prev, level]);
@@ -117,9 +117,9 @@
         // Manejo de errores si la tecla es incorrecta
         setErrors(prev => {
           const newErrors ={ ...prev, [currentIndex]: { expected: expectedKey, actual: key } };
-          if (Object.keys(newErrors).length >= levels[level -1].errorLimit) {
+          if (Object.keys(newErrors).length >= levels[level].errorLimit) {
             // Mostrar mensaje de error si se alcanza el límite
-            setErrorMessage(`Has alcanzado el límite de ${levels[level -1].errorLimit} errores. ¡Inténtalo de nuevo!`);
+            setErrorMessage(`Has alcanzado el límite de ${levels[level].errorLimit} errores. ¡Inténtalo de nuevo!`);
             setShowErrorModal(true);
           }
           return newErrors;
@@ -175,7 +175,7 @@
 
       // Regresar al nivel anterior si no es el primer nivel.
       const goBackLevel = () => {
-        if (level > 1) {
+        if (level > 0) {
           setLevel(level - 1); 
         }
       };
@@ -193,9 +193,11 @@
         source="Levels" 
         onBack={onBack} // Llama a la función para volver al menú
         onLevelChange={(newLevel) => setLevel(newLevel)} 
-        currentLevel={level - 1}
+        currentLevel={level}
         levels={levels}
       />
+      
+      
         <div className="w-full lg:w-3/4">
         <h1 className="text-3xl font-bold mb-4">Práctica de Mecanografía</h1>
           <TypingArea
@@ -207,7 +209,7 @@
             errors={errors}
             source="Levels"
           />
-          <Keyboard activeKey={nextKey} levelKeys={levels[level -1].keys} />
+          <Keyboard activeKey={nextKey} levelKeys={levels[level].keys} />
           <Hands nextKey={nextKey} />
           {/* Modal para mostrar estadísticas */}
           <ErrorModal isOpen={showStatsModal} onClose={() =>setShowStatsModal(false)}>
@@ -217,11 +219,11 @@
               accuracy={accuracy}
               level={level}
               errors={Object.keys(errors).length}
-              wpmGoal={levels[level -1].wpmGoal}
+              wpmGoal={levels[level].wpmGoal}
               elapsedTime={elapsedTime}
               errorList={errorList}
               levelCompleted={levelCompleted}
-              errorLimit={levels[level -1].errorLimit}
+              errorLimit={levels[level].errorLimit}
               onRepeatLevel={repeatLevel} 
               onNextLevel={nextLevel} 
               sourceComponent={"Levels"} // Indicar que proviene de Levels
