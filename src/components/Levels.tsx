@@ -196,6 +196,7 @@
         currentLevel={level}
         levels={levels}
       />
+      
         <div className="w-full lg:w-3/4">
         <h1 className="text-3xl font-bold mb-4">Práctica de Mecanografía</h1>
           <TypingArea
