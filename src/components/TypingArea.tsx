@@ -15,10 +15,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({ text, currentIndex, onKeyPress,
     const textAreaRef = useRef<HTMLParagraphElement>(null);
 
 useEffect(() => {
-  const handleKeyPress = (event: KeyboardEvent) => {--
-    if (event.key === text[currentIndex]) {
+  const handleKeyPress = (event: KeyboardEvent) => {
       onKeyPress(event.key);
-    } 
   };
 
   window.addEventListener('keydown', handleKeyPress);

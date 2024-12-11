@@ -39,8 +39,6 @@
     const [showStatsModal, setShowStatsModal] = useState(false);
     const [completedLevels, setCompletedLevels] = useState<number[]>([]);
     const [errorList, setErrorList] = useState<{ expected: string; actual: string }[]>([]);
-    const [showErrorModal, setShowErrorModal] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
 
     // Generar texto al cambiar de nivel
     useEffect(() => {
@@ -89,53 +87,52 @@
     };
 
     // Manejar la entrada del teclado
-    const handleKeyPress =(key:string) => {
-      if (!text) return;
-      if (currentIndex ===0 && startTime === null) {
-        // Iniciar temporizador al primer carácter escrito
-        setStartTime(Date.now());
+   const handleKeyPress = (key: string) => {
+  if (!text) return;
+  
+  if (currentIndex === 0 && startTime === null) {
+    setStartTime(Date.now());
+  }
+  
+  setTotalKeystrokes(prev => prev + 1);
+  
+  const expectedKey = text[currentIndex].toLowerCase();
+  
+  if (key.toLowerCase() === expectedKey) {
+    const newIndex = currentIndex + 1;
+    setCurrentIndex(newIndex);
+    
+    if (newIndex < text.length) {
+      setNextKey(text[newIndex].toLowerCase());
+    } else {
+      setNextKey('');
+      finishLevel();
+    }
+    
+    updateWPM();
+  } else {
+    setErrors(prev => {
+      const newErrors = { 
+        ...prev, 
+        [currentIndex]: { 
+          expected: expectedKey, 
+          actual: key 
+        } 
+      };
+      
+      if (Object.keys(newErrors).length >= levels[level].errorLimit) {
+        finishLevel();
       }
-      // Contar pulsaciones de teclas
-      setTotalKeystrokes(prev => prev +1);
-
-      // Obtener la tecla esperada del texto actual
-      const expectedKey = text[currentIndex].toLowerCase();
-      if (key.toLowerCase() === expectedKey) {
-        // Si la tecla es correcta
-        const newIndex = currentIndex +1;
-        setCurrentIndex(newIndex);
-        if (newIndex < text.length) {
-          // Actualizar la siguiente tecla esperada
-          setNextKey(text[newIndex].toLowerCase());
-        } else {
-          // Fin del texto
-          setNextKey('');
-          finishLevel();
-        }
-        updateWPM();
-      } else {
-        // Manejo de errores si la tecla es incorrecta
-        setErrors(prev => {
-          const newErrors ={ ...prev, [currentIndex]: { expected: expectedKey, actual: key } };
-          if (Object.keys(newErrors).length >= levels[level].errorLimit) {
-            // Mostrar mensaje de error si se alcanza el límite
-            setErrorMessage(`Has alcanzado el límite de ${levels[level].errorLimit} errores. ¡Inténtalo de nuevo!`);
-            setShowErrorModal(true);
-          }
-          return newErrors;
-        });
-        
-        // Guardar los últimos errores con información adicional
-        if (errorList.length <5) {
-          // Guardar el último error con la letra esperada y la letra escrita
-          setErrorList(prev => [{ expected: expectedKey, actual: key }, ...prev]);
-        } else {
-          // Mantener solo los últimos cinco errores
-          setErrorList(prev => [{ expected: expectedKey, actual: key }, ...prev.slice(0,4)]);
-        }
-      }
-      updateAccuracy();
-    };
+      
+      return newErrors;
+    });
+    
+    // Guardar todos los errores con información adicional
+    setErrorList(prev => [{ expected: expectedKey, actual: key }, ...prev]);
+  }
+  
+  updateAccuracy();
+};
 
     // Actualizar WPM basado en el tiempo transcurrido y palabras escritas
     const updateWPM = () => {
@@ -171,20 +168,6 @@
       } else {
         console.log("No se puede avanzar al siguiente nivel. Completa el nivel actual.");
       }
-    };
-
-      // Regresar al nivel anterior si no es el primer nivel.
-      const goBackLevel = () => {
-        if (level > 0) {
-          setLevel(level - 1); 
-        }
-      };
-
-    // Cerrar modal de error y reiniciar texto al hacer clic fuera o presionar Escape.
-    const closeErrorModal= () => {
-      // Cerrar modal de error y reiniciar texto.
-      setShowErrorModal(false);
-      generateText();
     };
 
     return (
@@ -227,19 +210,10 @@
               onRepeatLevel={repeatLevel} 
               onNextLevel={nextLevel} 
               sourceComponent={"Levels"} // Indicar que proviene de Levels
+              text={text}
             />
           </ErrorModal>
-          {/* Modal para mostrar el límite de errores alcanzado */}
-          <ErrorModal isOpen={showErrorModal} onClose={closeErrorModal}>
-            <div className="p-4">
-              <h2 className="text-xl font-bold mb-2">Límite de Errores Alcanzado</h2>
-              <p>{errorMessage}</p>
-              {/* Botón para reintentar el nivel */}
-              <button onClick={closeErrorModal}  className="mt-4 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600">
-              Reintentar Nivel
-              </button>
-            </div>
-          </ErrorModal>
+        
         </div>
       </div>
     );
