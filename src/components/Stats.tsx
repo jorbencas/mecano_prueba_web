@@ -1,4 +1,5 @@
 import React from 'react';
+import { Tooltip } from 'react-tooltip';
 
 interface StatsProps {
   wpm: number;
@@ -9,25 +10,27 @@ interface StatsProps {
   elapsedTime: number | null;
   errorList: { expected: string; actual: string }[];
   levelCompleted: boolean;
-  errorLimit: number; // Límite de errores del nivel actual
-  onRepeatLevel: () => void; // Función para repetir el nivel
-  onNextLevel: () => void;   // Función para avanzar al siguiente nivel
-  sourceComponent: string; // Nuevo prop para identificar el componente que llama
+  errorLimit: number;
+  onRepeatLevel: () => void;
+  onNextLevel: () => void;
+  sourceComponent: string;
+  text?: string;
 }
 
-const Stats: React.FC<StatsProps> = ({ 
-  wpm, 
-  accuracy, 
-  level, 
-  errors, 
-  wpmGoal, 
+const Stats: React.FC<StatsProps> = ({
+  wpm,
+  accuracy,
+  level,
+  errors,
+  wpmGoal,
   elapsedTime,
   errorList,
   levelCompleted,
   errorLimit,
   onRepeatLevel,
   onNextLevel,
-  sourceComponent // Recibir el nuevo prop
+  sourceComponent,
+  text
 }) => {
   
   const formatElapsedTime = (timeInSeconds: number | null) => {
@@ -39,7 +42,6 @@ const Stats: React.FC<StatsProps> = ({
 
   return (
     <div className="relative p-4">
-      {/* Interpretación de resultados */}
       <div className="mt-4 text-center mb-4">
         <p className={`font-bold ${levelCompleted ? 'text-green-600' : 'text-red-600'}`}>
           {sourceComponent === "CreateText" 
@@ -51,7 +53,6 @@ const Stats: React.FC<StatsProps> = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Columna de Rendimiento */}
         <div className="bg-blue-50 p-4 rounded-lg">
           <h3 className="text-lg font-semibold mb-3 text-blue-700">Rendimiento</h3>
           <div className="space-y-2">
@@ -74,7 +75,6 @@ const Stats: React.FC<StatsProps> = ({
           </div>
         </div>
 
-        {/* Columna de Detalles */}
         <div className="bg-green-50 p-4 rounded-lg">
           <h3 className="text-lg font-semibold mb-3 text-green-700">Detalles</h3>
           <div className="space-y-2">
@@ -98,26 +98,21 @@ const Stats: React.FC<StatsProps> = ({
         </div>
       </div>
 
-      {/* Información sobre los últimos errores */}
-      {errorList.length > 0 && (
-        <div className="mt-4 bg-red-100 p-4 rounded-lg">
-          <h3 className="font-semibold mb-2 text-lg text-red-800">Errores</h3> {/* Cambiar título a "Errores" */}
-          {/* Tabla de errores con mayor visibilidad */}
+      {sourceComponent !== "Levels" && errorList.length > 0 && (
+        <div className="mt-4 bg-red-100 p-4 rounded-lg max-h-[200px] overflow-y-auto">
+          <h3 className="font-semibold mb-2 text-lg text-red-800">Errores</h3>
           <table className="w-full text-sm table-auto">
             <thead className="bg-red-200">
               <tr>
-                <th className="px=2 py=1 text-left font-bold">Esperado</th> {/* Encabezados en negrita */}
-                <th className="px=2 py=1 text-left font-bold">Escrito</th> {/* Encabezados en negrita */}
+                <th className="px-2 py-1 text-left font-bold">Esperado</th>
+                <th className="px-2 py-1 text-left font-bold">Escrito</th>
               </tr>
             </thead>
             <tbody>
               {errorList.map((error, index) => (
                 <tr key={index} className='bg-red-50'>
-                  {/* Reemplazar espacio por guion bajo para mayor claridad */}
-                  <td className="px=2 py=1 font-mono">{error.expected === ' ' ? '_' : error.expected}</td> 
-                  <td className={`px=2 py=1 font-mono ${error.actual === ' ' ? 'font-bold' : ''}`}>
-                    {error.actual === ' ' ? '_' : error.actual} {/* Reemplazar espacio por guion bajo para mayor claridad */}
-                  </td> 
+                  <td className="px-2 py-1 font-mono">{error.expected === ' ' ? '_' : error.expected}</td>
+                  <td className="px-2 py-1 font-mono">{error.actual === ' ' ? '_' : error.actual}</td>
                 </tr>
               ))}
             </tbody>
@@ -125,10 +120,34 @@ const Stats: React.FC<StatsProps> = ({
         </div>
       )}
 
-      {/* Mostrar requisitos para pasar al siguiente nivel si es desde PlayGame */}
-      {(sourceComponent === "Levels" || sourceComponent === "PlayGame")  && (
+      {sourceComponent === "Levels" && text && (
+        <div className="mt-4 bg-gray-100 p-4 rounded-lg max-h-[200px] overflow-y-auto">
+          <h3 className="font-semibold mb-2 text-lg">Texto con Errores Resaltados</h3>
+          <p className="font-mono whitespace-pre-wrap break-all">
+            {text.split('').map((char, index) => {
+              const error = errorList.find(e => e.expected === char && e.actual !== char);
+              return (
+                 <span 
+                  key={index} 
+                  className={`inline-block ${error ? 'bg-red-300 relative' : ''}`}
+                  data-tooltip-id={`char-${index}`}
+                  data-tooltip-content={error ? `Escrito: ${error.actual}` : ''}
+                >
+                  {char}
+                  {error && (
+                    <Tooltip id={`char-${index}`} place="top" />
+
+                  )}
+                </span>
+              );
+            })}
+          </p>
+        </div>
+      )}
+
+      {(sourceComponent === "Levels" || sourceComponent === "PlayGame") && (
         <div className="mt-4 bg-yellow-50 p-4 rounded-lg">
-          <h3 className="font-semibold mb-2 text-lg">Requisitos para Pasar al Siguiente Nivel</h3> {/* Eliminar el ":" */}
+          <h3 className="font-semibold mb-2 text-lg">Requisitos para Pasar al Siguiente Nivel</h3>
           <ul className="list-disc list-inside space-y-1 text-gray-700">
             <li>Alcanzar un WPM de al menos {wpmGoal}.</li>
             <li>Tener una precisión del 95% o más.</li>
@@ -137,26 +156,20 @@ const Stats: React.FC<StatsProps> = ({
         </div>
       )}
 
-      {/* Botones para cerrar el modal */}
-      {sourceComponent === "CreateText" && (
+      {sourceComponent === "CreateText" ? (
         <button onClick={onRepeatLevel} 
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
           Cerrar
         </button>
-      )}
-
-      {sourceComponent !== "CreateText" && (
+      ) : (
         <>
-          {/* Botón para repetir el nivel */}
           <button onClick={onRepeatLevel} 
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
             Repetir Nivel
           </button>
-
-          {/* Botón para avanzar al siguiente nivel */}
           {levelCompleted && (
             <button onClick={onNextLevel} 
-              className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">
+              className="mt-4 ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">
               Siguiente Nivel
             </button>
           )}
