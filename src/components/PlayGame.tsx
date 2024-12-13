@@ -3,6 +3,7 @@ import { motion, useAnimation } from 'framer-motion';
 import ErrorModal from './ErrorModal';
 import Stats from './Stats';
 import MenuLevels from './MenuLevels';
+  import { useTheme } from '../context/ThemeContext';
 
 const levels = [
   { keys: ['a', 's', 'd', 'f'], name: "Nivel 1: Fila base izquierda", speed: 1000, errorLimit: 10, wpmGoal: 50, minLetters: 30, maxLetters: 5, text: "" },

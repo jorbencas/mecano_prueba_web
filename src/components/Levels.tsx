@@ -5,7 +5,8 @@
   import Hands from './Hands';
   import ErrorModal from './ErrorModal';
   import MenuLevels from "./MenuLevels";
-  
+  import { useTheme } from '../context/ThemeContext';
+
   interface LevelsProps {
     onBack: () => void; // Función para volver al menú principal
   }
@@ -39,6 +40,7 @@
     const [showStatsModal, setShowStatsModal] = useState(false);
     const [completedLevels, setCompletedLevels] = useState<number[]>([]);
     const [errorList, setErrorList] = useState<{ expected: string; actual: string }[]>([]);
+      const { isDarkMode } = useTheme();
 
     // Generar texto al cambiar de nivel
     useEffect(() => {
@@ -171,8 +173,7 @@
     };
 
     return (
-    <div className="container mx-auto p-4 flex flex-col lg:flex-row">
-      <MenuLevels 
+ <div className={`container mx-auto p-4 flex flex-col lg:flex-row ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>      <MenuLevels 
         source="Levels" 
         onBack={onBack} // Llama a la función para volver al menú
         onLevelChange={(newLevel) => setLevel(newLevel)} 
@@ -182,7 +183,7 @@
       
       
         <div className="w-full lg:w-3/4">
-        <h1 className="text-3xl font-bold mb-4">Práctica de Mecanografía</h1>
+         <h1 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Práctica de Mecanografía</h1>
           <TypingArea
             text={text}
             currentIndex={currentIndex}

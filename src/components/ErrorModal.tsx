@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 interface ErrorModalProps {
   isOpen: boolean;
@@ -7,7 +8,7 @@ interface ErrorModalProps {
 }
 
 const ErrorModal: React.FC<ErrorModalProps> = ({ isOpen, onClose, children }) => {
-  
+  const { isDarkMode } = useTheme();
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
       onClose();
@@ -40,17 +41,15 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ isOpen, onClose, children }) =>
         className="modal-backdrop fixed inset-0 bg-black opacity-50" 
         onClick={handleBackdropClick}
       ></div>
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md relative z-50">
+       <div className={`p-6 rounded-lg shadow-xl z-50  ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
+        {children}
         <button
-          className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-xl"
+           className={`mt-4 px-4 py-2 ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded`}
           onClick={onClose}
           aria-label="Cerrar"
         >
           &times;
         </button>
-        <div >
-          {children}
-        </div>
       </div>
     </div>
   );
