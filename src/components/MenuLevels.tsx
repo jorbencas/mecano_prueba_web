@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 interface Level {
   keys: string[];
@@ -27,6 +28,7 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
 }) => {
   const [showCreateTextModal, setShowCreateTextModal] = useState(false);
   const [newText, setNewText] = useState('');
+  const { isDarkMode } = useTheme();
 
   const handleAddNewText = () => {
     if (newText.trim() && onCreateNewText) {
@@ -37,8 +39,8 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
   };
 
   return (
-    <div className="w-1/4 pr-4">
-      <h2 className="text-2xl font-bold mb-2">
+     <div className={`w-1/4 pr-4 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg shadow-md p-6`}>
+      <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
         {source === 'CreateText' ? 'Textos' : 'Niveles'}
       </h2>
       <ul className="space-y-2">
@@ -46,7 +48,9 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
           <li
             key={index}
              className={`p-2 rounded cursor-pointer 
-              ${index === currentLevel ? 'bg-blue-500 text-white' : 'bg-gray-100 hover:bg-gray-200'}
+             ${index === currentLevel 
+                ? 'bg-blue-500 text-white shadow-lg transform scale-105' 
+                : isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-white hover:bg-blue-100'}
               ${source === 'PlayGame' && index > currentLevel ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={() => {
               if (source !== 'PlayGame' || index <= currentLevel) {
@@ -60,7 +64,7 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
       {source === 'CreateText' && (
         <button 
           onClick={() => setShowCreateTextModal(true)}
-          className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
+          className={`mt-4 px-4 py-2 ${isDarkMode ? 'bg-red-700 hover:bg-red-800' : 'bg-red-500 hover:bg-red-600'}  text-white py-2 rounded-md transition-colors duration-300 `}
         >
           Crear Nuevo Texto
         </button>
@@ -81,7 +85,7 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
           </div>
         </div>
       )}
-      <button onClick={onBack} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+      <button onClick={onBack}  className={`mt-6 w-full ${isDarkMode ? 'bg-red-700 hover:bg-red-800' : 'bg-red-500 hover:bg-red-600'} text-white py-2 rounded-md transition-colors duration-300`}>
         Volver al Menú Principal
       </button>
     </div>

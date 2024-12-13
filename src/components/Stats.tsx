@@ -1,5 +1,6 @@
 import React from 'react';
 import { Tooltip } from 'react-tooltip';
+import { useTheme } from '../context/ThemeContext';
 
 interface StatsProps {
   wpm: number;
@@ -32,7 +33,7 @@ const Stats: React.FC<StatsProps> = ({
   sourceComponent,
   text
 }) => {
-  
+  const { isDarkMode } = useTheme();
   const formatElapsedTime = (timeInSeconds: number | null) => {
     if (timeInSeconds === null) return 'N/A';
     const minutes = Math.floor(timeInSeconds / 60);
@@ -41,7 +42,7 @@ const Stats: React.FC<StatsProps> = ({
   };
 
   return (
-    <div className="relative p-4">
+    <div className={`relative p-4 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
       <div className="mt-4 text-center mb-4">
         <p className={`font-bold ${levelCompleted ? 'text-green-600' : 'text-red-600'}`}>
           {sourceComponent === "CreateText" 
@@ -52,7 +53,7 @@ const Stats: React.FC<StatsProps> = ({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
         <div className="bg-blue-50 p-4 rounded-lg">
           <h3 className="text-lg font-semibold mb-3 text-blue-700">Rendimiento</h3>
           <div className="space-y-2">
@@ -147,7 +148,7 @@ const Stats: React.FC<StatsProps> = ({
 
       {(sourceComponent === "Levels" || sourceComponent === "PlayGame") && (
         <div className="mt-4 bg-yellow-50 p-4 rounded-lg">
-          <h3 className="font-semibold mb-2 text-lg">Requisitos para Pasar al Siguiente Nivel</h3>
+          <h3 className="font-semibold mb-2 text-lg text-gray-700">Requisitos para Pasar al Siguiente Nivel</h3>
           <ul className="list-disc list-inside space-y-1 text-gray-700">
             <li>Alcanzar un WPM de al menos {wpmGoal}.</li>
             <li>Tener una precisión del 95% o más.</li>

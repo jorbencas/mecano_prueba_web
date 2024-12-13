@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+  import { useTheme } from '../context/ThemeContext';
 
 interface TypingAreaProps {
   text: string;
@@ -13,6 +14,7 @@ interface TypingAreaProps {
 const TypingArea: React.FC<TypingAreaProps> = ({ text, currentIndex, onKeyPress, wpm, accuracy, errors, source }) => {
 
     const textAreaRef = useRef<HTMLParagraphElement>(null);
+    const { isDarkMode } = useTheme();
 
 useEffect(() => {
   const handleKeyPress = (event: KeyboardEvent) => {
@@ -34,10 +36,9 @@ useEffect(() => {
 }, [text, source]);
 
   return (
-    <div className="typing-area">
-      <p 
-        ref={textAreaRef}
-        className={`text-lg sm:text-xl lg:text-2xl border-2 border-gray-300 rounded-lg p-4 bg-green-100 mb-4 
+    <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
+      <div className="mb-4">
+        <p ref={textAreaRef} className={`text-lg font-mono ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} sm:text-xl lg:text-2xl border-2 border-gray-300 rounded-lg p-4 mb-4 
           ${source === 'CreateText' ? 'min-h-[6rem] h-auto whitespace-pre-wrap break-words' : ''}`}
       >
         {text.split('').map((char, index) => (
@@ -49,7 +50,8 @@ useEffect(() => {
           </span>
         ))}
       </p>
-      <div className="flex flex-col sm:flex-row justify-between">
+      </div>
+      <div className={`flex flex-col sm:flex-row justify-between ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
         <p className="inline-block mr-0 sm:mr-4 text-lg">WPM: {wpm}</p>
         <p className="inline-block mr-0 sm:mr-4 text-lg">Precisión: {accuracy}%</p>
         <p className="inline-block text-lg">Errores: {Object.keys(errors).length}</p>
