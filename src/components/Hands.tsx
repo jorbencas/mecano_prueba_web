@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 interface HandsProps {
   nextKey: string;
@@ -49,6 +50,7 @@ const fingerMap: { [key: string]: { hand: 'left' | 'right'; finger: string } } =
 };
 
 const Hands: React.FC<HandsProps> = ({ nextKey }) => {
+   const { isDarkMode } = useTheme();
   const activeHand = fingerMap[nextKey]?.hand || null;
   const activeFinger = fingerMap[nextKey]?.finger || null;
 
@@ -62,48 +64,48 @@ const Hands: React.FC<HandsProps> = ({ nextKey }) => {
       <g transform={isLeft ? '' : "scale(-1,1) translate(-200,0)"}>
         {/* Palma cuadrada */}
         <rect x="40" y="80" width="120" height="100" rx="10" ry="10"
-              fill="#FFE5B4" stroke="#000" strokeWidth="2" />
+              fill={isDarkMode ? "#6B46C1" : "#FFE5B4"} stroke={isDarkMode ? "#E2E8F0" : "#000"} strokeWidth="2" />
         
         {/* Dedos redondeados */}
         <circle cx="60" cy="70" r="15" 
-                fill={activeFinger === "meñique" && ((isLeft && activeHand === "left") || (!isLeft && activeHand === "right")) ? "#FFD700" : "#FFB3BA"} 
-                stroke="#000" strokeWidth="2" />
+                fill={activeFinger === "meñique" && ((isLeft && activeHand === "left") || (!isLeft && activeHand === "right")) ? "#FFD700" : (isDarkMode ? "#F6AD55" : "#FFB3BA")} 
+                stroke={isDarkMode ? "#E2E8F0" : "#000"} strokeWidth="2" />
         
         <circle cx="90" cy="50" r="15" 
-                fill={activeFinger === "anular" && ((isLeft && activeHand === "left") || (!isLeft && activeHand === "right")) ? "#FFD700" : "#BAFFC9"} 
-                stroke="#000" strokeWidth="2" />
+                fill={activeFinger === "anular" && ((isLeft && activeHand === "left") || (!isLeft && activeHand === "right")) ? "#FFD700" : (isDarkMode ? "#F6AD55" : "#BAFFC9")} 
+                stroke={isDarkMode ? "#E2E8F0" : "#000"} strokeWidth="2" />
         
         <circle cx="120" cy="40" r="15" 
-                fill={activeFinger === "medio" && ((isLeft && activeHand === "left") || (!isLeft && activeHand === "right")) ? "#FFD700" : "#BAE1FF"} 
-                stroke="#000" strokeWidth="2" />
+                fill={activeFinger === "medio" && ((isLeft && activeHand === "left") || (!isLeft && activeHand === "right")) ? "#FFD700" : (isDarkMode ? "#F6AD55" : "#BAE1FF")} 
+                stroke={isDarkMode ? "#E2E8F0" : "#000"} strokeWidth="2" />
         
         <circle cx="150" cy="50" r="15" 
-                fill={activeFinger === "índice" && ((isLeft && activeHand === "left") || (!isLeft && activeHand === "right")) ? "#FFD700" : "#FFFFBA"} 
-                stroke="#000" strokeWidth="2" />
+                fill={activeFinger === "índice" && ((isLeft && activeHand === "left") || (!isLeft && activeHand === "right")) ? "#FFD700" : (isDarkMode ? "#F6AD55" : "#FFFFBA")} 
+                stroke={isDarkMode ? "#E2E8F0" : "#000"} strokeWidth="2" />
         
         <ellipse cx="170" cy="100" rx="10" ry="20"
-                 fill={activeFinger === "pulgar" && ((isLeft && activeHand === "left") || (!isLeft && activeHand === "right")) ? "#FFD700" : "#FFD9BA"} 
-                 stroke="#000" strokeWidth="2"/>
+                 fill={activeFinger === "pulgar" && ((isLeft && activeHand === "left") || (!isLeft && activeHand === "right")) ? "#FFD700" : (isDarkMode ? "#F6AD55" : "#FFD9BA")} 
+                 stroke={isDarkMode ? "#E2E8F0" : "#000"} strokeWidth="2"/>
       </g>
     </svg>
   );
 
   return (
-    <div className="flex flex-col items-center my-8">
+    <div className={`flex flex-col items-center my-8 ${isDarkMode ? ' text-white' : ' text-black'}`}>
       <div className="mb-4 text-center">
-        <span className="font-bold text-blue-500 text-lg">
+        <span className={`font-bold ${isDarkMode ? 'text-blue-300' : 'text-blue-500'} text-lg`}>
           {activeHand && activeFinger ? getFingerDescription(activeHand, activeFinger) : "Esperando..."}
         </span>
       </div>
 
       <div className="flex justify-center space-x-8">
-        <div className={`relative p-4 rounded-lg ${activeHand === 'left' ? 'bg-cyan-100' : 'bg-gray-100'}`}>
+        <div className={`relative p-4 rounded-lg ${activeHand === 'left' ? (isDarkMode ? 'bg-blue-900' : 'bg-cyan-100') : (isDarkMode ? 'bg-gray-700' : 'bg-gray-100')}`}>
           <HandSVG isLeft={true} />
-          <span className="absolute top-2 left-2 text-sm font-bold">left</span>
+          <span className={`absolute top-2 left-2 text-sm font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>left</span>
         </div>
-        <div className={`relative p-4 rounded-lg ${activeHand === 'right' ? 'bg-cyan-100' : 'bg-gray-100'}`}>
+        <div className={`relative p-4 rounded-lg ${activeHand === 'right' ? (isDarkMode ? 'bg-blue-900' : 'bg-cyan-100') : (isDarkMode ? 'bg-gray-700' : 'bg-gray-100')}`}>
           <HandSVG isLeft={false} />
-          <span className="absolute top-2 right-2 text-sm font-bold">right</span>
+          <span className={`absolute top-2 right-2 text-sm font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>right</span>
         </div>
       </div>
     </div>

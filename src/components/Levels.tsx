@@ -173,7 +173,7 @@
     };
 
     return (
- <div className={`container mx-auto p-4 flex flex-col lg:flex-row ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>      <MenuLevels 
+ <div className={`container mx-auto p-4 flex flex-col lg:flex-row ${isDarkMode ? ' text-white' : ' text-black'}`}>      <MenuLevels 
         source="Levels" 
         onBack={onBack} // Llama a la función para volver al menú
         onLevelChange={(newLevel) => setLevel(newLevel)} 

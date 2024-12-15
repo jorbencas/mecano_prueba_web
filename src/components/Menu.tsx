@@ -20,7 +20,7 @@ const Menu: React.FC<{ onSelectOption: (option: string) => void }> = ({ onSelect
   const { isDarkMode } = useTheme();
 
   return (
-    <div className={`flex flex-col space-y-4 p-6 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'} rounded-xl shadow-lg max-w-md mx-auto`}>
+    <div className={`flex flex-col space-y-4 p-6 ${isDarkMode ? ' text-white' : ' text-black'} rounded-xl shadow-lg max-w-md mx-auto`}>     
       <h1 className="text-3xl font-bold text-center mb-6 text-blue-700 dark:text-blue-300">Menú Principal</h1>
       <MenuItem icon={<FaKeyboard className="text-2xl" />} text="Práctica de Mecanografía" onClick={() => onSelectOption('practice')} />
       <MenuItem icon={<FaGamepad className="text-2xl" />} text="Juego de Mecanografía" onClick={() => onSelectOption('game')} />

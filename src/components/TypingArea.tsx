@@ -36,8 +36,8 @@ useEffect(() => {
 }, [text, source]);
 
   return (
-    <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
-      <div className="mb-4">
+    <div className={`p-4 rounded-lg ${isDarkMode ? ' text-white' : ' text-black'}`}>
+      <div className={`mb-4 ${source === 'CreateText' ? 'max-h-60 overflow-y-auto' : ''}`}>
         <p ref={textAreaRef} className={`text-lg font-mono ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} sm:text-xl lg:text-2xl border-2 border-gray-300 rounded-lg p-4 mb-4 
           ${source === 'CreateText' ? 'min-h-[6rem] h-auto whitespace-pre-wrap break-words' : ''}`}
       >

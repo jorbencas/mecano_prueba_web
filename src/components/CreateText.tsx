@@ -135,7 +135,7 @@ const CreateText: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           errors={errors} 
         />
 
-        <Keyboard activeKey={nextKey} levelKeys={[]} />
+      <Keyboard activeKey={nextKey} levelKeys={[]} isFullKeyboard={true} />
 
         <Hands nextKey={nextKey} />
 
