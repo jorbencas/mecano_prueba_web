@@ -318,7 +318,7 @@ const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
               )}
             </div>
 
-            <div ref={containerRef} className="relative h-64 border-2 border-gray-300 overflow-hidden">
+            <div ref={containerRef} className="relative h-[calc(100vh-200px)] border-2 border-gray-300 overflow-hidden">
               {fallingLetters.map((letter) => (
                 <FallingLetterComponent
                   key={letter.id}

@@ -39,7 +39,7 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
   };
 
   return (
-     <div className={`w-1/4 pr-4 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg shadow-md p-6`}>
+     <div className={`w-1/4 pr-4   rounded-lg shadow-md p-6`}>
       <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
         {source === 'CreateText' ? 'Textos' : 'Niveles'}
       </h2>
@@ -70,20 +70,20 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
         </button>
       )}
       {showCreateTextModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded">
-            <h2 className="text-xl font-bold mb-2">Crear Nuevo Texto</h2>
-            <input 
-              type="text"
-              value={newText}
-              onChange={(e) => setNewText(e.target.value)}
-              placeholder="Escribe un nuevo texto aquí..."
-              className="border p-2 rounded mb-2 w-full"
-            />
-            <button onClick={handleAddNewText} className="mt-4 px-4 py-2 bg-green-500 text-white rounded">Agregar Nuevo Texto</button>
-            <button onClick={() => setShowCreateTextModal(false)} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded ml-2">Cerrar</button>
-          </div>
-        </div>
+       <div className={`fixed inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-black'} bg-opacity-50 flex items-center justify-center`}>
+  <div className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'} p-4 rounded w-full max-w-lg`}>
+    <h2 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-blue-300' : 'text-blue-600'}`}>Crear Nuevo Texto</h2>
+    <textarea 
+      value={newText}
+      onChange={(e) => setNewText(e.target.value)}
+      placeholder="Escribe un nuevo texto aquí..."
+      className={`border p-2 rounded mb-2 w-full h-40 resize-none overflow-y-auto ${isDarkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-black border-gray-300'}`}
+    />
+    <button onClick={handleAddNewText} className={`mt-4 px-4 py-2 ${isDarkMode ? 'bg-green-700 hover:bg-green-600' : 'bg-green-500 hover:bg-green-400'} text-white rounded`}>Agregar Nuevo Texto</button>
+    <button onClick={() => setShowCreateTextModal(false)} className={`mt-4 px-4 py-2 ${isDarkMode ? 'bg-blue-700 hover:bg-blue-600' : 'bg-blue-500 hover:bg-blue-400'} text-white rounded ml-2`}>Cerrar</button>
+  </div>
+</div>
+
       )}
       <button onClick={onBack}  className={`mt-6 w-full ${isDarkMode ? 'bg-red-700 hover:bg-red-800' : 'bg-red-500 hover:bg-red-600'} text-white py-2 rounded-md transition-colors duration-300`}>
         Volver al Menú Principal
