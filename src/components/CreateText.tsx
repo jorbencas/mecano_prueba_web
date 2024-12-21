@@ -25,7 +25,7 @@ const CreateText: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [errors, setErrors] = useState<{ [key: number]: { expected: string; actual: string } }>({});
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [errorList, setErrorList] = useState<{ expected: string; actual: string }[]>([]);
-  const [currentLevel, setCurrentLevel] = useState(1);
+  const [currentLevel, setCurrentLevel] = useState(0);
 
   useEffect(() => {
     const storedTexts = localStorage.getItem('texts');
@@ -119,7 +119,7 @@ const CreateText: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         onBack={onBack}
         onLevelChange={handleLevelChange}
         onCreateNewText={handleAddNewText}
-        currentLevel={currentLevel - 1}
+        currentLevel={currentLevel}
         levels={texts}
       />
 
