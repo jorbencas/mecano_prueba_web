@@ -6,7 +6,7 @@ import PlayGame from './components/PlayGame';
 import Levels from './components/Levels';
 import CreateText from './components/CreateText';
 import Settings from './components/Settings';
-import VideoPlayerWithThumbnails from './components/VideoPlayerWithThumbnails';
+import VideoPlayer from './components/VideoPlayerWithThumbnails';
 
 const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isDarkMode } = useTheme();
@@ -28,9 +28,10 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       {children}
 
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">``
-      <VideoPlayerWithThumbnails
+      <VideoPlayer
         src="https://www.w3schools.com/html/mov_bbb.mp4"
         poster="https://via.placeholder.com/800x450?text=Video+Not+Found"
+        subtitlesUrl="https://example.com/subtitles.vtt"
       />
     </div>
     </div>
