@@ -15,7 +15,7 @@ interface Level {
   errorLimit: number;
 }
 
-const CreateText: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+const CreateText: React.FC<{ }> = () => {
   const [texts, setTexts] = useState<Level[]>([]);
   const [selectedText, setSelectedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -116,7 +116,6 @@ const CreateText: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     <div className="container mx-auto p-4 flex">
       <MenuLevels 
         source="CreateText"
-        onBack={onBack}
         onLevelChange={handleLevelChange}
         onCreateNewText={handleAddNewText}
         currentLevel={currentLevel}

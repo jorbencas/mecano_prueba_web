@@ -2,7 +2,7 @@ import React from 'react';
 import { FaSun, FaMoon } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 
-const Settings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+const Settings: React.FC<{}> = () => {
   const { isDarkMode, toggleTheme } = useTheme();
 
   return (
@@ -18,13 +18,6 @@ const Settings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           <span>Cambiar a Modo {isDarkMode ? 'Claro' : 'Oscuro'}</span>
         </button>
       </div>
-
-      <button
-        onClick={onBack}
-        className={`mt-6 w-full ${isDarkMode ? 'bg-red-700 hover:bg-red-800' : 'bg-red-500 hover:bg-red-600'} text-white py-2 rounded-md transition-colors duration-300`}
-      >
-        Volver al Menú Principal
-      </button>
     </div>
   );
 };

@@ -11,7 +11,6 @@ interface Level {
 
 interface MenuLevelsProps {
   source: 'Levels' | 'PlayGame' | 'CreateText';
-  onBack: () => void;
   onLevelChange: (level: number) => void;
   onCreateNewText?: (text: string) => void;
   currentLevel: number;
@@ -20,7 +19,6 @@ interface MenuLevelsProps {
 
 const MenuLevels: React.FC<MenuLevelsProps> = ({ 
   source, 
-  onBack, 
   onLevelChange, 
   onCreateNewText, 
   currentLevel, 
@@ -85,9 +83,6 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
 </div>
 
       )}
-      <button onClick={onBack}  className={`mt-6 w-full ${isDarkMode ? 'bg-red-700 hover:bg-red-800' : 'bg-red-500 hover:bg-red-600'} text-white py-2 rounded-md transition-colors duration-300`}>
-        Volver al Menú Principal
-      </button>
     </div>
   );
 };

@@ -94,16 +94,16 @@ const Hands: React.FC<HandsProps> = ({ nextKey }) => {
     <div className={`flex flex-col items-center my-8 ${isDarkMode ? ' text-white' : ' text-black'}`}>
       <div className="mb-4 text-center">
         <span className={`font-bold ${isDarkMode ? 'text-blue-300' : 'text-blue-500'} text-lg`}>
-          {activeHand && activeFinger ? getFingerDescription(activeHand, activeFinger) : "Esperando..."}
+          {activeHand && activeFinger ? getFingerDescription(activeHand, activeFinger) : ""}
         </span>
       </div>
 
       <div className="flex justify-center space-x-8">
-        <div className={`relative p-4 rounded-lg ${activeHand === 'left' ? (isDarkMode ? 'bg-blue-900' : 'bg-cyan-100') : (isDarkMode ? 'bg-gray-700' : 'bg-gray-100')}`}>
+        <div className={` border border-red-600  relative p-4 rounded-lg ${activeHand === 'left' ? (isDarkMode ? 'bg-blue-900' : 'bg-cyan-100') : (isDarkMode ? 'bg-gray-700' : 'bg-gray-100')}`}>
           <HandSVG isLeft={true} />
           <span className={`absolute top-2 left-2 text-sm font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>left</span>
         </div>
-        <div className={`relative p-4 rounded-lg ${activeHand === 'right' ? (isDarkMode ? 'bg-blue-900' : 'bg-cyan-100') : (isDarkMode ? 'bg-gray-700' : 'bg-gray-100')}`}>
+        <div className={`border border-red-600 relative p-4 rounded-lg ${activeHand === 'right' ? (isDarkMode ? 'bg-blue-900' : 'bg-cyan-100') : (isDarkMode ? 'bg-gray-700' : 'bg-gray-100')}`}>
           <HandSVG isLeft={false} />
           <span className={`absolute top-2 right-2 text-sm font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>right</span>
         </div>
