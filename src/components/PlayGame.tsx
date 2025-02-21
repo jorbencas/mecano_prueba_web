@@ -93,7 +93,7 @@ const FallingLetterComponent: React.FC<{
     );
 };
 
-const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+const PlayGame: React.FC<{}> = () => {
    const [level, setLevel] = useState(0);
    const [fallingLetters, setFallingLetters] = useState<FallingLetter[]>([]);
    const [score, setScore] = useState(0);
@@ -282,7 +282,6 @@ const PlayGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             source="PlayGame" 
             onLevelChange={handleLevelChange} 
             currentLevel={currentLevel} 
-            onBack={onBack} 
             levels={levels} // Pasar niveles aqu
           />
 

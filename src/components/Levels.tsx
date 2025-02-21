@@ -7,10 +7,6 @@
   import MenuLevels from "./MenuLevels";
   import { useTheme } from '../context/ThemeContext';
 
-  interface LevelsProps {
-    onBack: () => void; // Función para volver al menú principal
-  }
-
   const levels = [
     { keys: ['j', 'f', ' '], name: "Nivel 1: Posición base y espacio", text: "jf fj jf fj jjff ffjj fjfj jffj", wpmGoal: 15, errorLimit: 5 },
     { keys: ['j', 'f', 'k', 'd'], name: "Nivel 2: Introducción a las letras", text: "jfkd fjkd dkjf kfjf", wpmGoal: 20, errorLimit: 4 },
@@ -24,7 +20,7 @@
     { keys:['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], name :"Nivel 10: Práctica completa con números y letras", text :"Practicar mecanografía mejora la velocidad y precisión.", wpmGoal :75, errorLimit :1 }
   ];
 
-  const Levels: React.FC<LevelsProps> = ({ onBack }) => {
+  const Levels: React.FC<{}> = () => {
     const [level, setLevel] = useState(0);
     const [text, setText] = useState('');
     const [nextKey, setNextKey] = useState('');
@@ -175,7 +171,6 @@
     return (
  <div className={`container mx-auto p-4 flex flex-col lg:flex-row ${isDarkMode ? ' text-white' : ' text-black'}`}>      <MenuLevels 
         source="Levels" 
-        onBack={onBack} // Llama a la función para volver al menú
         onLevelChange={(newLevel) => setLevel(newLevel)} 
         currentLevel={level}
         levels={levels}
