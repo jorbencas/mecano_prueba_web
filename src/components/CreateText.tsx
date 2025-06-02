@@ -5,7 +5,6 @@ import ErrorModal from './ErrorModal';
 import Keyboard from './Keyboard';
 import Stats from './Stats';
 import MenuLevels from './MenuLevels';
-  import { useTheme } from '../context/ThemeContext';
 
 interface Level {
   keys: string[];

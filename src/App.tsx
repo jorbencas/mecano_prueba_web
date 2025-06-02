@@ -6,8 +6,8 @@ import PlayGame from './components/PlayGame';
 import Levels from './components/Levels';
 import CreateText from './components/CreateText';
 import Settings from './components/Settings';
-import VideoPlayer from './components/VideoPlayerWithThumbnails';
 import ErrorModal from './components/ErrorModal';
+import { LanguageProvider } from './context/LanguageContext';
 
 const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isDarkMode } = useTheme();
@@ -36,13 +36,6 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         )}
         {children}
       </div>
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <VideoPlayer
-          src="/home/jorge/Música/bdf/10.mp4"
-          poster="https://via.placeholder.com/800x450?text=Video+Not+Found"
-          subtitlesUrl="https://example.com/subtitles.vtt"
-        />
-      </div>
     </div>
   );
 };
@@ -50,11 +43,14 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider>
+    <LanguageProvider>
+      <ThemeProvider>
       <AppContainer>
         <p></p>
       </AppContainer>
     </ThemeProvider>
+    </LanguageProvider>
+
   );
 };
 
