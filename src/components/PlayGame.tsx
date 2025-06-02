@@ -3,7 +3,6 @@ import { motion, useAnimation } from 'framer-motion';
 import ErrorModal from './ErrorModal';
 import Stats from './Stats';
 import MenuLevels from './MenuLevels';
-  import { useTheme } from '../context/ThemeContext';
 
 const levels = [
   { keys: ['a', 's', 'd', 'f'], name: "Nivel 1: Fila base izquierda", speed: 1000, errorLimit: 10, wpmGoal: 50, minLetters: 30, maxLetters: 5, text: "" },
@@ -317,7 +316,7 @@ const PlayGame: React.FC<{}> = () => {
               )}
             </div>
 
-            <div ref={containerRef} className="relative h-[calc(100vh-200px)] border-2 border-gray-300 overflow-hidden">
+            <div ref={containerRef} className="relative h-[calc(100vh-300px)] border-2 border-gray-300 overflow-hidden">
               {fallingLetters.map((letter) => (
                 <FallingLetterComponent
                   key={letter.id}
