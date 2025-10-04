@@ -3,6 +3,7 @@ import { motion, useAnimation } from 'framer-motion';
 import ErrorModal from './ErrorModal';
 import Stats from './Stats';
 import MenuLevels from './MenuLevels';
+import InstruccionesButton from './Instrucciones';
 
 const levels = [
   { keys: ['a', 's', 'd', 'f'], name: "Nivel 1: Fila base izquierda", speed: 1000, errorLimit: 10, wpmGoal: 50, minLetters: 30, maxLetters: 5, text: "" },
@@ -275,7 +276,12 @@ const PlayGame: React.FC<{}> = () => {
     return (
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold mb-4">Juego de Letras Cayendo</h1>
-        
+        <InstruccionesButton
+  buttonLabel="Ver Instrucciones"
+  instructions="Presiona las teclas correctas antes de que caigan hasta el final. 
+  Evita errores, mantén el ritmo y alcanza el WPM objetivo para subir de nivel."
+  color="green"
+/>
         <div className="flex flex-col md:flex-row">
           <MenuLevels 
             source="PlayGame" 

@@ -5,6 +5,7 @@ import ErrorModal from './ErrorModal';
 import Keyboard from './Keyboard';
 import Stats from './Stats';
 import MenuLevels from './MenuLevels';
+import InstruccionesButton from './Instrucciones';
 
 interface Level {
   keys: string[];
@@ -123,7 +124,12 @@ const CreateText: React.FC<{ }> = () => {
 
       <div className="w-3/4">
         <h1 className="text-3xl font-bold mb-4">Escribe el Texto Seleccionado</h1>
-
+        <InstruccionesButton
+          buttonLabel="Ver Instrucciones"
+          instructions="Presiona las teclas correctas antes de que caigan hasta el final. 
+          Evita errores, mantén el ritmo y alcanza el WPM objetivo para subir de nivel."
+          color="green"
+        />
         <TypingArea 
           text={selectedText} 
           currentIndex={currentIndex} 

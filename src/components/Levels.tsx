@@ -6,6 +6,7 @@
   import ErrorModal from './ErrorModal';
   import MenuLevels from "./MenuLevels";
   import { useTheme } from '../context/ThemeContext';
+import InstruccionesButton from './Instrucciones';
 
   const levels = [
     { keys: ['j', 'f', ' '], name: "Nivel 1: Posición base y espacio", text: "jf fj jf fj jjff ffjj fjfj jffj", wpmGoal: 15, errorLimit: 5 },
@@ -36,7 +37,7 @@
     const [showStatsModal, setShowStatsModal] = useState(false);
     const [completedLevels, setCompletedLevels] = useState<number[]>([]);
     const [errorList, setErrorList] = useState<{ expected: string; actual: string }[]>([]);
-      const { isDarkMode } = useTheme();
+    const { isDarkMode } = useTheme();
 
     // Generar texto al cambiar de nivel
     useEffect(() => {
@@ -115,7 +116,7 @@
         [currentIndex]: { 
           expected: expectedKey, 
           actual: key 
-        } 
+        }
       };
       
       if (Object.keys(newErrors).length >= levels[level].errorLimit) {
@@ -127,8 +128,7 @@
     
     // Guardar todos los errores con información adicional
     setErrorList(prev => [{ expected: expectedKey, actual: key }, ...prev]);
-  }
-  
+  }  
   updateAccuracy();
 };
 
@@ -169,16 +169,21 @@
     };
 
     return (
- <div className={`container mx-auto p-4 flex flex-col lg:flex-row ${isDarkMode ? ' text-white' : ' text-black'}`}>      <MenuLevels 
+      <div className={`container mx-auto p-4 flex flex-col lg:flex-row ${isDarkMode ? ' text-white' : ' text-black'}`}>
+      <MenuLevels 
         source="Levels" 
         onLevelChange={(newLevel) => setLevel(newLevel)} 
         currentLevel={level}
         levels={levels}
       />
-      
-      
         <div className="w-full lg:w-3/4">
          <h1 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Práctica de Mecanografía</h1>
+          <InstruccionesButton
+          buttonLabel="Ver Instrucciones"
+          instructions="Presiona las teclas correctas antes de que caigan hasta el final. 
+          Evita errores, mantén el ritmo y alcanza el WPM objetivo para subir de nivel."
+          color="green"
+        />
           <TypingArea
             text={text}
             currentIndex={currentIndex}
@@ -208,8 +213,7 @@
               sourceComponent={"Levels"} // Indicar que proviene de Levels
               text={text}
             />
-          </ErrorModal>
-        
+          </ErrorModal>        
         </div>
       </div>
     );

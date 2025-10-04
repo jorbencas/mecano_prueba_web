@@ -1,0 +1,24 @@
+{
+  es: {
+    hand: { left: "izquierda", right: "derecha"
+        },
+    finger: {
+      pinky: "meñique",
+      ring: "anular",
+      middle: "medio",
+      index: "índice",
+      thumb: "pulgar",
+        },
+    },
+  en: {
+    hand: { left: "left", right: "right"
+        },
+    finger: {
+      pinky: "pinky",
+      ring: "ring",
+      middle: "middle",
+      index: "index",
+      thumb: "thumb",
+        },
+    },
+}
