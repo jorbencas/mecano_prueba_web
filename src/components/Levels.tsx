@@ -7,6 +7,7 @@
   import MenuLevels from "./MenuLevels";
   import { useTheme } from '../context/ThemeContext';
 import InstruccionesButton from './Instrucciones';
+import { getStatsData } from '../utils/getStatsData';
 
   const levels = [
     { keys: ['j', 'f', ' '], name: "Nivel 1: Posición base y espacio", text: "jf fj jf fj jjff ffjj fjfj jffj", wpmGoal: 15, errorLimit: 5 },
@@ -169,21 +170,16 @@ import InstruccionesButton from './Instrucciones';
     };
 
     return (
-      <div className={`container mx-auto p-4 flex flex-col lg:flex-row ${isDarkMode ? ' text-white' : ' text-black'}`}>
+      <div className="container mx-auto p-4 flex">
       <MenuLevels 
         source="Levels" 
         onLevelChange={(newLevel) => setLevel(newLevel)} 
         currentLevel={level}
         levels={levels}
       />
-        <div className="w-full lg:w-3/4">
+        <div className="w-3/4">
          <h1 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Práctica de Mecanografía</h1>
-          <InstruccionesButton
-          buttonLabel="Ver Instrucciones"
-          instructions="Presiona las teclas correctas antes de que caigan hasta el final. 
-          Evita errores, mantén el ritmo y alcanza el WPM objetivo para subir de nivel."
-          color="green"
-        />
+
           <TypingArea
             text={text}
             currentIndex={currentIndex}
@@ -195,24 +191,33 @@ import InstruccionesButton from './Instrucciones';
           />
           <Keyboard activeKey={nextKey} levelKeys={levels[level].keys} />
           <Hands nextKey={nextKey} />
+          <InstruccionesButton
+          instructions="Presiona las teclas correctas antes de que caigan hasta el final. 
+          Evita errores, mantén el ritmo y alcanza el WPM objetivo para subir de nivel."
+          color="green"
+        />
           {/* Modal para mostrar estadísticas */}
           <ErrorModal isOpen={showStatsModal} onClose={() =>setShowStatsModal(false)}>
             {/* Componente Stats */}
-            <Stats 
-              wpm={wpm}
-              accuracy={accuracy}
-              level={level}
-              errors={Object.keys(errors).length}
-              wpmGoal={levels[level].wpmGoal}
-              elapsedTime={elapsedTime}
-              errorList={errorList}
-              levelCompleted={levelCompleted}
-              errorLimit={levels[level].errorLimit}
-              onRepeatLevel={repeatLevel} 
-              onNextLevel={nextLevel} 
-              sourceComponent={"Levels"} // Indicar que proviene de Levels
-              text={text}
-            />
+            <Stats
+            stats={getStatsData({
+              wpm,
+              accuracy,
+              level,
+              errors: Object.keys(errors).length,
+              elapsedTime,
+              levelCompleted,
+              levelData: {
+                wpmGoal: levels[level].wpmGoal,
+                errorLimit: levels[level].errorLimit,
+              },
+              text, // Mostrar texto con errores resaltados
+            })}
+            errorList={errorList}
+            onRepeatLevel={repeatLevel}
+            onNextLevel={nextLevel}
+            sourceComponent="Levels"
+          />
           </ErrorModal>        
         </div>
       </div>
