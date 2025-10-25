@@ -2,6 +2,7 @@ import React from 'react';
 import { FaSun, FaMoon } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
+import StatsHistory from './StatsHistory';
 
 const Settings: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -15,7 +16,7 @@ const Settings: React.FC = () => {
   ];
 
   return (
-    <div className={`p-6 rounded-xl shadow-lg max-w-md mx-auto ${isDarkMode ? 'text-white' : 'text-black'}`}>
+    <div className={`p-6 rounded-xl max-w-md mx-auto ${isDarkMode ? 'text-white' : 'text-black'}`}>
       <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>Configuración</h2>
       
       {/* Cambio de tema */}
@@ -46,6 +47,10 @@ const Settings: React.FC = () => {
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="mb-4">
+        <StatsHistory />
       </div>
     </div>
   );

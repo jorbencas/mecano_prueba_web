@@ -3,7 +3,9 @@ import { motion, useAnimation } from 'framer-motion';
 import ErrorModal from './ErrorModal';
 import Stats from './Stats';
 import MenuLevels from './MenuLevels';
+import { useTheme } from '../context/ThemeContext';
 import InstruccionesButton from './Instrucciones';
+import { getStatsData } from '../utils/getStatsData';
 
 const levels = [
   { keys: ['a', 's', 'd', 'f'], name: "Nivel 1: Fila base izquierda", speed: 1000, errorLimit: 10, wpmGoal: 50, minLetters: 30, maxLetters: 5, text: "" },
@@ -108,6 +110,7 @@ const PlayGame: React.FC<{}> = () => {
    const [time, setTime] = useState(0);
     const [currentLevel, setCurrentLevel] = useState(0);
    const containerRef = useRef<HTMLDivElement>(null);
+    const { isDarkMode } = useTheme();
 
    // Audio
    const correctAudio = new Audio(process.env.PUBLIC_URL + '/sounds/correct.mp3');
@@ -274,22 +277,16 @@ const PlayGame: React.FC<{}> = () => {
     };
 
     return (
-      <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-4">Juego de Letras Cayendo</h1>
-        <InstruccionesButton
-  buttonLabel="Ver Instrucciones"
-  instructions="Presiona las teclas correctas antes de que caigan hasta el final. 
-  Evita errores, mantén el ritmo y alcanza el WPM objetivo para subir de nivel."
-  color="green"
-/>
-        <div className="flex flex-col md:flex-row">
-          <MenuLevels 
+      <div className="container mx-auto p-4 flex">
+      
+<MenuLevels 
             source="PlayGame" 
             onLevelChange={handleLevelChange} 
             currentLevel={currentLevel} 
             levels={levels} // Pasar niveles aqu
           />
-
+        <div className="w-3/4">
+           <h1 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Juego de Letras Cayendo</h1>
           {/* Columna derecha para el juego y la información */}
           <div className="w-full md:w-3/4">
             <div className="mb-4">
@@ -334,31 +331,40 @@ const PlayGame: React.FC<{}> = () => {
               ))}
             </div>
           </div>
+          <InstruccionesButton
+          instructions="Presiona las teclas correctas antes de que caigan hasta el final. 
+          Evita errores, mantén el ritmo y alcanza el WPM objetivo para subir de nivel."
+          color="green"
+        />
         </div>
-
+        
         {/* Modal de estadísticas */}
         {showStatsModal && (
           <ErrorModal isOpen={showStatsModal} onClose={() => setShowStatsModal(false)}>
-            <Stats
-              wpm={score}
-              accuracy={Math.round((score / (score + errors)) * 100) || 0}
-              level={level + 1}
-              errors={errors}
-              wpmGoal={levels[level].wpmGoal}
-              elapsedTime={time}
-              errorList={errorList}
-              levelCompleted={!gameOver}
-              errorLimit={levels[level].errorLimit}
-              onRepeatLevel={handleRepeatLevel}
-              onNextLevel={() => {
-                if (level < levels.length - 1) {
-                  setLevel(prev => prev + 1);
-                  setShowStatsModal(false);
-                  startGame();
-                }
-              }}
-              sourceComponent="PlayGame"
-            />
+          <Stats
+            stats={getStatsData({
+              wpm: score,
+              accuracy: Math.round((score / (score + errors)) * 100) || 0,
+              level: level + 1,
+              errors,
+              elapsedTime: time,
+              levelCompleted: !gameOver,
+              levelData: {
+                wpmGoal: levels[level].wpmGoal,
+                errorLimit: levels[level].errorLimit,
+              },
+            })}
+            errorList={errorList}
+            onRepeatLevel={handleRepeatLevel}
+            onNextLevel={() => {
+              if (level < levels.length - 1) {
+                setLevel((prev) => prev + 1);
+                setShowStatsModal(false);
+                startGame();
+              }
+            }}
+            sourceComponent="PlayGame"
+          />
           </ErrorModal>
         )}
       </div>

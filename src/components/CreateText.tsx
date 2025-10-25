@@ -6,6 +6,7 @@ import Keyboard from './Keyboard';
 import Stats from './Stats';
 import MenuLevels from './MenuLevels';
 import InstruccionesButton from './Instrucciones';
+import { getStatsData } from '../utils/getStatsData';
 
 interface Level {
   keys: string[];
@@ -121,15 +122,10 @@ const CreateText: React.FC<{ }> = () => {
         currentLevel={currentLevel}
         levels={texts}
       />
-
+ 
       <div className="w-3/4">
         <h1 className="text-3xl font-bold mb-4">Escribe el Texto Seleccionado</h1>
-        <InstruccionesButton
-          buttonLabel="Ver Instrucciones"
-          instructions="Presiona las teclas correctas antes de que caigan hasta el final. 
-          Evita errores, mantén el ritmo y alcanza el WPM objetivo para subir de nivel."
-          color="green"
-        />
+        
         <TypingArea 
           text={selectedText} 
           currentIndex={currentIndex} 
@@ -142,23 +138,32 @@ const CreateText: React.FC<{ }> = () => {
       <Keyboard activeKey={nextKey} levelKeys={[]} isFullKeyboard={true} />
 
         <Hands nextKey={nextKey} />
-
+        <InstruccionesButton
+          instructions="Presiona las teclas correctas antes de que caigan hasta el final. 
+          Evita errores, mantén el ritmo y alcanza el WPM objetivo para subir de nivel."
+          color="green"
+        />
         {showStatsModal && (
           <ErrorModal isOpen={showStatsModal} onClose={() => setShowStatsModal(false)}>
-            <Stats 
-              wpm={wpm}
-              accuracy={accuracy}
-              level={currentLevel + 1}
-              errors={Object.keys(errors).length}
-              wpmGoal={texts[currentLevel]?.wpmGoal || 0}
-              elapsedTime={0}
-              errorList={errorList}
-              levelCompleted={true}
-              errorLimit={texts[currentLevel]?.errorLimit || 0}
-              onRepeatLevel={() => {setShowStatsModal(false)}}
-              onNextLevel={() => {}}
-              sourceComponent="CreateText"
-            />
+          <Stats
+            stats={getStatsData({
+              wpm,
+              accuracy,
+              level: currentLevel + 1,
+              errors: Object.keys(errors).length,
+              elapsedTime: 0,
+              levelCompleted: true,
+              levelData: {
+                wpmGoal: texts[currentLevel]?.wpmGoal || 0,
+                errorLimit: texts[currentLevel]?.errorLimit || 0,
+              },
+              text: '', // o el texto actual si quieres mostrarlo
+            })}
+            errorList={errorList}
+            onRepeatLevel={() => setShowStatsModal(false)}
+            onNextLevel={() => {}}
+            sourceComponent="CreateText"
+          />
           </ErrorModal>
         )}
       </div>
