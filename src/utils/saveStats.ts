@@ -1,4 +1,3 @@
-// utils/saveStats.ts
 export interface SavedStat {
   wpm: number;
   accuracy: number;
@@ -10,39 +9,61 @@ export interface SavedStat {
   errorLimit: number;
   sourceComponent?: string; // "Levels" | "PlayGame" | "CreateText"
   date?: string;
+  text?: string
 }
 
-const STORAGE_KEY = 'savedStats';
-
-// Guardar una estadística
-export const saveStats = (stat: SavedStat) => {
+/**
+ * Guarda las estadísticas en localStorage (array persistente).
+ * Evita duplicados y mantiene máximo 100 registros.
+ */
+export const saveStats = (newStat: SavedStat) => {
   try {
-    const current = loadStats();
-    const newStats = [...current, stat];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newStats));
+    const existing = JSON.parse(localStorage.getItem('typingStats') || '[]');
+
+    const updated = [
+      ...existing,
+      {
+        ...newStat,
+        date: newStat.date || new Date().toISOString(),
+      },
+    ];
+
+    // Limitar a los últimos 100 registros
+    if (updated.length > 100) updated.shift();
+
+    localStorage.setItem('typingStats', JSON.stringify(updated));
   } catch (err) {
     console.error('Error guardando estadísticas:', err);
   }
 };
 
-// Cargar todas las estadísticas
+/**
+ * Recupera todas las estadísticas del almacenamiento.
+ */
 export const loadStats = (): SavedStat[] => {
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (!data) return [];
-    const parsed: SavedStat[] = JSON.parse(data);
-    return parsed;
-  } catch (err) {
-    console.error('Error cargando estadísticas:', err);
+    return JSON.parse(localStorage.getItem('typingStats') || '[]');
+  } catch {
     return [];
   }
 };
 
-// Borrar todas las estadísticas
+/**
+ * Elimina todas las estadísticas guardadas.
+ */
 export const clearStats = () => {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('typingStats');
   } catch (err) {
-    console.error('Error borrando estadísticas:', err);
+    console.error('Error limpiando estadísticas:', err);
   }
+};
+
+/**
+ * Filtra estadísticas por tipo de componente (Levels, PlayGame, CreateText).
+ */
+export const getStatsBySource = (
+  source: 'Levels' | 'PlayGame' | 'CreateText'
+): SavedStat[] => {
+  return loadStats().filter((stat) => stat.sourceComponent === source);
 };

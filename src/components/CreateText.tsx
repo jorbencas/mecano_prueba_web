@@ -7,6 +7,7 @@ import Stats from './Stats';
 import MenuLevels from './MenuLevels';
 import InstruccionesButton from './Instrucciones';
 import { getStatsData } from '../utils/getStatsData';
+import sampleTexts from '../data/texts.json';
 
 interface Level {
   keys: string[];
@@ -17,7 +18,7 @@ interface Level {
 }
 
 const CreateText: React.FC<{ }> = () => {
-  const [texts, setTexts] = useState<Level[]>([]);
+  const [texts, setTexts] = useState<Level[]>(sampleTexts);
   const [selectedText, setSelectedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [nextKey, setNextKey] = useState('');

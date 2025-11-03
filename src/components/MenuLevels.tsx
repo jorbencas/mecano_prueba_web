@@ -37,7 +37,7 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
   };
 
   return (
-     <div className={`w-1/4 pr-4   rounded-lg  p-6`}>
+<div className={`w-1/4 pr-4 rounded-lg p-6 overflow-y-auto overflow-x-hidden max-h-[80vh]`}>
       <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
         {source === 'CreateText' ? 'Textos' : 'Niveles'}
       </h2>

@@ -1,4 +1,4 @@
-  import React, { useState, useEffect } from 'react';
+  import React, { useState, useEffect, useLayoutEffect } from 'react';
   import Keyboard from './Keyboard';
   import TypingArea from './TypingArea';
   import Stats from './Stats';
@@ -34,7 +34,7 @@ import { getStatsData } from '../utils/getStatsData';
     const [totalKeystrokes, setTotalKeystrokes] = useState(0);
     const [levelCompleted, setLevelCompleted] = useState(false);
     const [totalWords, setTotalWords] = useState(0);
-    const [elapsedTime, setElapsedTime] = useState<number | null>(null);
+    const [elapsedTime, setElapsedTime] = useState<number>(0);
     const [showStatsModal, setShowStatsModal] = useState(false);
     const [completedLevels, setCompletedLevels] = useState<number[]>([]);
     const [errorList, setErrorList] = useState<{ expected: string; actual: string }[]>([]);
@@ -44,6 +44,8 @@ import { getStatsData } from '../utils/getStatsData';
     useEffect(() => {
       generateText();
     }, [level]);
+
+    
 
     // Función para generar texto aleatorio basado en las teclas del nivel actual
       const generateText = () => {
@@ -59,7 +61,7 @@ import { getStatsData } from '../utils/getStatsData';
           setErrors({});
           setTotalKeystrokes(0);
           setLevelCompleted(false);
-          setElapsedTime(null);
+          setElapsedTime(0);
           setErrorList([]);
       };
 
@@ -133,6 +135,23 @@ import { getStatsData } from '../utils/getStatsData';
   updateAccuracy();
 };
 
+// Límite de tiempo por nivel (en segundos)
+useEffect(() => {
+  if (startTime !== null && !levelCompleted) {
+    const timer = setInterval(() => {
+      const timePassed = Math.floor((Date.now() - startTime) / 1000);
+      setElapsedTime(timePassed);
+
+      // Si el usuario excede 120 segundos, finalizar el nivel automáticamente
+      if (timePassed >= 120) {
+        finishLevel();
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }
+}, [startTime, levelCompleted]);
+
     // Actualizar WPM basado en el tiempo transcurrido y palabras escritas
     const updateWPM = () => {
       if (startTime) {
@@ -178,7 +197,7 @@ import { getStatsData } from '../utils/getStatsData';
         levels={levels}
       />
         <div className="w-3/4">
-         <h1 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Práctica de Mecanografía</h1>
+          <h1 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Práctica de Mecanografía</h1>
 
           <TypingArea
             text={text}
@@ -189,6 +208,23 @@ import { getStatsData } from '../utils/getStatsData';
             errors={errors}
             source="Levels"
           />
+
+<div className="flex justify-between items-center mb-4">
+  <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+    {levels[level].name}
+  </h2>
+
+  {startTime && !levelCompleted && (
+    <span className={`text-sm font-mono ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>
+      ⏱️ Tiempo: {elapsedTime}s
+    </span>
+  )}
+</div>
+
+
+
+
+
           <Keyboard activeKey={nextKey} levelKeys={levels[level].keys} />
           <Hands nextKey={nextKey} />
           <InstruccionesButton
@@ -205,7 +241,7 @@ import { getStatsData } from '../utils/getStatsData';
               accuracy,
               level,
               errors: Object.keys(errors).length,
-              elapsedTime,
+              elapsedTime: elapsedTime,
               levelCompleted,
               levelData: {
                 wpmGoal: levels[level].wpmGoal,

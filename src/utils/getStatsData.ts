@@ -15,7 +15,7 @@ export interface GetStatsParams {
   accuracy?: number; // opcional, se puede calcular
   level: number;
   errors?: number | Record<string, unknown>; // puede venir como objeto o número
-  elapsedTime?: number | null;
+  elapsedTime?: number | undefined;
   errorList?: ErrorItem[];
   levelCompleted: boolean;
   levelData?: LevelData;
@@ -35,7 +35,7 @@ export const getStatsData = ({
   accuracy,
   level,
   errors = 0,
-  elapsedTime = null,
+  elapsedTime = 0,
   errorList = [],
   levelCompleted,
   levelData,
