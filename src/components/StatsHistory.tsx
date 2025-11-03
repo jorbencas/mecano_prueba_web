@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { loadStats, clearStats, SavedStat } from '../utils/saveStats';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { useTheme } from '../context/ThemeContext';
 
 const FILTER_KEY = 'statsFilter';
 
 const StatsHistory: React.FC = () => {
   const [stats, setStats] = useState<SavedStat[]>([]);
   const [filter, setFilter] = useState<string>(() => localStorage.getItem(FILTER_KEY) || 'Todos');
+  const { isDarkMode } = useTheme();
 
   useEffect(() => {
     setStats(loadStats());
@@ -36,7 +38,7 @@ const StatsHistory: React.FC = () => {
         <select
           value={filter}
           onChange={(e) => handleFilterChange(e.target.value)}
-          className="p-2 border rounded bg-gray-100"
+          className={` p-2 border rounded ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-black'}`}
         >
           <option value="Todos">Todos</option>
           <option value="Levels">Niveles</option>
@@ -68,7 +70,7 @@ const StatsHistory: React.FC = () => {
       </div>
 
       <table className="w-full border-collapse text-sm">
-        <thead className="bg-gray-200">
+        <thead className={`${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-black'}`}>
           <tr>
             <th className="p-2 text-left">Fecha</th>
             <th className="p-2 text-left">Origen</th>

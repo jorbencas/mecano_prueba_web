@@ -30,7 +30,7 @@ export const calculateGlobalStats = (): GlobalStats => {
   const totalWpm = data.reduce((acc, s) => acc + (s.wpm || 0), 0);
   const totalAccuracy = data.reduce((acc, s) => acc + (s.accuracy || 0), 0);
   const totalErrors = data.reduce((acc, s) => acc + (s.errors || 0), 0);
-  const levelsCompleted = data.filter((s) => s.completed).length;
+  const levelsCompleted = data.filter((s) => s.levelCompleted).length;
 
   return {
     totalSessions: data.length,
