@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import { FaKeyboard, FaGamepad, FaPen, FaCog, FaBars } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
+import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 
-const MenuItem: React.FC<{ icon: React.ReactNode; text: string; onClick: () => void; isActive: boolean }> = ({ icon, text, onClick, isActive }) => {
+interface MenuItemProps {
+  icon: React.ReactNode;
+  text: string;
+  onClick: () => void;
+  isActive: boolean;
+}
+
+const MenuItem: React.FC<MenuItemProps> = ({ icon, text, onClick, isActive }) => {
   const { isDarkMode } = useTheme();
   return (
     <button
       onClick={onClick}
-      className={`flex items-center w-full p-4 hitespace-nowrap overflow-hidden text-ellipsis transition-colors duration-200 ${
+      className={`flex items-center w-full p-4 whitespace-nowrap overflow-hidden text-ellipsis transition-colors duration-200 ${
         isActive
           ? 'bg-blue-500 text-white'
           : isDarkMode
@@ -21,30 +29,36 @@ const MenuItem: React.FC<{ icon: React.ReactNode; text: string; onClick: () => v
   );
 };
 
+interface MenuProps {
+  onSelectOption: (option: string) => void;
+  currentView: string;
+}
 
-
-const Menu: React.FC<{ onSelectOption: (option: string) => void; currentView: string  }> = ({ onSelectOption, currentView }) => {
+const Menu: React.FC<MenuProps> = ({ onSelectOption, currentView }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { isDarkMode } = useTheme();
+  const { t } = useDynamicTranslations();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const menuItems = [
-    { icon: <FaGamepad className="text-xl" />, text: 'Juego', option: 'game' },
-    { icon: <FaKeyboard className="text-xl" />, text: 'Práctica', option: 'practice' },
-    { icon: <FaPen className="text-xl" />, text: 'Crear Texto', option: 'create' },
-    { icon: <FaCog className="text-xl" />, text: 'Configuración', option: 'settings' },
+    { icon: <FaGamepad className="text-xl" />, text: t('menu.items.game'), option: 'game' },
+    { icon: <FaKeyboard className="text-xl" />, text: t('menu.items.practice'), option: 'practice' },
+    { icon: <FaPen className="text-xl" />, text: t('menu.items.createText'), option: 'create' },
+    { icon: <FaCog className="text-xl" />, text: t('menu.items.settings'), option: 'settings' },
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} `}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <span className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-              Typing App
+              {t('menu.title')}
             </span>
           </div>
+
+          {/* Desktop */}
           <div className="hidden md:block">
             <div className="flex items-center space-x-4">
               {menuItems.map((item) => (
@@ -58,6 +72,8 @@ const Menu: React.FC<{ onSelectOption: (option: string) => void; currentView: st
               ))}
             </div>
           </div>
+
+          {/* Mobile */}
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
@@ -70,6 +86,8 @@ const Menu: React.FC<{ onSelectOption: (option: string) => void; currentView: st
           </div>
         </div>
       </div>
+
+      {/* Dropdown for mobile */}
       {isOpen && (
         <div className="md:hidden">
           <div className={`px-2 pt-2 pb-3 space-y-1 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>

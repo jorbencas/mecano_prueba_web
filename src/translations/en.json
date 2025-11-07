@@ -1,0 +1,160 @@
+{
+    "statsHistory": {
+        "title": "Statistics History",
+        "filters": {
+            "ALL": "All",
+            "LEVELS": "Levels",
+            "PLAY_GAME": "Free Game",
+            "CREATE_TEXT": "Custom Texts"
+        },
+        "clear": "Clear History",
+        "confirmClear": "Do you want to delete all statistics?",
+        "columns": {
+            "date": "Date",
+            "origin": "Source",
+            "level": "Level",
+            "wpm": "WPM",
+            "accuracy": "Accuracy",
+            "errors": "Errors",
+            "time": "Time"
+        }
+    },
+    "settings": {
+        "title": "Settings",
+        "theme": {
+            "light": "Light Mode",
+            "dark": "Dark Mode",
+            "switchTo": "Switch to"
+        },
+        "language": {
+            "label": "Select language:"
+        },
+        "languages": {
+            "en": "English",
+            "es": "Spanish (Castilian)",
+            "ca": "Catalan",
+            "va": "Valencian"
+        }
+    },
+    "stats": {
+        "feedback": {
+            "textErrors": "The text contains errors",
+            "textComplete": "Text completed successfully",
+            "levelComplete": "Level completed successfully!",
+            "levelFail": "Level not completed"
+        },
+        "cards": {
+            "performance": "Performance",
+            "details": "Details"
+        },
+        "labels": {
+            "currentWpm": "Current WPM",
+            "goalWpm": "Goal WPM",
+            "accuracy": "Accuracy",
+            "level": "Level",
+            "errors": "Errors",
+            "time": "Time"
+        },
+        "errors": {
+            "title": "Errors",
+            "expected": "Expected",
+            "actual": "Typed"
+        },
+        "requirements": {
+            "title": "Requirements to Pass to the Next Level",
+            "wpm": "Reach at least {{wpmGoal}} WPM.",
+            "accuracy": "Maintain accuracy of 95% or higher.",
+            "errors": "Do not exceed the error limit for this level."
+        },
+        "highlighted": {
+            "title": "Highlighted Text with Errors",
+            "tooltip": "Typed:"
+        },
+        "buttons": {
+            "repeat": "Repeat Level",
+            "next": "Next Level",
+            "close": "Close"
+        }
+    },
+    "menuLevels": {
+        "title": {
+            "levels": "Levels",
+            "texts": "Texts"
+        },
+        "buttons": {
+            "createNewText": "Create New Text"
+        },
+        "modal": {
+            "title": "Create New Text",
+            "placeholder": "Write a new text here...",
+            "add": "Add New Text",
+            "close": "Close"
+        }
+    },
+    "menu": {
+        "title": "Typing App",
+        "items": {
+            "game": "Game",
+            "practice": "Practice",
+            "createText": "Create Text",
+            "settings": "Settings"
+        }
+    },
+    "levels": {
+        "title": "Typing Practice",
+        "timer": "Time",
+        "instructions": "Press the correct keys before they reach the bottom. Avoid mistakes, keep your rhythm, and reach the target WPM to advance to the next level.",
+        "errors": {
+            "cannotAdvance": "You cannot advance to the next level. Complete the current one first."
+        }
+    },
+    "typingArea": {
+        "stats": {
+            "wpm": "WPM",
+            "accuracy": "Accuracy",
+            "errors": "Errors"
+        }
+    },
+    "playgame": {
+        "title": "Falling Letters Game",
+        "start": "Start",
+        "pause": "Pause",
+        "resume": "Resume",
+        "stop": "Stop",
+        "score": "Score (WPM)",
+        "errors": "Errors",
+        "time": "Time",
+        "instructions": "Press the correct keys before they reach the bottom. Avoid mistakes and reach the goal."
+    },
+    "instructions": {
+        "title": "Instructions",
+        "default": "Follow the instructions to complete the exercise correctly."
+    },
+    "keyboard": {
+        "space": "Space",
+        "keys": {
+            "Shift": "Shift",
+            "Ctrl": "Ctrl",
+            "Alt": "Alt"
+        }
+    },
+    "createText": {
+        "title": "Type the Selected Text",
+        "instructions": "Type the selected text accurately. Avoid mistakes and keep your rhythm.",
+        "newText": "Text"
+    },
+    "hands": {
+        "title": "Hands",
+        "hands": {
+            "left": "left",
+            "right": "right"
+        },
+        "fingers": {
+            "pinky": "Pinky",
+            "ring": "Ring",
+            "middle": "Middle",
+            "index": "Index",
+            "thumb": "Thumb"
+        }
+    }
+}

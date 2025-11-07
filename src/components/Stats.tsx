@@ -2,17 +2,16 @@ import React, { useEffect } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { useTheme } from '../context/ThemeContext';
 import { saveStats, SavedStat } from '../utils/saveStats';
+import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 
-// === Props ===
 interface StatsProps {
-  stats: SavedStat; // ⬅️ Lo pasas igual que antes (getStatsData(...))
+  stats: SavedStat;
   errorList: { expected: string; actual: string }[];
   onRepeatLevel: () => void;
   onNextLevel: () => void;
   sourceComponent: 'Levels' | 'PlayGame' | 'CreateText';
 }
 
-// === Utilidad ===
 const formatElapsedTime = (timeInSeconds: number | null) => {
   if (timeInSeconds === null) return 'N/A';
   const minutes = Math.floor(timeInSeconds / 60);
@@ -20,7 +19,6 @@ const formatElapsedTime = (timeInSeconds: number | null) => {
   return `${minutes} min ${seconds} s`;
 };
 
-// === Subcomponentes ===
 const StatRow: React.FC<{
   label: string;
   value: React.ReactNode;
@@ -43,38 +41,32 @@ const StatRow: React.FC<{
   </div>
 );
 
-const StatCard: React.FC<{
-  title: string;
-  className?: string;
-  children: React.ReactNode;
-}> = ({ title, className = '', children }) => (
+const StatCard: React.FC<{ title: string; className?: string; children: React.ReactNode }> = ({
+  title,
+  className = '',
+  children,
+}) => (
   <div className={`p-4 rounded-lg shadow-sm ${className}`}>
     <h3 className="text-lg font-semibold mb-3">{title}</h3>
     <div className="space-y-2">{children}</div>
   </div>
 );
 
-const ErrorTable: React.FC<{ errorList: { expected: string; actual: string }[] }> = ({
-  errorList,
-}) => (
+const ErrorTable: React.FC<{ errorList: { expected: string; actual: string }[]; t: any }> = ({ errorList, t }) => (
   <div className="mt-4 bg-red-100 p-4 rounded-lg max-h-[200px] overflow-y-auto">
-    <h3 className="font-semibold mb-2 text-lg text-red-800">Errores</h3>
+    <h3 className="font-semibold mb-2 text-lg text-red-800">{t('stats.errors.title')}</h3>
     <table className="w-full text-sm table-auto">
       <thead className="bg-red-200">
         <tr>
-          <th className="px-2 py-1 text-left font-bold">Esperado</th>
-          <th className="px-2 py-1 text-left font-bold">Escrito</th>
+          <th className="px-2 py-1 text-left font-bold">{t('stats.errors.expected')}</th>
+          <th className="px-2 py-1 text-left font-bold">{t('stats.errors.actual')}</th>
         </tr>
       </thead>
       <tbody>
         {errorList.map((error, index) => (
           <tr key={index} className="bg-red-50">
-            <td className="px-2 py-1 font-mono">
-              {error.expected === ' ' ? '_' : error.expected}
-            </td>
-            <td className="px-2 py-1 font-mono">
-              {error.actual === ' ' ? '_' : error.actual}
-            </td>
+            <td className="px-2 py-1 font-mono">{error.expected === ' ' ? '_' : error.expected}</td>
+            <td className="px-2 py-1 font-mono">{error.actual === ' ' ? '_' : error.actual}</td>
           </tr>
         ))}
       </tbody>
@@ -82,36 +74,33 @@ const ErrorTable: React.FC<{ errorList: { expected: string; actual: string }[] }
   </div>
 );
 
-const Requirements: React.FC<{ wpmGoal: number }> = ({ wpmGoal }) => (
+const Requirements: React.FC<{ wpmGoal: number; t: any }> = ({ wpmGoal, t }) => (
   <div className="mt-4 bg-yellow-50 p-4 rounded-lg">
-    <h3 className="font-semibold mb-2 text-lg text-gray-700">
-      Requisitos para Pasar al Siguiente Nivel
-    </h3>
+    <h3 className="font-semibold mb-2 text-lg text-gray-700">{t('stats.requirements.title')}</h3>
     <ul className="list-disc list-inside space-y-1 text-gray-700">
-      <li>Alcanzar un WPM de al menos {wpmGoal}.</li>
-      <li>Tener una precisión del 95% o más.</li>
-      <li>No exceder el límite de errores permitidos para este nivel.</li>
+      <li>{t('stats.requirements.wpm', { wpmGoal })}</li>
+      <li>{t('stats.requirements.accuracy')}</li>
+      <li>{t('stats.requirements.errors')}</li>
     </ul>
   </div>
 );
 
-const HighlightedText: React.FC<{
-  text: string;
-  errorList: { expected: string; actual: string }[];
-}> = ({ text, errorList }) => (
+const HighlightedText: React.FC<{ text: string; errorList: { expected: string; actual: string }[]; t: any }> = ({
+  text,
+  errorList,
+  t,
+}) => (
   <div className="mt-4 bg-gray-100 p-4 rounded-lg max-h-[200px] overflow-y-auto">
-    <h3 className="font-semibold mb-2 text-lg">Texto con Errores Resaltados</h3>
+    <h3 className="font-semibold mb-2 text-lg">{t('stats.highlighted.title')}</h3>
     <p className="font-mono whitespace-pre-wrap break-all">
       {text.split('').map((char, index) => {
-        const error = errorList.find(
-          (e) => e.expected === char && e.actual !== char
-        );
+        const error = errorList.find((e) => e.expected === char && e.actual !== char);
         return (
           <span
             key={index}
             className={`inline-block ${error ? 'bg-red-300 relative' : ''}`}
             data-tooltip-id={`char-${index}`}
-            data-tooltip-content={error ? `Escrito: ${error.actual}` : ''}
+            data-tooltip-content={error ? `${t('stats.highlighted.tooltip')} ${error.actual}` : ''}
           >
             {char}
             {error && <Tooltip id={`char-${index}`} place="top" />}
@@ -122,7 +111,6 @@ const HighlightedText: React.FC<{
   </div>
 );
 
-// === Componente principal ===
 const Stats: React.FC<StatsProps> = ({
   stats,
   errorList,
@@ -131,111 +119,57 @@ const Stats: React.FC<StatsProps> = ({
   sourceComponent,
 }) => {
   const { isDarkMode } = useTheme();
+  const { t } = useDynamicTranslations();
 
-  // 💾 Guardar stats automáticamente (añadiendo sourceComponent y fecha)
   useEffect(() => {
-    const completeStats: SavedStat = {
-      ...stats,
-      sourceComponent,
-      date: new Date().toISOString(),
-    };
-    saveStats(completeStats);
+    saveStats({ ...stats, sourceComponent, date: new Date().toISOString() });
   }, [stats, sourceComponent]);
 
-  const {
-    wpm,
-    accuracy,
-    level,
-    errors,
-    wpmGoal,
-    elapsedTime,
-    levelCompleted,
-    errorLimit,
-    text,
-  } = stats;
+  const { wpm, accuracy, level, errors, wpmGoal, elapsedTime, levelCompleted, errorLimit, text } = stats;
 
-  const containerClasses = `relative p-4 rounded-lg transition-colors ${
-    isDarkMode ? 'text-white' : 'text-black'
-  }`;
-
-  const feedbackMessage =
+  const feedbackMessageKey =
     sourceComponent === 'CreateText'
       ? errorList.length > 0
-        ? 'El texto presenta errores'
-        : 'Se ha completado el texto'
+        ? 'stats.feedback.textErrors'
+        : 'stats.feedback.textComplete'
       : levelCompleted
-      ? '¡Nivel completado con éxito!'
-      : 'No se ha completado el nivel';
+      ? 'stats.feedback.levelComplete'
+      : 'stats.feedback.levelFail';
 
   return (
-    <div className={containerClasses}>
+    <div className={`relative p-4 rounded-lg ${isDarkMode ? 'text-white' : 'text-black'}`}>
       <div className="mt-4 text-center mb-4">
-        <p
-          className={`font-bold ${
-            levelCompleted ? 'text-green-600' : 'text-red-600'
-          }`}
-        >
-          {feedbackMessage}
+        <p className={`font-bold ${levelCompleted ? 'text-green-600' : 'text-red-600'}`}>
+          {t(feedbackMessageKey)}
         </p>
       </div>
 
-      {/* === Sección principal === */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <StatCard title="Rendimiento" className="bg-blue-50 text-blue-700">
-          <StatRow label="WPM Actual" value={wpm} highlight={wpm >= wpmGoal} />
-          <StatRow label="WPM Objetivo" value={wpmGoal} color="text-blue-600" />
-          <StatRow
-            label="Precisión"
-            value={`${accuracy.toFixed(2)}%`}
-            highlight={accuracy >= 95}
-          />
+        <StatCard title={t('stats.cards.performance')} className="bg-blue-50 text-blue-700">
+          <StatRow label={t('stats.labels.currentWpm')} value={wpm} highlight={wpm >= wpmGoal} />
+          <StatRow label={t('stats.labels.goalWpm')} value={wpmGoal} color="text-blue-600" />
+          <StatRow label={t('stats.labels.accuracy')} value={`${accuracy.toFixed(2)}%`} highlight={accuracy >= 95} />
         </StatCard>
 
-        <StatCard title="Detalles" className="bg-green-50 text-green-700">
-          <StatRow label="Nivel" value={level} color="text-blue-600" />
-          <StatRow
-            label="Errores"
-            value={`${errors} / ${errorLimit}`}
-            highlight={errors === 0}
-          />
-          <StatRow
-            label="Tiempo"
-            value={formatElapsedTime(elapsedTime)}
-            color="text-purple-600"
-          />
+        <StatCard title={t('stats.cards.details')} className="bg-green-50 text-green-700">
+          <StatRow label={t('stats.labels.level')} value={level} color="text-blue-600" />
+          <StatRow label={t('stats.labels.errors')} value={`${errors} / ${errorLimit}`} highlight={errors === 0} />
+          <StatRow label={t('stats.labels.time')} value={formatElapsedTime(elapsedTime)} color="text-purple-600" />
         </StatCard>
       </div>
 
-      {/* === Errores === */}
-      {sourceComponent !== 'Levels' && errorList.length > 0 && (
-        <ErrorTable errorList={errorList} />
-      )}
+      {sourceComponent !== 'Levels' && errorList.length > 0 && <ErrorTable errorList={errorList} t={t} />}
+      {sourceComponent === 'Levels' && text && <HighlightedText text={text} errorList={errorList} t={t} />}
+      {(sourceComponent === 'Levels' || sourceComponent === 'PlayGame') && <Requirements wpmGoal={wpmGoal} t={t} />}
 
-      {/* === Texto con errores === */}
-      {sourceComponent === 'Levels' && text && (
-        <HighlightedText text={text} errorList={errorList} />
-      )}
-
-      {/* === Requisitos === */}
-      {(sourceComponent === 'Levels' || sourceComponent === 'PlayGame') && (
-        <Requirements wpmGoal={wpmGoal} />
-      )}
-
-      {/* === Botones === */}
       <div className="mt-4 flex flex-wrap gap-2">
-        <button
-          onClick={onRepeatLevel}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition-colors"
-        >
-          {sourceComponent === 'CreateText' ? 'Cerrar' : 'Repetir Nivel'}
+        <button onClick={onRepeatLevel} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition">
+          {sourceComponent === 'CreateText' ? t('stats.buttons.close') : t('stats.buttons.repeat')}
         </button>
 
         {sourceComponent !== 'CreateText' && levelCompleted && (
-          <button
-            onClick={onNextLevel}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition-colors"
-          >
-            Siguiente Nivel
+          <button onClick={onNextLevel} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
+            {t('stats.buttons.next')}
           </button>
         )}
       </div>

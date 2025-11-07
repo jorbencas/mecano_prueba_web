@@ -2,43 +2,47 @@ import React from 'react';
 import { FaSun, FaMoon } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import StatsHistory from './StatsHistory';
 
 const Settings: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
+  const { t } = useDynamicTranslations();
 
   const languages = [
-    { code: 'en', label: 'English' },
-    { code: 'es', label: 'Español (Castellano)' },
-    { code: 'ca', label: 'Català' },
-    { code: 'va', label: 'Valencià' }
+    { code: 'en', label: t('settings.languages.en') },
+    { code: 'es', label: t('settings.languages.es') },
+    { code: 'ca', label: t('settings.languages.ca') },
+    { code: 'va', label: t('settings.languages.va') },
   ];
 
   return (
     <div className={`p-6 rounded-xl max-w-xl mx-auto ${isDarkMode ? 'text-white' : 'text-black'}`}>
-      <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>Configuración</h2>
-      
-      {/* Cambio de tema */}
+      <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+        {t('settings.title')}
+      </h2>
+
       <div className="flex items-center mb-4">
         <button
           onClick={toggleTheme}
           className={`flex items-center p-2 rounded-md ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'} text-white transition duration-300`}
         >
           {isDarkMode ? <FaSun className="text-xl mr-2" /> : <FaMoon className="text-xl mr-2" />}
-          <span>Cambiar a Modo {isDarkMode ? 'Claro' : 'Oscuro'}</span>
+          <span>
+            {t('settings.theme.switchTo')} {isDarkMode ? t('settings.theme.light') : t('settings.theme.dark')}
+          </span>
         </button>
       </div>
 
-      {/* Cambio de idioma */}
       <div className="mb-4">
         <label htmlFor="language" className="block font-semibold mb-2">
-          Seleccionar idioma:
+          {t('settings.language.label')}
         </label>
         <select
           id="language"
           value={language}
-          onChange={(e) => setLanguage(e.target.value as 'en' | 'es' | 'ca' | 'va')}
+          onChange={(e) => setLanguage(e.target.value as any)}
           className={`w-full p-2 rounded-md border ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-black'}`}
         >
           {languages.map((lang) => (
@@ -49,9 +53,7 @@ const Settings: React.FC = () => {
         </select>
       </div>
 
-      <div className="mb-4">
-        <StatsHistory />
-      </div>
+      {/* <StatsHistory /> */}
     </div>
   );
 };

@@ -1,0 +1,160 @@
+{
+    "statsHistory": {
+        "title": "Historial de Estadísticas",
+        "filters": {
+            "ALL": "Todos",
+            "LEVELS": "Niveles",
+            "PLAY_GAME": "Juego Libre",
+            "CREATE_TEXT": "Textos Personalizados"
+        },
+        "clear": "Borrar Historial",
+        "confirmClear": "¿Deseas borrar todo el historial de estadísticas?",
+        "columns": {
+            "date": "Fecha",
+            "origin": "Origen",
+            "level": "Nivel",
+            "wpm": "WPM",
+            "accuracy": "Precisión",
+            "errors": "Errores",
+            "time": "Tiempo"
+        }
+    },
+    "settings": {
+        "title": "Configuración",
+        "theme": {
+            "light": "Modo Claro",
+            "dark": "Modo Oscuro",
+            "switchTo": "Cambiar a"
+        },
+        "language": {
+            "label": "Seleccionar idioma:"
+        },
+        "languages": {
+            "en": "Inglés",
+            "es": "Español (Castellano)",
+            "ca": "Catalán",
+            "va": "Valenciano"
+        }
+    },
+    "stats": {
+        "feedback": {
+            "textErrors": "El texto presenta errores",
+            "textComplete": "Se ha completado el texto",
+            "levelComplete": "¡Nivel completado con éxito!",
+            "levelFail": "No se ha completado el nivel"
+        },
+        "cards": {
+            "performance": "Rendimiento",
+            "details": "Detalles"
+        },
+        "labels": {
+            "currentWpm": "WPM Actual",
+            "goalWpm": "WPM Objetivo",
+            "accuracy": "Precisión",
+            "level": "Nivel",
+            "errors": "Errores",
+            "time": "Tiempo"
+        },
+        "errors": {
+            "title": "Errores",
+            "expected": "Esperado",
+            "actual": "Escrito"
+        },
+        "requirements": {
+            "title": "Requisitos para Pasar al Siguiente Nivel",
+            "wpm": "Alcanzar un WPM de al menos {{wpmGoal}}.",
+            "accuracy": "Tener una precisión del 95% o más.",
+            "errors": "No exceder el límite de errores permitidos para este nivel."
+        },
+        "highlighted": {
+            "title": "Texto con Errores Resaltados",
+            "tooltip": "Escrito:"
+        },
+        "buttons": {
+            "repeat": "Repetir Nivel",
+            "next": "Siguiente Nivel",
+            "close": "Cerrar"
+        }
+    },
+    "menuLevels": {
+        "title": {
+            "levels": "Niveles",
+            "texts": "Textos"
+        },
+        "buttons": {
+            "createNewText": "Crear Nuevo Texto"
+        },
+        "modal": {
+            "title": "Crear Nuevo Texto",
+            "placeholder": "Escribe un nuevo texto aquí...",
+            "add": "Agregar Nuevo Texto",
+            "close": "Cerrar"
+        }
+    },
+    "menu": {
+        "title": "Aplicación de Mecanografía",
+        "items": {
+            "game": "Juego",
+            "practice": "Práctica",
+            "createText": "Crear Texto",
+            "settings": "Configuración"
+        }
+    },
+    "levels": {
+        "title": "Práctica de Mecanografía",
+        "timer": "Tiempo",
+        "instructions": "Presiona las teclas correctas antes de que caigan hasta el final. Evita errores, mantén el ritmo y alcanza el WPM objetivo para subir de nivel.",
+        "errors": {
+            "cannotAdvance": "No se puede avanzar al siguiente nivel. Completa el nivel actual."
+        }
+    },
+    "typingArea": {
+        "stats": {
+            "wpm": "WPM",
+            "accuracy": "Precisión",
+            "errors": "Errores"
+        }
+    },
+    "playgame": {
+        "title": "Juego de Letras Cayendo",
+        "start": "Iniciar",
+        "pause": "Pausar",
+        "resume": "Reanudar",
+        "stop": "Detener",
+        "score": "Puntuación (WPM)",
+        "errors": "Errores",
+        "time": "Tiempo",
+        "instructions": "Presiona las teclas correctas antes de que caigan hasta el final. Evita errores y alcanza el objetivo."
+    },
+    "instructions": {
+        "title": "Instrucciones",
+        "default": "Sigue las indicaciones para completar el ejercicio correctamente."
+    },
+    "keyboard": {
+        "space": "Espacio",
+        "keys": {
+            "Shift": "Mayús",
+            "Ctrl": "Ctrl",
+            "Alt": "Alt"
+        }
+    },
+    "createText": {
+        "title": "Escribe el Texto Seleccionado",
+        "instructions": "Escribe el texto seleccionado con precisión. Evita errores y mantén el ritmo.",
+        "newText": "Texto"
+    },
+    "hands": {
+        "title": "Manos",
+        "hands": {
+            "left": "izquierda",
+            "right": "derecha"
+        },
+        "fingers": {
+            "pinky": "Meñique",
+            "ring": "Anular",
+            "middle": "Medio",
+            "index": "Índice",
+            "thumb": "Pulgar"
+        }
+    }
+}
