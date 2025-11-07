@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Nivel 1: Posición base y espacio",
+        "text": "jf fj jf fj jjff ffjj fjfj jffj",
+        "wpmGoal": 15,
+        "errorLimit": 5
+    },
+    {
+        "name": "Nivel 2: Introducción a las letras",
+        "text": "jfkd fjkd dkjf kfjf",
+        "wpmGoal": 20,
+        "errorLimit": 4
+    },
+    {
+        "name": "Nivel 2: Índices y espacio",
+        "text": "jfkd fkdj jfd kfdj",
+        "wpmGoal": 25,
+        "errorLimit": 4
+    },
+    {
+        "name": "Nivel 4: Añadiendo anulares",
+        "text": "jfkdls ldkfj sldkfj",
+        "wpmGoal": 20,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 5: Introducción a las letras adicionales",
+        "text": "jfkdlsa sldkfja",
+        "wpmGoal": 25,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 6: Meñiques",
+        "text": "añsl fkjd ñalk jfds lasñ kfdj",
+        "wpmGoal": 40,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 7: Introducción a las letras superiores",
+        "text": "qw er ty uiop",
+        "wpmGoal": 45,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 8: Letras inferiores",
+        "text": "asdfgh jkl",
+        "wpmGoal": 55,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 9: Combinaciones avanzadas",
+        "text": "zxcvbnm",
+        "wpmGoal": 65,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 10: Práctica completa con números y letras",
+        "text": "Practicar mecanografía mejora la velocidad y precisión.",
+        "wpmGoal": 75,
+        "errorLimit": 1
+    }
+]

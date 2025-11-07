@@ -1,0 +1,89 @@
+[
+    {
+        "keys": [
+            "a",
+            "s",
+            "d",
+            "f"
+        ],
+        "name": "Nivel 1: Fila base izquierda",
+        "speed": 1500,
+        "errorLimit": 10,
+        "wpmGoal": 50,
+        "minLetters": 30,
+        "maxLetters": 5,
+        "text": ""
+    },
+    {
+        "keys": [
+            "j",
+            "k",
+            "l",
+            "ñ"
+        ],
+        "name": "Nivel 2: Fila base derecha",
+        "speed": 1300,
+        "errorLimit": 5,
+        "wpmGoal": 60,
+        "minLetters": 40,
+        "maxLetters": 6,
+        "text": ""
+    },
+    {
+        "keys": [
+            "q",
+            "w",
+            "e",
+            "r"
+        ],
+        "name": "Nivel 3: Fila superior izquierda",
+        "speed": 1200,
+        "errorLimit": 5,
+        "wpmGoal": 70,
+        "minLetters": 50,
+        "maxLetters": 7,
+        "text": ""
+    },
+    {
+        "keys": [
+            "u",
+            "i",
+            "o",
+            "p"
+        ],
+        "name": "Nivel 4: Fila superior derecha",
+        "speed": 1000,
+        "errorLimit": 5,
+        "wpmGoal": 80,
+        "minLetters": 60,
+        "maxLetters": 8,
+        "text": ""
+    },
+    {
+        "keys": [
+            "a",
+            "s",
+            "d",
+            "f",
+            "j",
+            "k",
+            "l",
+            "ñ",
+            "q",
+            "w",
+            "e",
+            "r",
+            "u",
+            "i",
+            "o",
+            "p"
+        ],
+        "name": "Nivel 5: Todas las letras",
+        "speed": 900,
+        "errorLimit": 5,
+        "wpmGoal": 90,
+        "minLetters": 70,
+        "maxLetters": 9,
+        "text": ""
+    }
+]

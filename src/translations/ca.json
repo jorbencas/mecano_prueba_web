@@ -1,0 +1,160 @@
+{
+    "statsHistory": {
+        "title": "Historial d'Estadístiques",
+        "filters": {
+            "ALL": "Tots",
+            "LEVELS": "Nivells",
+            "PLAY_GAME": "Joc Lliure",
+            "CREATE_TEXT": "Textos Personalitzats"
+        },
+        "clear": "Esborra l'Historial",
+        "confirmClear": "Vols esborrar tot l'historial d'estadístiques?",
+        "columns": {
+            "date": "Data",
+            "origin": "Origen",
+            "level": "Nivell",
+            "wpm": "PPM",
+            "accuracy": "Precisió",
+            "errors": "Errors",
+            "time": "Temps"
+        }
+    },
+    "settings": {
+        "title": "Configuració",
+        "theme": {
+            "light": "Mode Clar",
+            "dark": "Mode Fosc",
+            "switchTo": "Canvia a"
+        },
+        "language": {
+            "label": "Selecciona idioma:"
+        },
+        "languages": {
+            "en": "Anglès",
+            "es": "Espanyol (Castellà)",
+            "ca": "Català",
+            "va": "Valencià"
+        }
+    },
+    "stats": {
+        "feedback": {
+            "textErrors": "El text conté errors",
+            "textComplete": "Text completat correctament",
+            "levelComplete": "Nivell completat amb èxit!",
+            "levelFail": "Nivell no completat"
+        },
+        "cards": {
+            "performance": "Rendiment",
+            "details": "Detalls"
+        },
+        "labels": {
+            "currentWpm": "WPM Actual",
+            "goalWpm": "WPM Objectiu",
+            "accuracy": "Precisió",
+            "level": "Nivell",
+            "errors": "Errors",
+            "time": "Temps"
+        },
+        "errors": {
+            "title": "Errors",
+            "expected": "Esperat",
+            "actual": "Escrit"
+        },
+        "requirements": {
+            "title": "Requisits per passar al següent nivell",
+            "wpm": "Aconseguir un WPM d'almenys {{wpmGoal}}.",
+            "accuracy": "Tenir una precisió del 95% o més.",
+            "errors": "No superar el límit d'errors per aquest nivell."
+        },
+        "highlighted": {
+            "title": "Text amb Errors Ressaltats",
+            "tooltip": "Escrit:"
+        },
+        "buttons": {
+            "repeat": "Repetir Nivell",
+            "next": "Següent Nivell",
+            "close": "Tancar"
+        }
+    },
+    "menuLevels": {
+        "title": {
+            "levels": "Nivells",
+            "texts": "Textos"
+        },
+        "buttons": {
+            "createNewText": "Crear Nou Text"
+        },
+        "modal": {
+            "title": "Crear Nou Text",
+            "placeholder": "Escriu un nou text aquí...",
+            "add": "Afegir Nou Text",
+            "close": "Tancar"
+        }
+    },
+    "menu": {
+        "title": "Aplicació d'Escriptura",
+        "items": {
+            "game": "Joc",
+            "practice": "Pràctica",
+            "createText": "Crear Text",
+            "settings": "Configuració"
+        }
+    },
+    "levels": {
+        "title": "Pràctica de Mecanografia",
+        "timer": "Temps",
+        "instructions": "Prem les tecles correctes abans que arribin al final. Evita errors, mantén el ritme i arriba al WPM objectiu per pujar de nivell.",
+        "errors": {
+            "cannotAdvance": "No pots avançar al següent nivell. Completa primer el nivell actual."
+        }
+    },
+    "typingArea": {
+        "stats": {
+            "wpm": "PPM",
+            "accuracy": "Precisió",
+            "errors": "Errors"
+        }
+    },
+    "playgame": {
+        "title": "Joc de Lletres Caient",
+        "start": "Inicia",
+        "pause": "Pausa",
+        "resume": "Reprèn",
+        "stop": "Atura",
+        "score": "Puntuació (PAM)",
+        "errors": "Errors",
+        "time": "Temps",
+        "instructions": "Prem les tecles correctes abans que caiguin fins al final. Evita errors i arriba a l'objectiu."
+    },
+    "instructions": {
+        "title": "Instruccions",
+        "default": "Segueix les indicacions per completar l'exercici correctament."
+    },
+    "keyboard": {
+        "space": "Espai",
+        "keys": {
+            "Shift": "Maj",
+            "Ctrl": "Ctrl",
+            "Alt": "Alt"
+        }
+    },
+    "createText": {
+        "title": "Escriu el text seleccionat",
+        "instructions": "Escriu el text seleccionat amb precisió. Evita errors i mantén el ritme.",
+        "newText": "Text"
+    },
+    "hands": {
+        "title": "Mans",
+        "hands": {
+            "left": "esquerra",
+            "right": "dreta"
+        },
+        "fingers": {
+            "pinky": "Petit",
+            "ring": "Anular",
+            "middle": "Mig",
+            "index": "Índex",
+            "thumb": "Polze"
+        }
+    }
+}
