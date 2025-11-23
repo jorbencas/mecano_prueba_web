@@ -58,5 +58,125 @@
         "text": "Practicar mecanografía mejora la velocidad y precisión.",
         "wpmGoal": 75,
         "errorLimit": 1
+    },
+    {
+        "name": "Nivel 11: Textos Largos I",
+        "text": "El rápido zorro marrón salta sobre el perro perezoso. La práctica constante es la clave del éxito en la mecanografía.",
+        "wpmGoal": 80,
+        "errorLimit": 3
+    },
+    {
+        "name": "Nivel 12: Textos Largos II",
+        "text": "La tecnología avanza a pasos agigantados, transformando nuestra forma de vivir y trabajar cada día.",
+        "wpmGoal": 85,
+        "errorLimit": 3
+    },
+    {
+        "name": "Nivel 13: Símbolos en Contexto I",
+        "text": "El precio es de $50.00, pero con el descuento del 10% queda en $45.00. ¡Qué oferta!",
+        "wpmGoal": 90,
+        "errorLimit": 4
+    },
+    {
+        "name": "Nivel 14: Símbolos en Contexto II",
+        "text": "¿Sabías que la fórmula del agua es H2O? También es importante recordar que E=mc^2.",
+        "wpmGoal": 95,
+        "errorLimit": 4
+    },
+    {
+        "name": "Nivel 15: Código Básico",
+        "text": "function holaMundo() { console.log('Hola, mundo!'); return true; }",
+        "wpmGoal": 100,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 16: Código Intermedio",
+        "text": "const suma = (a, b) => { return a + b; }; let resultado = suma(5, 10);",
+        "wpmGoal": 105,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 17: Direcciones Web",
+        "text": "Visita https://www.ejemplo.com/inicio para más información o escribe a contacto@email.com",
+        "wpmGoal": 110,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 18: Fechas y Horas",
+        "text": "La reunión es el 15/03/2024 a las 14:30 horas. No llegues tarde.",
+        "wpmGoal": 115,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 19: Frases Complejas I",
+        "text": "A pesar de las dificultades, el equipo logró terminar el proyecto antes de la fecha límite establecida.",
+        "wpmGoal": 120,
+        "errorLimit": 3
+    },
+    {
+        "name": "Nivel 20: Frases Complejas II",
+        "text": "La resiliencia es la capacidad de adaptarse frente a la adversidad, trauma, tragedia o amenazas significativas.",
+        "wpmGoal": 125,
+        "errorLimit": 3
+    },
+    {
+        "name": "Nivel 21: Vocabulario Técnico I",
+        "text": "El algoritmo de cifrado utiliza una clave de 256 bits para asegurar la integridad de los datos transmitidos.",
+        "wpmGoal": 130,
+        "errorLimit": 3
+    },
+    {
+        "name": "Nivel 22: Vocabulario Técnico II",
+        "text": "La inteligencia artificial y el aprendizaje automático están revolucionando la industria del software.",
+        "wpmGoal": 135,
+        "errorLimit": 3
+    },
+    {
+        "name": "Nivel 23: Mezcla de Idiomas (Inglés)",
+        "text": "The quick brown fox jumps over the lazy dog. Programming is fun and challenging.",
+        "wpmGoal": 140,
+        "errorLimit": 3
+    },
+    {
+        "name": "Nivel 24: Mezcla de Idiomas (Francés)",
+        "text": "La vie est belle. C'est la vie. Merci beaucoup pour votre aide précieuse.",
+        "wpmGoal": 145,
+        "errorLimit": 4
+    },
+    {
+        "name": "Nivel 25: Citas Famosas I",
+        "text": "\"La única forma de hacer un gran trabajo es amar lo que haces.\" - Steve Jobs",
+        "wpmGoal": 150,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 26: Citas Famosas II",
+        "text": "\"El éxito no es definitivo, el fracaso no es fatal: lo que cuenta es el valor para continuar.\" - Winston Churchill",
+        "wpmGoal": 155,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 27: Trabalenguas",
+        "text": "Tres tristes tigres tragaban trigo en un trigal. Pablito clavó un clavito, ¿qué clavito clavó Pablito?",
+        "wpmGoal": 160,
+        "errorLimit": 3
+    },
+    {
+        "name": "Nivel 28: Pangramas",
+        "text": "El veloz murciélago hindú comía feliz cardillo y kiwi. La cigüeña tocaba el saxofón detrás del palenque de paja.",
+        "wpmGoal": 165,
+        "errorLimit": 2
+    },
+    {
+        "name": "Nivel 29: Velocidad Pura",
+        "text": "rápido correr saltar volar nadar escribir leer pensar soñar crear vivir reír amar ganar lograr triunfar",
+        "wpmGoal": 180,
+        "errorLimit": 1
+    },
+    {
+        "name": "Nivel 30: El Examen Final",
+        "text": "¡Felicidades por llegar hasta aquí! Este es el último desafío para demostrar tu maestría en la mecanografía. ¡Suerte!",
+        "wpmGoal": 200,
+        "errorLimit": 0
     }
 ]

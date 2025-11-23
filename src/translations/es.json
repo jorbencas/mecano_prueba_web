@@ -1,6 +1,7 @@
 {
     "statsHistory": {
         "title": "Historial de Estadísticas",
+        "filter": "Filtrar por",
         "filters": {
             "ALL": "Todos",
             "LEVELS": "Niveles",
@@ -9,32 +10,41 @@
         },
         "clear": "Borrar Historial",
         "confirmClear": "¿Deseas borrar todo el historial de estadísticas?",
+        "noData": "No hay datos disponibles",
         "columns": {
             "date": "Fecha",
+            "sourceComponent": "Componente",
             "origin": "Origen",
             "level": "Nivel",
             "wpm": "WPM",
             "accuracy": "Precisión",
             "errors": "Errores",
+            "elapsedTime": "Tiempo",
             "time": "Tiempo"
         }
     },
+    "progress": {
+        "title": "Panel de Progreso",
+        "avgWPM": "WPM Promedio",
+        "bestWPM": "Mejor WPM",
+        "avgAccuracy": "Precisión Promedio",
+        "totalTime": "Tiempo Total",
+        "wpmProgress": "Progreso de WPM",
+        "accuracyProgress": "Progreso de Precisión"
+    },
     "settings": {
         "title": "Configuración",
-        "theme": {
-            "light": "Modo Claro",
-            "dark": "Modo Oscuro",
-            "switchTo": "Cambiar a"
-        },
-        "language": {
-            "label": "Seleccionar idioma:"
-        },
-        "languages": {
-            "en": "Inglés",
-            "es": "Español (Castellano)",
-            "ca": "Catalán",
-            "va": "Valenciano"
-        }
+        "userInfo": "Usuario",
+        "notLoggedIn": "No has iniciado sesión",
+        "loginPrompt": "Inicia sesión para guardar tu progreso y acceder a todas las funciones.",
+        "loginButton": "Iniciar Sesión / Registrarse",
+        "theme": "Tema",
+        "lightMode": "Modo Claro",
+        "darkMode": "Modo Oscuro",
+        "language": "Idioma",
+        "logout": "Cerrar Sesión",
+        "confirmLogout": "¿Seguro que quieres cerrar sesión?",
+        "viewProfile": "Ver Perfil y Actividad"
     },
     "stats": {
         "feedback": {
@@ -97,7 +107,8 @@
             "game": "Juego",
             "practice": "Práctica",
             "createText": "Crear Texto",
-            "settings": "Configuración"
+            "settings": "Configuración",
+            "login": "Iniciar Sesión"
         }
     },
     "levels": {
@@ -156,5 +167,61 @@
             "index": "Índice",
             "thumb": "Pulgar"
         }
+    },
+    "freePractice": {
+        "title": "Práctica Libre",
+        "selectKeys": "Selecciona Teclas",
+        "keysSelected": "Teclas seleccionadas",
+        "keysLocked": "Teclas bloqueadas durante la práctica",
+        "session": "Sesión de Práctica",
+        "reset": "Reiniciar",
+        "saved": "Guardado",
+        "limitInfo": "Límite: 100 caracteres. Regístrate para 500 caracteres.",
+        "configSaved": "Tu configuración se guarda automáticamente",
+        "unlimitedChars": "Práctica ilimitada",
+        "instructions": "Practica sin límites de tiempo o errores. Selecciona las teclas que quieres practicar y empieza a escribir."
+    },
+    "profile": {
+        "title": "Perfil de Usuario",
+        "notLoggedIn": "Debes iniciar sesión para ver tu perfil",
+        "totalTime": "Tiempo Total",
+        "totalActivities": "Sesiones",
+        "averageWPM": "WPM Promedio",
+        "completed": "Completados",
+        "timeByComponent": "Tiempo por Componente",
+        "sessions": "sesiones",
+        "recentActivity": "Actividad Reciente",
+        "noActivity": "No hay actividad registrada",
+        "date": "Fecha",
+        "component": "Componente",
+        "duration": "Duración",
+        "wpm": "WPM",
+        "accuracy": "Precisión"
+    },
+    "login": {
+        "back": "Volver a la aplicación",
+        "welcome": "Bienvenido a Mecano",
+        "inviteText": "¿Listo para mejorar tu velocidad de escritura? Únete a nuestra comunidad y descubre todo tu potencial. Con Mecano, no solo practicas mecanografía, sino que mides tu progreso, compites con otros usuarios y desbloqueas logros mientras mejoras. ¡Empieza ahora y ve cómo tus habilidades crecen día a día!",
+        "whyRegister": "Registrarte te permite guardar tu progreso, competir en la clasificación global, desbloquear logros y acceder a estadísticas detalladas de tu evolución. Tus datos están seguros y puedes practicar desde cualquier dispositivo.",
+        "benefits": "Beneficios de registrarte",
+        "benefit1": "Guarda tu progreso y estadísticas",
+        "benefit2": "Compite en la clasificación global",
+        "benefit3": "Desbloquea logros y medallas",
+        "benefit4": "Accede desde cualquier dispositivo",
+        "benefit5": "Crea niveles y textos personalizados",
+        "loginTab": "Iniciar Sesión",
+        "registerTab": "Registrarse",
+        "displayName": "Nombre",
+        "displayNamePlaceholder": "Tu nombre",
+        "email": "Email",
+        "password": "Contraseña",
+        "passwordHint": "Mínimo 6 caracteres",
+        "loginButton": "Entrar",
+        "registerButton": "Crear Cuenta",
+        "googleButton": "Continuar con Google",
+        "or": "o",
+        "loading": "Cargando...",
+        "error": "Error al iniciar sesión",
+        "googleError": "Error con Google"
     }
 }

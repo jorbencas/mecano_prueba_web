@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { FaTimes } from 'react-icons/fa';
 
 interface ErrorModalProps {
   isOpen: boolean;
@@ -41,15 +42,19 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ isOpen, onClose, children }) =>
         className="modal-backdrop fixed inset-0 bg-black opacity-50" 
         onClick={handleBackdropClick}
       ></div>
-       <div className={`p-6 rounded-lg shadow-xl z-50  ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
-        {children}
-        <button
-           className={`mt-4 px-4 py-2 ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded`}
+      <div className={`relative p-6 rounded-lg shadow-xl z-50 max-w-4xl w-full max-h-[90vh] overflow-y-auto ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
+        {/* Close button - top right */}
+        <div
           onClick={onClose}
+          className={`absolute top-4 right-4 cursor-pointer text-2xl transition-colors ${
+            isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'
+          }`}
           aria-label="Cerrar"
         >
-          &times;
-        </button>
+          <FaTimes />
+        </div>
+        
+        {children}
       </div>
     </div>
   );

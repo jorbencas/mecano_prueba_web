@@ -6,7 +6,9 @@ import Hands from './Hands';
 import ErrorModal from './ErrorModal';
 import MenuLevels from "./MenuLevels";
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import InstruccionesButton from './Instrucciones';
+import { useActivityTracker } from '../hooks/useActivityTracker';
 import { getStatsData } from '../utils/getStatsData';
 import levels from '../data/levels.json';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
@@ -29,7 +31,9 @@ const Levels: React.FC = () => {
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
   const [errorList, setErrorList] = useState<{ expected: string; actual: string }[]>([]);
   const { isDarkMode } = useTheme();
+  const { user } = useAuth();
   const { t } = useDynamicTranslations();
+  const { startTracking, stopTracking } = useActivityTracker('Levels', 'level');
 
   // Generar texto al cambiar de nivel
   useEffect(() => {
@@ -69,14 +73,28 @@ const Levels: React.FC = () => {
       if (completed && !completedLevels.includes(level)) {
         setCompletedLevels(prev => [...prev, level]);
       }
-      setShowStatsModal(true);
+      
+      // Stop tracking with metadata
+      stopTracking({
+        level,
+        wpm: currentWpm,
+        accuracy,
+        errors: Object.keys(errors).length,
+        completed,
+      });
     }
+    setShowStatsModal(true);
   };
 
   const handleKeyPress = (key: string) => {
     if (!text) return;
 
-    if (currentIndex === 0 && startTime === null) setStartTime(Date.now());
+    // Start tracking when first key is pressed
+    if (currentIndex === 0 && startTime === null) {
+      setStartTime(Date.now());
+      startTracking();
+    }
+    
     setTotalKeystrokes(prev => prev + 1);
 
     const expectedKey = text[currentIndex].toLowerCase();
@@ -161,6 +179,7 @@ const Levels: React.FC = () => {
         onLevelChange={(newLevel) => setLevel(newLevel)}
         currentLevel={level}
         levels={levels}
+        user={user}
       />
       <div className="w-3/4">
         <h1 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
@@ -177,25 +196,13 @@ const Levels: React.FC = () => {
           source="Levels"
         />
 
-        <div className="flex justify-between items-center mb-4">
-          <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-            {levels[level].name}
-          </h2>
-
-          {startTime && !levelCompleted && (
-            <span className={`text-sm font-mono ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>
-              ⏱️ {t('levels.timer')}: {elapsedTime}s
-            </span>
-          )}
-        </div>
-
         <Keyboard activeKey={nextKey} levelKeys={extractKeysFromText(levels[level].text)} />
         <Hands nextKey={nextKey} />
 
         <InstruccionesButton
           instructions={t('levels.instructions')}
+          source="Levels"
         />
-z
         <ErrorModal isOpen={showStatsModal} onClose={() => setShowStatsModal(false)}>
           <Stats
             stats={getStatsData({
@@ -203,7 +210,7 @@ z
               accuracy,
               level,
               errors: Object.keys(errors).length,
-              elapsedTime: elapsedTime,
+              elapsedTime,
               levelCompleted,
               levelData: {
                 wpmGoal: levels[level].wpmGoal,

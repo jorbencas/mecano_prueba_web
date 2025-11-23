@@ -9,7 +9,7 @@ interface StatsProps {
   errorList: { expected: string; actual: string }[];
   onRepeatLevel: () => void;
   onNextLevel: () => void;
-  sourceComponent: 'Levels' | 'PlayGame' | 'CreateText';
+  sourceComponent: 'Levels' | 'PlayGame' | 'CreateText' | 'PrecisionMode' | 'FreePractice' | 'SpeedMode' | 'NeonMode';
 }
 
 const formatElapsedTime = (timeInSeconds: number | null) => {
@@ -127,21 +127,207 @@ const Stats: React.FC<StatsProps> = ({
 
   const { wpm, accuracy, level, errors, wpmGoal, elapsedTime, levelCompleted, errorLimit, text } = stats;
 
-  const feedbackMessageKey =
-    sourceComponent === 'CreateText'
-      ? errorList.length > 0
-        ? 'stats.feedback.textErrors'
-        : 'stats.feedback.textComplete'
-      : levelCompleted
-      ? 'stats.feedback.levelComplete'
-      : 'stats.feedback.levelFail';
+  // Enhanced feedback based on component and performance
+  const getFeedbackMessage = () => {
+    if (sourceComponent === 'CreateText') {
+      if (errorList.length === 0) {
+        return {
+          message: t('stats.feedback.createtext.perfect', '¡Perfecto! Sin errores'),
+          color: 'text-green-600',
+          icon: '🎉'
+        };
+      } else if (accuracy >= 95) {
+        return {
+          message: t('stats.feedback.createtext.good', 'Buen trabajo, sigue practicando'),
+          color: 'text-blue-600',
+          icon: '👍'
+        };
+      } else {
+        return {
+          message: t('stats.feedback.createtext.improve', 'Revisa los errores y vuelve a intentarlo'),
+          color: 'text-orange-600',
+          icon: '💪'
+        };
+      }
+    }
+
+    if (sourceComponent === 'PlayGame') {
+      if (levelCompleted) {
+        if (wpm >= wpmGoal * 1.2) {
+          return {
+            message: t('stats.feedback.playgame.excellent', '¡Excelente! Superaste el objetivo'),
+            color: 'text-green-600',
+            icon: '🏆'
+          };
+        }
+        return {
+          message: t('stats.feedback.playgame.complete', '¡Nivel completado!'),
+          color: 'text-green-600',
+          icon: '✅'
+        };
+      } else {
+        return {
+          message: t('stats.feedback.playgame.fail', 'Sigue intentándolo'),
+          color: 'text-red-600',
+          icon: '🎯'
+        };
+      }
+    }
+
+    if (sourceComponent === 'PrecisionMode') {
+      if (accuracy >= 98) {
+        return {
+          message: t('stats.feedback.precision.perfect', '¡Precisión excepcional!'),
+          color: 'text-green-600',
+          icon: '🎯'
+        };
+      } else if (accuracy >= 95) {
+        return {
+          message: t('stats.feedback.precision.good', 'Buena precisión, sigue mejorando'),
+          color: 'text-blue-600',
+          icon: '👍'
+        };
+      } else {
+        return {
+          message: t('stats.feedback.precision.improve', 'Concéntrate en reducir errores'),
+          color: 'text-orange-600',
+          icon: '💪',
+          suggestion: t('stats.suggestions.precision', 'Reduce la velocidad y enfócate en la precisión')
+        };
+      }
+    }
+
+    if (sourceComponent === 'SpeedMode') {
+      if (wpm >= 60) {
+        return {
+          message: t('stats.feedback.speed.excellent', '¡Velocidad impresionante!'),
+          color: 'text-green-600',
+          icon: '⚡'
+        };
+      } else if (wpm >= 40) {
+        return {
+          message: t('stats.feedback.speed.good', 'Buena velocidad, sigue practicando'),
+          color: 'text-blue-600',
+          icon: '🚀'
+        };
+      } else {
+        return {
+          message: t('stats.feedback.speed.improve', 'Sigue practicando para mejorar tu velocidad'),
+          color: 'text-orange-600',
+          icon: '💪',
+          suggestion: t('stats.suggestions.speed', 'Practica los mismos caracteres para ganar fluidez')
+        };
+      }
+    }
+
+    if (sourceComponent === 'FreePractice') {
+      if (errorList.length === 0) {
+        return {
+          message: t('stats.feedback.freepractice.perfect', '¡Práctica perfecta!'),
+          color: 'text-green-600',
+          icon: '🎉'
+        };
+      } else if (accuracy >= 95) {
+        return {
+          message: t('stats.feedback.freepractice.good', 'Buen trabajo en tu práctica'),
+          color: 'text-blue-600',
+          icon: '👍'
+        };
+      } else {
+        return {
+          message: t('stats.feedback.freepractice.improve', 'Sigue practicando para mejorar'),
+          color: 'text-orange-600',
+          icon: '💪'
+        };
+      }
+    }
+
+    if (sourceComponent === 'NeonMode') {
+      if (wpm >= 60 && accuracy >= 95) {
+        return {
+          message: t('stats.feedback.neon.excellent', '⚡ SISTEMA OPTIMIZADO ⚡'),
+          color: 'text-cyan-400',
+          icon: '🔮',
+          suggestion: t('stats.suggestions.neon.excellent', 'Rendimiento excepcional en el protocolo digital')
+        };
+      } else if (wpm >= 40 && accuracy >= 90) {
+        return {
+          message: t('stats.feedback.neon.good', '✨ CONEXIÓN ESTABLE ✨'),
+          color: 'text-blue-400',
+          icon: '💎'
+        };
+      } else if (accuracy < 85) {
+        return {
+          message: t('stats.feedback.neon.lowAccuracy', '⚠️ INTERFERENCIA DETECTADA'),
+          color: 'text-yellow-400',
+          icon: '⚡',
+          suggestion: t('stats.suggestions.neon.accuracy', 'Calibra tu precisión para estabilizar el sistema')
+        };
+      } else {
+        return {
+          message: t('stats.feedback.neon.improve', '🔄 RECALIBRANDO SISTEMA'),
+          color: 'text-purple-400',
+          icon: '🌐',
+          suggestion: t('stats.suggestions.neon.speed', 'Aumenta la velocidad de transmisión de datos')
+        };
+      }
+    }
+
+    // Levels (default)
+
+    if (levelCompleted) {
+      if (wpm >= wpmGoal && accuracy >= 98) {
+        return {
+          message: t('stats.feedback.levels.perfect', '¡Perfecto! Dominas este nivel'),
+          color: 'text-green-600',
+          icon: '⭐'
+        };
+      }
+      return {
+        message: t('stats.feedback.levels.complete', '¡Nivel superado!'),
+        color: 'text-green-600',
+        icon: '✅'
+      };
+    } else {
+      if (wpm < wpmGoal) {
+        return {
+          message: t('stats.feedback.levels.slowSpeed', 'Necesitas más velocidad'),
+          color: 'text-orange-600',
+          icon: '⚡',
+          suggestion: t('stats.suggestions.speed', 'Practica los mismos caracteres para ganar fluidez')
+        };
+      } else if (accuracy < 95) {
+        return {
+          message: t('stats.feedback.levels.lowAccuracy', 'Necesitas más precisión'),
+          color: 'text-orange-600',
+          icon: '🎯',
+          suggestion: t('stats.suggestions.accuracy', 'Reduce la velocidad y concéntrate en la precisión')
+        };
+      } else {
+        return {
+          message: t('stats.feedback.levels.tooManyErrors', 'Demasiados errores'),
+          color: 'text-red-600',
+          icon: '❌',
+          suggestion: t('stats.suggestions.errors', 'Revisa tu posición de manos y teclea con calma')
+        };
+      }
+    }
+  };
+
+  const feedback = getFeedbackMessage();
 
   return (
     <div className={`relative p-4 rounded-lg ${isDarkMode ? 'text-white' : 'text-black'}`}>
-      <div className="mt-4 text-center mb-4">
-        <p className={`font-bold ${levelCompleted ? 'text-green-600' : 'text-red-600'}`}>
-          {t(feedbackMessageKey)}
+      <div className="mt-4 text-center mb-6">
+        <div className={`text-6xl mb-2`}>{feedback.icon}</div>
+        <p className={`text-2xl font-bold ${feedback.color}`}>
+          {feedback.message}
         </p>
+        {feedback.suggestion && (
+          <p className={`mt-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} italic`}>
+            💡 {feedback.suggestion}
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

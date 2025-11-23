@@ -10,6 +10,7 @@ import { getStatsData } from '../utils/getStatsData';
 import levels from '../data/playgames.json';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import { useKeyboardHandler } from '../hooks/useKeyboardHandler';
+import { useAuth } from '../context/AuthContext';
 
 interface FallingLetter {
   id: number;
@@ -141,6 +142,7 @@ const FallingLetterComponent: React.FC<{
 const PlayGame: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
+  const { user } = useAuth();
 
   const [level, setLevel] = useState(0);
   const [fallingLetters, setFallingLetters] = useState<FallingLetter[]>([]);
@@ -306,8 +308,7 @@ const PlayGame: React.FC = () => {
     endGame();
   }, [endGame]);
 
-  const formatTime = (s: number) =>
-    `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+
 
   // cambiar nivel desde el menú
   const handleLevelChange = (n: number) => {
@@ -327,6 +328,7 @@ const PlayGame: React.FC = () => {
         onLevelChange={handleLevelChange}
         currentLevel={currentLevel}
         levels={levels}
+        user={user}
       />
 
       <div className="w-3/4">
@@ -357,14 +359,30 @@ const PlayGame: React.FC = () => {
           )}
         </div>
 
-        <div className="mb-4">
-          <h2 className="text-xl font-bold">{levels[level]?.name}</h2>
-          <p>{t('playgame.score', 'Puntuación (WPM)')}: {score}</p>
-          <p>{t('playgame.errors', 'Errores')}: {errors}/{levels[level]?.errorLimit ?? '-'}</p>
-          <p>{t('playgame.time', 'Tiempo')}: {formatTime(time)}</p>
+        <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+          <div className="flex justify-between items-center mb-2">
+            <h2 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+              {levels[level]?.name}
+            </h2>
+            <div className="text-4xl font-bold text-blue-500">
+              {time}s
+            </div>
+          </div>
+          
+          <div className={`flex flex-col sm:flex-row justify-between ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            <p className="inline-block mr-0 sm:mr-4 text-lg">
+              {t('playgame.score', 'Puntuación (WPM)')}: {score}
+            </p>
+            <p className="inline-block mr-0 sm:mr-4 text-lg">
+              {t('playgame.errors', 'Errores')}: {errors}/{levels[level]?.errorLimit ?? '-'}
+            </p>
+            <p className="inline-block text-lg">
+              {t('playgame.accuracy', 'Precisión')}: {Math.round((score / Math.max(1, (score + errors))) * 100) || 0}%
+            </p>
+          </div>
         </div>
 
-        <div ref={containerRef} className="relative h-[calc(100vh-300px)] border-2 border-gray-300 overflow-hidden">
+        <div ref={containerRef} className="relative h-[calc(100vh-300px)] border-2 border-gray-300 rounded-lg overflow-hidden">
           {fallingLetters.map(letter => (
             <FallingLetterComponent
               key={letter.id}
@@ -379,6 +397,7 @@ const PlayGame: React.FC = () => {
 
         <InstruccionesButton
           instructions={t('playgame.instructions', 'Presiona las teclas correctas.')}
+          source="PlayGame"
         />
       </div>
 

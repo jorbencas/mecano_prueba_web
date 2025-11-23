@@ -9,6 +9,7 @@ import InstruccionesButton from './Instrucciones';
 import { getStatsData } from '../utils/getStatsData';
 import sampleTexts from '../data/texts.json';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import { useTheme } from '../context/ThemeContext';
 
 interface Level {
   keys: string[];
@@ -20,6 +21,7 @@ interface Level {
 
 const CreateText: React.FC = () => {
   const { t } = useDynamicTranslations();
+  const { isDarkMode } = useTheme();
   
   const [texts, setTexts] = useState<Level[]>(sampleTexts);
   const [selectedText, setSelectedText] = useState('');
@@ -35,7 +37,17 @@ const CreateText: React.FC = () => {
   useEffect(() => {
     const storedTexts = localStorage.getItem('texts');
     if (storedTexts) {
-      setTexts(JSON.parse(storedTexts));
+      const parsedTexts = JSON.parse(storedTexts);
+      setTexts(parsedTexts);
+      // Set initial text on mount
+      if (parsedTexts.length > 0 && !selectedText) {
+        setSelectedText(parsedTexts[0].text);
+        setNextKey(parsedTexts[0].text[0].toLowerCase());
+      }
+    } else if (sampleTexts.length > 0 && !selectedText) {
+      // If no stored texts, use first sample text
+      setSelectedText(sampleTexts[0].text);
+      setNextKey(sampleTexts[0].text[0].toLowerCase());
     }
   }, []);
 
@@ -95,13 +107,13 @@ const CreateText: React.FC = () => {
     setNextKey('');
   };
 
-  const handleAddNewText = (text: string) => {
+  const handleAddNewText = (text: string, wpmGoal: number = 60, errorLimit: number = 5) => {
     const newLevel: Level = {
       keys: text.split(''),
       name: `${t('createText.newText')} ${texts.length + 1}`,
       text: text,
-      wpmGoal: 60,
-      errorLimit: 5,
+      wpmGoal: wpmGoal,
+      errorLimit: errorLimit,
     };
     setTexts(prev => [...prev, newLevel]);
     setSelectedText(text);
@@ -129,19 +141,53 @@ const CreateText: React.FC = () => {
       />
 
       <div className="w-3/4">
-        <h1 className="text-3xl font-bold mb-4">
+        <h1 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
           {t('createText.title', 'Escribe el Texto Seleccionado')}
         </h1>
 
-        <TypingArea
-          text={selectedText}
-          currentIndex={currentIndex}
-          onKeyPress={handleKeyPress}
-          wpm={wpm}
-          accuracy={accuracy}
-          errors={errors}
-          source="CreateText"
-        />
+        <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+          <div className="flex justify-between items-center mb-2">
+            <h2 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+              {texts[currentLevel]?.name || t('createText.noTextSelected')}
+            </h2>
+            <span className={`text-sm font-mono ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>
+              {t('createText.progress')}: {currentIndex}/{selectedText.length}
+            </span>
+          </div>
+          
+          <div className={`flex flex-col sm:flex-row justify-between ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            <p className="inline-block mr-0 sm:mr-4 text-lg">
+              {t('typingArea.stats.wpm')}: {wpm}
+            </p>
+            <p className="inline-block mr-0 sm:mr-4 text-lg">
+              {t('typingArea.stats.accuracy')}: {accuracy}%
+            </p>
+            <p className="inline-block text-lg">
+              {t('typingArea.stats.errors')}: {Object.keys(errors).length}
+            </p>
+          </div>
+        </div>
+
+        <div className={`p-4 rounded-lg mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+          <p
+            className={`text-lg font-mono ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} sm:text-xl lg:text-2xl border-2 border-gray-300 rounded-lg p-4 min-h-[6rem] h-auto whitespace-pre-wrap break-words`}
+          >
+            {selectedText.split('').map((char, index) => (
+              <span
+                key={index}
+                className={
+                  index < currentIndex
+                    ? 'text-green-500'
+                    : index === currentIndex
+                    ? 'font-bold text-blue-500'
+                    : ''
+                }
+              >
+                {char}
+              </span>
+            ))}
+          </p>
+        </div>
 
         <Keyboard activeKey={nextKey} levelKeys={[]} isFullKeyboard />
 
@@ -151,6 +197,7 @@ const CreateText: React.FC = () => {
             'createText.instructions',
             'Escribe el texto seleccionado con precisión. Evita errores y mantén el ritmo.'
           )}
+          source="CreateText"
         />
 
         {showStatsModal && (

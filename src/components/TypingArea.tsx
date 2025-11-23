@@ -5,19 +5,33 @@ import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 interface TypingAreaProps {
   text: string;
   currentIndex: number; 
-  onKeyPress: (key: string) => void;
-  wpm: number;
-  accuracy: number;
-  errors: { [key: number]: { expected: string; actual: string } };
+  onKeyPress?: (key: string) => void;
+  wpm?: number;
+  accuracy?: number;
+  errors?: { [key: number]: { expected: string; actual: string } } | number;
   source?: string;
+  standalone?: boolean; // If true, only show text without stats
+  maxHeight?: string; // Optional max height for scrollable text
 }
 
-const TypingArea: React.FC<TypingAreaProps> = ({ text, currentIndex, onKeyPress, wpm, accuracy, errors, source }) => {
+const TypingArea: React.FC<TypingAreaProps> = ({ 
+  text, 
+  currentIndex, 
+  onKeyPress, 
+  wpm = 0, 
+  accuracy = 100, 
+  errors = 0, 
+  source,
+  standalone = false,
+  maxHeight
+}) => {
   const textAreaRef = useRef<HTMLParagraphElement>(null);
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
 
   useEffect(() => {
+    if (!onKeyPress) return;
+    
     const handleKeyPress = (event: KeyboardEvent) => {
       onKeyPress(event.key);
     };
@@ -32,13 +46,15 @@ const TypingArea: React.FC<TypingAreaProps> = ({ text, currentIndex, onKeyPress,
     }
   }, [text, source]);
 
+  const errorCount = typeof errors === 'object' ? Object.keys(errors).length : errors;
+
   return (
     <div className={`p-4 rounded-lg ${isDarkMode ? 'text-white' : 'text-black'}`}>
-      <div className={`mb-4 ${source === 'CreateText' ? 'max-h-60 overflow-y-auto' : ''}`}>
+      <div className={`mb-4 ${maxHeight ? maxHeight : source === 'CreateText' ? 'max-h-60 overflow-y-auto' : ''}`}>
         <p
           ref={textAreaRef}
           className={`text-lg font-mono ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} sm:text-xl lg:text-2xl border-2 border-gray-300 rounded-lg p-4 mb-4 
-            ${source === 'CreateText' ? 'min-h-[6rem] h-auto whitespace-pre-wrap break-words' : ''}`}
+            min-h-[6rem] h-auto whitespace-pre-wrap break-all`}
         >
           {text.split('').map((char, index) => (
             <span
@@ -57,17 +73,19 @@ const TypingArea: React.FC<TypingAreaProps> = ({ text, currentIndex, onKeyPress,
         </p>
       </div>
 
-      <div className={`flex flex-col sm:flex-row justify-between ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-        <p className="inline-block mr-0 sm:mr-4 text-lg">
-          {t('typingArea.stats.wpm')}: {wpm}
-        </p>
-        <p className="inline-block mr-0 sm:mr-4 text-lg">
-          {t('typingArea.stats.accuracy')}: {accuracy}%
-        </p>
-        <p className="inline-block text-lg">
-          {t('typingArea.stats.errors')}: {Object.keys(errors).length}
-        </p>
-      </div>
+      {!standalone && (
+        <div className={`flex flex-col sm:flex-row justify-between ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+          <p className="inline-block mr-0 sm:mr-4 text-lg">
+            {t('typingArea.stats.wpm')}: {wpm}
+          </p>
+          <p className="inline-block mr-0 sm:mr-4 text-lg">
+            {t('typingArea.stats.accuracy')}: {accuracy}%
+          </p>
+          <p className="inline-block text-lg">
+            {t('typingArea.stats.errors')}: {errorCount}
+          </p>
+        </div>
+      )}
     </div>
   );
 };

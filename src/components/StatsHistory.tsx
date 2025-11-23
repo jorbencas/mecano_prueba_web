@@ -76,30 +76,40 @@ const StatsHistory: React.FC = () => {
         </ResponsiveContainer>
       </div>
 
-      <table className="border-collapse text-sm w-full mt-4">
-        <thead className={`${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-black'}`}>
-          <tr>
-            {Object.keys(t('statsHistory.columns')).map((colKey) => (
-              <th key={colKey} className="p-2 text-left">
-                {t(`statsHistory.columns.${colKey}`)}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {filteredStats.map((stat, index) => (
-            <tr key={index}>
-              <td className="p-2">{new Date(stat.date || '').toLocaleString()}</td>
-              <td className="p-2">{stat.sourceComponent}</td>
-              <td className="p-2">{stat.level}</td>
-              <td className="p-2">{stat.wpm}</td>
-              <td className="p-2">{stat.accuracy.toFixed(1)}%</td>
-              <td className="p-2">{stat.errors}</td>
-              <td className="p-2">{Math.round(stat.elapsedTime)}s</td>
+      <div className="mt-4 max-h-96 overflow-y-auto border rounded-lg">
+        <table className="border-collapse text-sm w-full">
+          <thead className={`sticky top-0 ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-black'}`}>
+            <tr>
+              {Object.keys(t('statsHistory.columns')).map((colKey) => (
+                <th key={colKey} className="p-2 text-left">
+                  {t(`statsHistory.columns.${colKey}`)}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredStats.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="p-4 text-center text-gray-500">
+                  {t('statsHistory.noData', 'No hay datos disponibles')}
+                </td>
+              </tr>
+            ) : (
+              filteredStats.map((stat, index) => (
+                <tr key={index} className={`${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} border-b`}>
+                  <td className="p-2">{new Date(stat.date || '').toLocaleString()}</td>
+                  <td className="p-2">{stat.sourceComponent}</td>
+                  <td className="p-2">{stat.level}</td>
+                  <td className="p-2">{stat.wpm}</td>
+                  <td className="p-2">{stat.accuracy.toFixed(1)}%</td>
+                  <td className="p-2">{stat.errors}</td>
+                  <td className="p-2">{Math.round(stat.elapsedTime)}s</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

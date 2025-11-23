@@ -13,7 +13,7 @@ export interface LevelData {
 export interface GetStatsParams {
   wpm: number;
   accuracy?: number; // opcional, se puede calcular
-  level: number;
+  level: number | string; // puede ser número o string (ej: "60s")
   errors?: number | Record<string, unknown>; // puede venir como objeto o número
   elapsedTime?: number | undefined;
   errorList?: ErrorItem[];
@@ -66,10 +66,13 @@ export const getStatsData = ({
       ? Number((elapsedTime / totalWords).toFixed(2))
       : null;
 
+  // 🔸 Normaliza level a número (por si viene como string tipo "60s")
+  const normalizedLevel = typeof level === 'string' ? parseInt(level, 10) || 0 : level;
+
   return {
     wpm,
     accuracy: computedAccuracy,
-    level,
+    level: normalizedLevel,
     errors: normalizedErrors,
     wpmGoal: levelData?.wpmGoal ?? 0,
     elapsedTime,
