@@ -3,13 +3,15 @@ import { Tooltip } from 'react-tooltip';
 import { useTheme } from '../context/ThemeContext';
 import { saveStats, SavedStat } from '../utils/saveStats';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import Modal from './Modal';
 
 interface StatsProps {
   stats: SavedStat;
   errorList: { expected: string; actual: string }[];
   onRepeatLevel: () => void;
   onNextLevel: () => void;
-  sourceComponent: 'Levels' | 'PlayGame' | 'CreateText' | 'PrecisionMode' | 'FreePractice' | 'SpeedMode' | 'NeonMode';
+  sourceComponent: 'Levels' | 'PlayGame' | 'CreateText' | 'PrecisionMode' | 'FreePractice' | 'SpeedMode' | 'NeonMode' | 'ZenMode' | 'NumbersMode' | 'SymbolsMode' | 'CodeMode' | 'DictationMode';
+  onClose?: () => void;
 }
 
 const formatElapsedTime = (timeInSeconds: number | null) => {
@@ -117,6 +119,7 @@ const Stats: React.FC<StatsProps> = ({
   onRepeatLevel,
   onNextLevel,
   sourceComponent,
+  onClose,
 }) => {
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
@@ -129,6 +132,7 @@ const Stats: React.FC<StatsProps> = ({
 
   // Enhanced feedback based on component and performance
   const getFeedbackMessage = () => {
+    // ... (logic remains same)
     if (sourceComponent === 'CreateText') {
       if (errorList.length === 0) {
         return {
@@ -317,49 +321,51 @@ const Stats: React.FC<StatsProps> = ({
   const feedback = getFeedbackMessage();
 
   return (
-    <div className={`relative p-4 rounded-lg ${isDarkMode ? 'text-white' : 'text-black'}`}>
-      <div className="mt-4 text-center mb-6">
-        <div className={`text-6xl mb-2`}>{feedback.icon}</div>
-        <p className={`text-2xl font-bold ${feedback.color}`}>
-          {feedback.message}
-        </p>
-        {feedback.suggestion && (
-          <p className={`mt-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} italic`}>
-            💡 {feedback.suggestion}
+    <Modal isOpen={true} size="xl" onClose={onClose} showCloseButton={!!onClose}>
+      <div className={`p-6 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+        <div className="text-center mb-6">
+          <div className={`text-6xl mb-2`}>{feedback.icon}</div>
+          <p className={`text-2xl font-bold ${feedback.color}`}>
+            {feedback.message}
           </p>
-        )}
-      </div>
+          {feedback.suggestion && (
+            <p className={`mt-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} italic`}>
+              💡 {feedback.suggestion}
+            </p>
+          )}
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <StatCard title={t('stats.cards.performance')} className="bg-blue-50 text-blue-700">
-          <StatRow label={t('stats.labels.currentWpm')} value={wpm} highlight={wpm >= wpmGoal} />
-          <StatRow label={t('stats.labels.goalWpm')} value={wpmGoal} color="text-blue-600" />
-          <StatRow label={t('stats.labels.accuracy')} value={`${accuracy.toFixed(2)}%`} highlight={accuracy >= 95} />
-        </StatCard>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <StatCard title={t('stats.cards.performance')} className="bg-blue-50 text-blue-700">
+            <StatRow label={t('stats.labels.currentWpm')} value={wpm} highlight={wpm >= wpmGoal} />
+            <StatRow label={t('stats.labels.goalWpm')} value={wpmGoal} color="text-blue-600" />
+            <StatRow label={t('stats.labels.accuracy')} value={`${accuracy.toFixed(2)}%`} highlight={accuracy >= 95} />
+          </StatCard>
 
-        <StatCard title={t('stats.cards.details')} className="bg-green-50 text-green-700">
-          <StatRow label={t('stats.labels.level')} value={level} color="text-blue-600" />
-          <StatRow label={t('stats.labels.errors')} value={`${errors} / ${errorLimit}`} highlight={errors === 0} />
-          <StatRow label={t('stats.labels.time')} value={formatElapsedTime(elapsedTime)} color="text-purple-600" />
-        </StatCard>
-      </div>
+          <StatCard title={t('stats.cards.details')} className="bg-green-50 text-green-700">
+            <StatRow label={t('stats.labels.level')} value={level} color="text-blue-600" />
+            <StatRow label={t('stats.labels.errors')} value={`${errors} / ${errorLimit}`} highlight={errors === 0} />
+            <StatRow label={t('stats.labels.time')} value={formatElapsedTime(elapsedTime)} color="text-purple-600" />
+          </StatCard>
+        </div>
 
-      {sourceComponent !== 'Levels' && errorList.length > 0 && <ErrorTable errorList={errorList} t={t} />}
-      {sourceComponent === 'Levels' && text && <HighlightedText text={text} errorList={errorList} t={t} />}
-      {(sourceComponent === 'Levels' || sourceComponent === 'PlayGame') && <Requirements wpmGoal={wpmGoal} t={t} />}
+        {sourceComponent !== 'Levels' && errorList.length > 0 && <ErrorTable errorList={errorList} t={t} />}
+        {sourceComponent === 'Levels' && text && <HighlightedText text={text} errorList={errorList} t={t} />}
+        {(sourceComponent === 'Levels' || sourceComponent === 'PlayGame') && <Requirements wpmGoal={wpmGoal} t={t} />}
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        <button onClick={onRepeatLevel} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition">
-          {sourceComponent === 'CreateText' ? t('stats.buttons.close') : t('stats.buttons.repeat')}
-        </button>
-
-        {sourceComponent !== 'CreateText' && levelCompleted && (
-          <button onClick={onNextLevel} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            {t('stats.buttons.next')}
+        <div className="mt-6 flex flex-wrap gap-3 justify-center">
+          <button onClick={onRepeatLevel} className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
+            {sourceComponent === 'CreateText' ? t('stats.buttons.close') : t('stats.buttons.repeat')}
           </button>
-        )}
+
+          {sourceComponent !== 'CreateText' && levelCompleted && (
+            <button onClick={onNextLevel} className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-700 transition font-semibold">
+              {t('stats.buttons.next')}
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 

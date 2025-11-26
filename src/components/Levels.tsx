@@ -3,7 +3,6 @@ import Keyboard from './Keyboard';
 import TypingArea from './TypingArea';
 import Stats from './Stats';
 import Hands from './Hands';
-import ErrorModal from './ErrorModal';
 import MenuLevels from "./MenuLevels";
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -203,7 +202,7 @@ const Levels: React.FC = () => {
           instructions={t('levels.instructions')}
           source="Levels"
         />
-        <ErrorModal isOpen={showStatsModal} onClose={() => setShowStatsModal(false)}>
+        {showStatsModal && (
           <Stats
             stats={getStatsData({
               wpm,
@@ -222,8 +221,9 @@ const Levels: React.FC = () => {
             onRepeatLevel={repeatLevel}
             onNextLevel={nextLevel}
             sourceComponent="Levels"
+            onClose={() => setShowStatsModal(false)}
           />
-        </ErrorModal>
+        )}
       </div>
     </div>
   );

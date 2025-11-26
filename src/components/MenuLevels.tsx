@@ -10,7 +10,7 @@ interface Level {
 }
 
 interface MenuLevelsProps {
-  source: 'Levels' | 'PlayGame' | 'CreateText';
+  source: 'Levels' | 'PlayGame' | 'CreateText' | 'ZenMode' | 'NumbersMode' | 'SymbolsMode' | 'CodeMode' | 'DictationMode';
   onLevelChange: (level: number) => void;
   onCreateNewText?: (text: string, wpmGoal?: number, errorLimit?: number) => void;
   currentLevel: number;
@@ -46,7 +46,13 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
   return (
     <div className="w-1/4 pr-4 rounded-lg p-6 ">
       <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-        {source === 'CreateText' ? t('menuLevels.title.texts') : t('menuLevels.title.levels')}
+        {source === 'CreateText' ? t('menuLevels.title.texts') : 
+         source === 'ZenMode' ? t('menuLevels.title.zen', 'Temas Zen') :
+         source === 'NumbersMode' ? t('menuLevels.title.numbers', 'Niveles Numéricos') :
+         source === 'SymbolsMode' ? t('menuLevels.title.symbols', 'Niveles de Símbolos') :
+         source === 'CodeMode' ? t('menuLevels.title.code', 'Lenguajes de Código') :
+         source === 'DictationMode' ? t('menuLevels.title.dictation', 'Ejercicios de Dictado') :
+         t('menuLevels.title.levels')}
       </h2>
 
       <ul className="space-y-2 overflow-y-auto overflow-x-hidden max-h-[80vh]">

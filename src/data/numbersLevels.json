@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Números Simples",
+        "text": "1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0",
+        "wpmGoal": 20,
+        "errorLimit": 5
+    },
+    {
+        "name": "Repeticiones",
+        "text": "11 22 33 44 55 66 77 88 99 00 11 22 33 44 55 66 77 88 99 00",
+        "wpmGoal": 25,
+        "errorLimit": 5
+    },
+    {
+        "name": "Escalera",
+        "text": "123 456 789 123 456 789 123 456 789 123 456 789",
+        "wpmGoal": 30,
+        "errorLimit": 5
+    },
+    {
+        "name": "Teléfonos",
+        "text": "555-0123 555-0124 555-0125 555-0126 555-0127 555-0128",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "Fechas",
+        "text": "01/01/2023 12/12/2024 04/07/1776 25/12/2025 14/02/2026",
+        "wpmGoal": 20,
+        "errorLimit": 3
+    },
+    {
+        "name": "Decimales",
+        "text": "3.14 2.71 1.41 1.61 0.5 0.25 0.125 0.01 0.001 10.5 100.01",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "Operaciones",
+        "text": "1+1=2 2+2=4 3*3=9 10/2=5 100-50=50 5*5=25 8/4=2",
+        "wpmGoal": 20,
+        "errorLimit": 3
+    },
+    {
+        "name": "Binario",
+        "text": "010101 101010 001100 110011 111000 000111 10101010",
+        "wpmGoal": 30,
+        "errorLimit": 2
+    },
+    {
+        "name": "Precios",
+        "text": "$19.99 $9.99 $4.50 $100.00 $123.45 $0.99 $50.50",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "Mixto Avanzado",
+        "text": "ID: 12345 Tel: 555-9999 Price: $45.00 Date: 01/01/2025 Qty: 10",
+        "wpmGoal": 30,
+        "errorLimit": 3
+    }
+]

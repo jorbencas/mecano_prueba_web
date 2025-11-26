@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { AccessibilityProvider } from './context/AccessibilityContext';
 import Menu from './components/Menu';
 import PlayGame from './components/PlayGame';
 import Levels from './components/Levels';
@@ -21,6 +22,13 @@ import ProgressDashboard from './components/ProgressDashboard';
 import Achievements from './components/Achievements';
 import Leaderboard from './components/Leaderboard';
 import UserProfile from './components/UserProfile';
+
+// Additional Practice Modes
+import ZenMode from './components/ZenMode';
+import NumbersMode from './components/NumbersMode';
+import SymbolsMode from './components/SymbolsMode';
+import CodeMode from './components/CodeMode';
+import DictationMode from './components/DictationMode';
 
 const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isDarkMode } = useTheme();
@@ -94,6 +102,11 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         {currentView === 'free-practice' && <FreePractice />}
         {currentView === 'speed-mode' && <SpeedMode />}
         {currentView === 'precision-mode' && <PrecisionMode />}
+        {currentView === 'zen-mode' && <ZenMode />}
+        {currentView === 'numbers-mode' && <NumbersMode />}
+        {currentView === 'symbols-mode' && <SymbolsMode />}
+        {currentView === 'code-mode' && <CodeMode />}
+        {currentView === 'dictation-mode' && <DictationMode />}
         
         {/* Games Section */}
         {currentView === 'game' && <PlayGame />}
@@ -138,13 +151,15 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 const App: React.FC = () => {
   return (
     <LanguageProvider>
-      <ThemeProvider>
-        <AuthProvider>
-          <AppContainer>
-            <p></p>
-          </AppContainer>
-        </AuthProvider>
-      </ThemeProvider>
+      <AccessibilityProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <AppContainer>
+              <p></p>
+            </AppContainer>
+          </AuthProvider>
+        </ThemeProvider>
+      </AccessibilityProvider>
     </LanguageProvider>
   );
 };

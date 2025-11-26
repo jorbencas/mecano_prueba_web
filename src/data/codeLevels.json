@@ -1,0 +1,62 @@
+[
+    {
+        "name": "JS: Variables",
+        "text": "const name = 'John'; let age = 30; var active = true;",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "JS: Funciones",
+        "text": "function greet(name) { return 'Hello ' + name; }",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "JS: Arrays",
+        "text": "const numbers = [1, 2, 3, 4, 5]; numbers.push(6);",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "Python: Print",
+        "text": "print('Hello World') name = input('Enter name: ')",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "Python: Loops",
+        "text": "for i in range(10): print(i)",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "HTML: Estructura",
+        "text": "<html><head><title>Page</title></head><body></body></html>",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "HTML: Tags",
+        "text": "<div><p>Paragraph</p><a href='#'>Link</a></div>",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "CSS: Selectors",
+        "text": "body { margin: 0; padding: 0; font-family: sans-serif; }",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "CSS: Classes",
+        "text": ".container { display: flex; justify-content: center; }",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "SQL: Select",
+        "text": "SELECT * FROM users WHERE age > 18 ORDER BY name;",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    }
+]

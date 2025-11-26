@@ -8,7 +8,7 @@ const JWT_EXPIRATION = '24h';
 /**
  * Register a new user with email and password
  */
-async function register(email, password, displayName) {
+async function register(email, password, displayName, role = 'student') {
   try {
     // Check if user already exists
     const existing = await sql`
@@ -24,16 +24,16 @@ async function register(email, password, displayName) {
 
     // Create user
     const result = await sql`
-      INSERT INTO users (email, password_hash, display_name)
-      VALUES (${email}, ${passwordHash}, ${displayName})
-      RETURNING id, email, display_name, photo_url, created_at
+      INSERT INTO users (email, password_hash, display_name, role)
+      VALUES (${email}, ${passwordHash}, ${displayName}, ${role})
+      RETURNING id, email, display_name, photo_url, role, created_at
     `;
 
     const user = result[0];
 
     // Generate token
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: JWT_EXPIRATION }
     );
@@ -52,6 +52,7 @@ async function register(email, password, displayName) {
         email: user.email,
         displayName: user.display_name,
         photoURL: user.photo_url,
+        role: user.role,
         provider: 'email',
       },
     };
@@ -67,7 +68,7 @@ async function login(email, password) {
   try {
     // Find user
     const users = await sql`
-      SELECT id, email, display_name, password_hash, photo_url
+      SELECT id, email, display_name, password_hash, photo_url, role
       FROM users
       WHERE email = ${email} AND password_hash IS NOT NULL
     `;
@@ -93,7 +94,7 @@ async function login(email, password) {
 
     // Generate token
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: JWT_EXPIRATION }
     );
@@ -112,6 +113,7 @@ async function login(email, password) {
         email: user.email,
         displayName: user.display_name,
         photoURL: user.photo_url,
+        role: user.role,
         provider: 'email',
       },
     };
@@ -136,7 +138,7 @@ function verifyToken(token) {
  */
 async function getUserById(userId) {
   const users = await sql`
-    SELECT id, email, display_name, photo_url, google_id
+    SELECT id, email, display_name, photo_url, google_id, role
     FROM users
     WHERE id = ${userId}
   `;
@@ -151,6 +153,7 @@ async function getUserById(userId) {
     email: user.email,
     displayName: user.display_name,
     photoURL: user.photo_url,
+    role: user.role,
     provider: user.google_id ? 'google' : 'email',
   };
 }

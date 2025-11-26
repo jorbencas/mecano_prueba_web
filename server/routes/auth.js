@@ -11,7 +11,7 @@ const router = express.Router();
  */
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, displayName } = req.body;
+    const { email, password, displayName, role } = req.body;
 
     // Validation
     if (!email || !password) {
@@ -22,7 +22,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
 
-    const result = await register(email, password, displayName || null);
+    const result = await register(email, password, displayName || null, role || 'student');
 
     res.json(result);
   } catch (error) {

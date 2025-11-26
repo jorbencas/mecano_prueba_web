@@ -1,7 +1,6 @@
 // src/components/PlayGame.tsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import ErrorModal from './ErrorModal';
 import Stats from './Stats';
 import MenuLevels from './MenuLevels';
 import { useTheme } from '../context/ThemeContext';
@@ -402,34 +401,33 @@ const PlayGame: React.FC = () => {
       </div>
 
       {showStatsModal && (
-        <ErrorModal isOpen={showStatsModal} onClose={() => setShowStatsModal(false)}>
-          <Stats
-            stats={getStatsData({
-              wpm: score,
-              accuracy: Math.round((score / Math.max(1, (score + errors))) * 100) || 0,
-              level: level + 1,
-              errors,
-              elapsedTime: time,
-              levelCompleted: !gameOver,
-              levelData: {
-                wpmGoal: levels[level]?.wpmGoal ?? 0,
-                errorLimit: levels[level]?.errorLimit ?? 0,
-              },
-            })}
-            errorList={errorList}
-            onRepeatLevel={() => {
+        <Stats
+          stats={getStatsData({
+            wpm: score,
+            accuracy: Math.round((score / Math.max(1, (score + errors))) * 100) || 0,
+            level: level + 1,
+            errors,
+            elapsedTime: time,
+            levelCompleted: !gameOver,
+            levelData: {
+              wpmGoal: levels[level]?.wpmGoal ?? 0,
+              errorLimit: levels[level]?.errorLimit ?? 0,
+            },
+          })}
+          errorList={errorList}
+          onRepeatLevel={() => {
+            setShowStatsModal(false);
+          }}
+          onNextLevel={() => {
+            if (level < levels.length - 1) {
+              setLevel(prev => prev + 1);
               setShowStatsModal(false);
-            }}
-            onNextLevel={() => {
-              if (level < levels.length - 1) {
-                setLevel(prev => prev + 1);
-                setShowStatsModal(false);
-                startGame();
-              }
-            }}
-            sourceComponent="PlayGame"
-          />
-        </ErrorModal>
+              startGame();
+            }
+          }}
+          sourceComponent="PlayGame"
+          onClose={() => setShowStatsModal(false)}
+        />
       )}
     </div>
   );

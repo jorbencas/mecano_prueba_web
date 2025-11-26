@@ -29,9 +29,17 @@ async function initializeSchema() {
         photo_url TEXT,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW(),
-        last_login TIMESTAMP
+        last_login TIMESTAMP,
+        role VARCHAR(20) DEFAULT 'student'
       )
     `;
+
+    // Add role column if it doesn't exist (migration)
+    try {
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'student'`;
+    } catch (error) {
+      console.log('Role column might already exist or error adding it:', error.message);
+    }
 
     // Create indexes for users
     await sql`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`;

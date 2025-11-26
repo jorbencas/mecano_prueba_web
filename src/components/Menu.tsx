@@ -58,6 +58,11 @@ const Menu: React.FC<MenuProps> = ({ onSelectOption, currentView, isAuthenticate
     { text: t('menu.practice.free', 'Práctica Libre'), option: 'free-practice' },
     { text: t('menu.practice.speed', 'Modo Velocidad'), option: 'speed-mode' },
     { text: t('menu.practice.precision', 'Modo Precisión'), option: 'precision-mode' },
+    { text: t('menu.practice.zen', 'Modo Zen'), option: 'zen-mode' },
+    { text: t('menu.practice.numbers', 'Modo Números'), option: 'numbers-mode' },
+    { text: t('menu.practice.symbols', 'Modo Símbolos'), option: 'symbols-mode' },
+    { text: t('menu.practice.code', 'Modo Código'), option: 'code-mode' },
+    { text: t('menu.practice.dictation', 'Modo Dictado'), option: 'dictation-mode' },
   ];
 
   const gamesItems = [

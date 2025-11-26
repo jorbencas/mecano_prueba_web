@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Frases Cortas",
+        "text": "El perro corre en el parque. La casa es grande y blanca.",
+        "wpmGoal": 30,
+        "errorLimit": 5
+    },
+    {
+        "name": "Preguntas",
+        "text": "¿Cómo estás hoy? ¿Qué hora es? ¿Dónde está la biblioteca?",
+        "wpmGoal": 30,
+        "errorLimit": 5
+    },
+    {
+        "name": "Saludos",
+        "text": "Buenos días a todos. Espero que tengan un excelente día.",
+        "wpmGoal": 35,
+        "errorLimit": 5
+    },
+    {
+        "name": "Naturaleza",
+        "text": "El sol brilla en el cielo azul. Los pájaros cantan en los árboles.",
+        "wpmGoal": 35,
+        "errorLimit": 5
+    },
+    {
+        "name": "Tecnología",
+        "text": "La computadora es una herramienta muy útil para trabajar y aprender.",
+        "wpmGoal": 35,
+        "errorLimit": 5
+    },
+    {
+        "name": "Comida",
+        "text": "Me gusta comer pizza los viernes. La fruta es saludable y deliciosa.",
+        "wpmGoal": 35,
+        "errorLimit": 5
+    },
+    {
+        "name": "Viajes",
+        "text": "Viajar es una forma maravillosa de conocer nuevas culturas y personas.",
+        "wpmGoal": 35,
+        "errorLimit": 5
+    },
+    {
+        "name": "Deportes",
+        "text": "El fútbol es el deporte más popular del mundo. Correr es bueno para la salud.",
+        "wpmGoal": 40,
+        "errorLimit": 5
+    },
+    {
+        "name": "Música",
+        "text": "La música clásica es relajante. Tocar un instrumento requiere práctica.",
+        "wpmGoal": 40,
+        "errorLimit": 5
+    },
+    {
+        "name": "Ciencia",
+        "text": "La ciencia nos ayuda a entender el universo y cómo funcionan las cosas.",
+        "wpmGoal": 40,
+        "errorLimit": 5
+    }
+]

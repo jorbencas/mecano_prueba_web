@@ -4,14 +4,17 @@ import '@testing-library/jest-dom';
 import Stats from '../components/Stats';
 import { ThemeProvider } from '../context/ThemeContext';
 import { LanguageProvider } from '../context/LanguageContext';
+import { AccessibilityProvider } from '../context/AccessibilityContext';
 
 const renderWithProviders = (component: React.ReactElement) => {
   return render(
-    <ThemeProvider>
-      <LanguageProvider>
-        {component}
-      </LanguageProvider>
-    </ThemeProvider>
+    <LanguageProvider>
+      <AccessibilityProvider>
+        <ThemeProvider>
+          {component}
+        </ThemeProvider>
+      </AccessibilityProvider>
+    </LanguageProvider>
   );
 };
 
@@ -30,11 +33,17 @@ const mockStats = {
   },
 };
 
+const mockErrorList = [
+  { expected: 'a', actual: 's' },
+  { expected: 'd', actual: 'f' },
+];
+
 describe('Stats Component', () => {
   test('renders Stats component', () => {
     renderWithProviders(
       <Stats
         stats={mockStats}
+        errorList={mockErrorList}
         onRepeatLevel={jest.fn()}
         onNextLevel={jest.fn()}
         sourceComponent="Levels"
@@ -47,6 +56,7 @@ describe('Stats Component', () => {
     renderWithProviders(
       <Stats
         stats={mockStats}
+        errorList={mockErrorList}
         onRepeatLevel={jest.fn()}
         onNextLevel={jest.fn()}
         sourceComponent="Levels"
@@ -60,6 +70,7 @@ describe('Stats Component', () => {
     renderWithProviders(
       <Stats
         stats={mockStats}
+        errorList={mockErrorList}
         onRepeatLevel={jest.fn()}
         onNextLevel={jest.fn()}
         sourceComponent="Levels"
@@ -72,6 +83,7 @@ describe('Stats Component', () => {
     renderWithProviders(
       <Stats
         stats={mockStats}
+        errorList={mockErrorList}
         onRepeatLevel={jest.fn()}
         onNextLevel={jest.fn()}
         sourceComponent="Levels"
@@ -85,6 +97,7 @@ describe('Stats Component', () => {
     renderWithProviders(
       <Stats
         stats={mockStats}
+        errorList={mockErrorList}
         onRepeatLevel={jest.fn()}
         onNextLevel={handleNextLevel}
         sourceComponent="Levels"

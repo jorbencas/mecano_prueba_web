@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Básicos 1",
+        "text": "! @ # $ % ^ & * ( ) ! @ # $ % ^ & * ( )",
+        "wpmGoal": 15,
+        "errorLimit": 5
+    },
+    {
+        "name": "Básicos 2",
+        "text": "- _ = + - _ = + - _ = + - _ = +",
+        "wpmGoal": 20,
+        "errorLimit": 5
+    },
+    {
+        "name": "Paréntesis",
+        "text": "( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "Corchetes",
+        "text": "[ ] { } [ ] { } [ ] { } [ ] { } [ ] { }",
+        "wpmGoal": 20,
+        "errorLimit": 3
+    },
+    {
+        "name": "Puntuación",
+        "text": ". , ; : . , ; : . , ; : . , ; : . , ; :",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "Comillas",
+        "text": "' \" ' \" ' \" ' \" ' \" ' \" ' \" ' \" ' \" ' \"",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "Barras",
+        "text": "/ \\ | / \\ | / \\ | / \\ | / \\ | / \\ |",
+        "wpmGoal": 20,
+        "errorLimit": 3
+    },
+    {
+        "name": "Matemáticos",
+        "text": "< > = + - * / % < > = + - * / %",
+        "wpmGoal": 20,
+        "errorLimit": 3
+    },
+    {
+        "name": "Email y Web",
+        "text": "@ . # / : @ . # / : @ . # / :",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "Complejo",
+        "text": "{ [ ( < ! @ # $ % ^ & * > ) ] }",
+        "wpmGoal": 15,
+        "errorLimit": 5
+    }
+]
