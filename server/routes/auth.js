@@ -22,7 +22,8 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
 
-    const result = await register(email, password, displayName || null, role || 'student');
+    // Register user (role is determined server-side: first user = admin, others = student)
+    const result = await register(email, password, displayName || null);
 
     res.json(result);
   } catch (error) {

@@ -3,12 +3,13 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 export const authAPI = {
   /**
    * Register new user with email and password
+   * Role is determined server-side: first user = admin, others = student
    */
-  register: async (email: string, password: string, displayName: string, role?: string) => {
+  register: async (email: string, password: string, displayName: string) => {
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, displayName, role }),
+      body: JSON.stringify({ email, password, displayName }),
     });
 
     const data = await response.json();

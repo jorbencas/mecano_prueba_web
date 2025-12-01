@@ -19,13 +19,21 @@ async function register(email, password, displayName, role = 'student') {
       throw new Error('User already exists');
     }
 
+    // Check if this is the first user (make them admin)
+    const userCount = await sql`
+      SELECT COUNT(*) as count FROM users
+    `;
+    
+    const isFirstUser = parseInt(userCount[0].count) === 0;
+    const finalRole = isFirstUser ? 'admin' : 'student'; // First user is admin, others are students
+
     // Hash password
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
     // Create user
     const result = await sql`
       INSERT INTO users (email, password_hash, display_name, role)
-      VALUES (${email}, ${passwordHash}, ${displayName}, ${role})
+      VALUES (${email}, ${passwordHash}, ${displayName}, ${finalRole})
       RETURNING id, email, display_name, photo_url, role, created_at
     `;
 

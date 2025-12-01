@@ -1,6 +1,7 @@
 {
     "statsHistory": {
         "title": "Statistics History",
+        "filter": "Filter by",
         "filters": {
             "ALL": "All",
             "LEVELS": "Levels",
@@ -9,32 +10,41 @@
         },
         "clear": "Clear History",
         "confirmClear": "Do you want to delete all statistics?",
+        "noData": "No data available",
         "columns": {
             "date": "Date",
+            "sourceComponent": "Component",
             "origin": "Source",
             "level": "Level",
             "wpm": "WPM",
             "accuracy": "Accuracy",
             "errors": "Errors",
+            "elapsedTime": "Time",
             "time": "Time"
         }
     },
+    "progress": {
+        "title": "Progress Dashboard",
+        "avgWPM": "Average WPM",
+        "bestWPM": "Best WPM",
+        "avgAccuracy": "Average Accuracy",
+        "totalTime": "Total Time",
+        "wpmProgress": "WPM Progress",
+        "accuracyProgress": "Accuracy Progress"
+    },
     "settings": {
         "title": "Settings",
-        "theme": {
-            "light": "Light Mode",
-            "dark": "Dark Mode",
-            "switchTo": "Switch to"
-        },
-        "language": {
-            "label": "Select language:"
-        },
-        "languages": {
-            "en": "English",
-            "es": "Spanish (Castilian)",
-            "ca": "Catalan",
-            "va": "Valencian"
-        }
+        "userInfo": "User",
+        "notLoggedIn": "You are not logged in",
+        "loginPrompt": "Log in to save your progress and access all features.",
+        "loginButton": "Login / Register",
+        "theme": "Theme",
+        "lightMode": "Light Mode",
+        "darkMode": "Dark Mode",
+        "language": "Language",
+        "logout": "Logout",
+        "confirmLogout": "Are you sure you want to logout?",
+        "viewProfile": "View Profile and Activity"
     },
     "stats": {
         "feedback": {
@@ -93,11 +103,41 @@
     },
     "menu": {
         "title": "Typing App",
+        "sections": {
+            "practice": "Practice",
+            "games": "Games",
+            "create": "Create",
+            "progress": "Progress"
+        },
+        "practice": {
+            "guided": "Guided Levels",
+            "free": "Free Practice",
+            "speed": "Speed Mode",
+            "precision": "Precision Mode",
+            "zen": "Zen Mode",
+            "numbers": "Numbers Mode",
+            "symbols": "Symbols Mode",
+            "code": "Code Mode",
+            "dictation": "Dictation Mode"
+        },
+        "games": {
+            "falling": "Falling Letters"
+        },
+        "create": {
+            "texts": "Custom Texts",
+            "levels": "Custom Levels"
+        },
+        "progress": {
+            "stats": "Statistics",
+            "achievements": "Achievements",
+            "leaderboard": "Leaderboard"
+        },
         "items": {
             "game": "Game",
             "practice": "Practice",
             "createText": "Create Text",
-            "settings": "Settings"
+            "settings": "Settings",
+            "login": "Login"
         }
     },
     "levels": {
@@ -156,5 +196,88 @@
             "index": "Index",
             "thumb": "Thumb"
         }
+    },
+    "freePractice": {
+        "title": "Free Practice",
+        "selectKeys": "Select Keys",
+        "keysSelected": "Selected keys",
+        "keysLocked": "Keys locked during practice",
+        "session": "Practice Session",
+        "reset": "Reset",
+        "saved": "Saved",
+        "limitInfo": "Limit: 100 characters. Register for 500 characters.",
+        "configSaved": "Your configuration is saved automatically",
+        "unlimitedChars": "Unlimited practice",
+        "instructions": "Practice without time or error limits. Select the keys you want to practice and start typing."
+    },
+    "profile": {
+        "title": "User Profile",
+        "notLoggedIn": "You must login to view your profile",
+        "totalTime": "Total Time",
+        "totalActivities": "Sessions",
+        "averageWPM": "Average WPM",
+        "completed": "Completed",
+        "timeByComponent": "Time by Component",
+        "sessions": "sessions",
+        "recentActivity": "Recent Activity",
+        "noActivity": "No activity recorded",
+        "date": "Date",
+        "component": "Component",
+        "duration": "Duration",
+        "wpm": "WPM",
+        "accuracy": "Accuracy"
+    },
+    "challenges": {
+        "title": "Daily Challenges",
+        "notLoggedIn": "You must login to see challenges",
+        "loading": "Loading challenges...",
+        "todayTitle": "Today's Challenges",
+        "noChallenges": "No challenges available",
+        "checkBack": "Come back tomorrow for new challenges",
+        "completed": "Completed",
+        "progress": "Progress",
+        "difficulty": {
+            "easy": "Easy",
+            "medium": "Medium",
+            "hard": "Hard"
+        },
+        "stats": {
+            "completed": "Completed",
+            "streak": "Streak",
+            "points": "Points",
+            "today": "Today"
+        },
+        "modal": {
+            "title": "🎯 Your Challenges for Today!",
+            "subtitle": "Complete these challenges to improve your skills and earn points",
+            "tip": "💡 Challenges refresh every day",
+            "start": "Let's go!"
+        }
+    },
+    "login": {
+        "back": "Back to app",
+        "welcome": "Welcome to Mecano",
+        "inviteText": "Ready to improve your typing speed? Join our community and discover your full potential. With Mecano, you don't just practice typing, you track your progress, compete with other users, and unlock achievements while improving. Start now and see how your skills grow day by day!",
+        "whyRegister": "Registering allows you to save your progress, compete in the global ranking, unlock achievements, and access detailed statistics of your evolution. Your data is safe and you can practice from any device.",
+        "benefits": "Benefits of registering",
+        "benefit1": "Save your progress and statistics",
+        "benefit2": "Compete in the global ranking",
+        "benefit3": "Unlock achievements and medals",
+        "benefit4": "Access from any device",
+        "benefit5": "Create custom levels and texts",
+        "loginTab": "Login",
+        "registerTab": "Register",
+        "displayName": "Name",
+        "displayNamePlaceholder": "Your name",
+        "email": "Email",
+        "password": "Password",
+        "passwordHint": "Minimum 6 characters",
+        "loginButton": "Login",
+        "registerButton": "Create Account",
+        "googleButton": "Continue with Google",
+        "or": "or",
+        "loading": "Loading...",
+        "error": "Login error",
+        "googleError": "Error with Google"
     }
 }

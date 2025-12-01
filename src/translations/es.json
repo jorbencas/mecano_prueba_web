@@ -103,6 +103,36 @@
     },
     "menu": {
         "title": "Aplicación de Mecanografía",
+        "sections": {
+            "practice": "Práctica",
+            "games": "Juegos",
+            "create": "Crear",
+            "progress": "Progreso"
+        },
+        "practice": {
+            "guided": "Niveles Guiados",
+            "free": "Práctica Libre",
+            "speed": "Modo Velocidad",
+            "precision": "Modo Precisión",
+            "zen": "Modo Zen",
+            "numbers": "Modo Números",
+            "symbols": "Modo Símbolos",
+            "code": "Modo Código",
+            "dictation": "Modo Dictado"
+        },
+        "games": {
+            "falling": "Letras Cayendo"
+        },
+        "create": {
+            "texts": "Textos Personalizados",
+            "levels": "Niveles Personalizados"
+        },
+        "progress": {
+            "stats": "Estadísticas",
+            "achievements": "Logros",
+            "leaderboard": "Clasificación",
+            "challenges": "Retos Diarios"
+        },
         "items": {
             "game": "Juego",
             "practice": "Práctica",
@@ -197,6 +227,33 @@
         "duration": "Duración",
         "wpm": "WPM",
         "accuracy": "Precisión"
+    },
+    "challenges": {
+        "title": "Retos Diarios",
+        "notLoggedIn": "Debes iniciar sesión para ver los retos",
+        "loading": "Cargando retos...",
+        "todayTitle": "Retos de Hoy",
+        "noChallenges": "No hay retos disponibles",
+        "checkBack": "Vuelve mañana para nuevos desafíos",
+        "completed": "Completado",
+        "progress": "Progreso",
+        "difficulty": {
+            "easy": "Fácil",
+            "medium": "Medio",
+            "hard": "Difícil"
+        },
+        "stats": {
+            "completed": "Completados",
+            "streak": "Racha",
+            "points": "Puntos",
+            "today": "Hoy"
+        },
+        "modal": {
+            "title": "🎯 ¡Tus Retos de Hoy!",
+            "subtitle": "Completa estos desafíos para mejorar tus habilidades y ganar puntos",
+            "tip": "💡 Los retos se renuevan cada día",
+            "start": "¡Vamos!"
+        }
     },
     "login": {
         "back": "Volver a la aplicación",

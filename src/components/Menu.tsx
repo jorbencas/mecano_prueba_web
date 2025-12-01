@@ -78,6 +78,7 @@ const Menu: React.FC<MenuProps> = ({ onSelectOption, currentView, isAuthenticate
     { text: t('menu.progress.stats', 'Estadísticas'), option: 'statistics', locked: !isAuthenticated },
     { text: t('menu.progress.achievements', 'Logros'), option: 'achievements', locked: !isAuthenticated },
     { text: t('menu.progress.leaderboard', 'Clasificación'), option: 'leaderboard', locked: !isAuthenticated },
+    { text: t('menu.progress.challenges', 'Retos Diarios'), option: 'challenges', locked: !isAuthenticated },
   ];
 
   const createItemsWithLock = [

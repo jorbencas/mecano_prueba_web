@@ -1,4 +1,5 @@
 // App.tsx
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -10,6 +11,7 @@ import CreateText from './components/CreateText';
 import Settings from './components/Settings';
 import ErrorModal from './components/ErrorModal';
 import { LanguageProvider } from './context/LanguageContext';
+import { MultiplayerProvider } from './context/MultiplayerContext';
 import Login from './components/Login';
 import RegistrationModal from './components/RegistrationModal';
 
@@ -29,6 +31,19 @@ import NumbersMode from './components/NumbersMode';
 import SymbolsMode from './components/SymbolsMode';
 import CodeMode from './components/CodeMode';
 import DictationMode from './components/DictationMode';
+import UserManagement from './components/UserManagement';
+import SettingsConfiguration from './components/SettingsConfiguration';
+import PublicProfile from './components/social/PublicProfile';
+import CommunityForum from './components/social/CommunityForum';
+
+// Multiplayer Components
+import RaceMode from './components/RaceMode';
+import PracticeRoom from './components/PracticeRoom';
+import FriendsSystem from './components/FriendsSystem';
+
+// Daily Challenges
+import DailyChallenges from './components/DailyChallenges';
+import DailyChallengesModal from './components/DailyChallengesModal';
 
 const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isDarkMode } = useTheme();
@@ -120,6 +135,18 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         {currentView === 'achievements' && user && <Achievements />}
         {currentView === 'leaderboard' && user && <Leaderboard />}
         {currentView === 'profile' && user && <UserProfile />}
+        {currentView === 'user-management' && user && user.role === 'admin' && <UserManagement />}
+        {currentView === 'settings-config' && user && <SettingsConfiguration />}
+        {currentView === 'community' && <CommunityForum />}
+        {currentView === 'public-profile' && <PublicProfile />}
+        
+        {/* Multiplayer Section */}
+        {currentView === 'race-mode' && user && <RaceMode />}
+        {currentView === 'practice-room' && user && <PracticeRoom />}
+        {currentView === 'friends' && user && <FriendsSystem />}
+        
+        {/* Daily Challenges */}
+        {currentView === 'challenges' && user && <DailyChallenges />}
         
         {showSettingsModal && (
           <ErrorModal isOpen={showSettingsModal} onClose={() => setShowSettingsModal(false)}>
@@ -141,6 +168,10 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             featureName={blockedFeatureName}
           />
         )}
+        
+        {/* Daily Challenges Modal */}
+        <DailyChallengesModal />
+        
         {children}
       </div>
     </div>
@@ -154,9 +185,11 @@ const App: React.FC = () => {
       <AccessibilityProvider>
         <ThemeProvider>
           <AuthProvider>
-            <AppContainer>
-              <p></p>
-            </AppContainer>
+            <MultiplayerProvider>
+              <AppContainer>
+                <p></p>
+              </AppContainer>
+            </MultiplayerProvider>
           </AuthProvider>
         </ThemeProvider>
       </AccessibilityProvider>

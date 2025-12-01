@@ -3,6 +3,7 @@ import { Tooltip } from 'react-tooltip';
 import { useTheme } from '../context/ThemeContext';
 import { saveStats, SavedStat } from '../utils/saveStats';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import { useChallengeChecker } from '../hooks/useChallengeChecker';
 import Modal from './Modal';
 
 interface StatsProps {
@@ -123,10 +124,24 @@ const Stats: React.FC<StatsProps> = ({
 }) => {
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
+  const { checkChallenges } = useChallengeChecker();
 
+  // Save stats and check challenges
   useEffect(() => {
     saveStats({ ...stats, sourceComponent, date: new Date().toISOString() });
-  }, [stats, sourceComponent]);
+    
+    // Check if any challenges were completed with this session
+    checkChallenges({
+      wpm: stats.wpm,
+      accuracy: stats.accuracy,
+      errors: stats.errors,
+      elapsedTime: stats.elapsedTime,
+      mode: sourceComponent,
+      level: stats.level
+    }).catch(err => {
+      console.error('Error checking challenges:', err);
+    });
+  }, [stats, sourceComponent, checkChallenges]);
 
   const { wpm, accuracy, level, errors, wpmGoal, elapsedTime, levelCompleted, errorLimit, text } = stats;
 

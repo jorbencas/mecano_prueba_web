@@ -1,6 +1,7 @@
 {
     "statsHistory": {
         "title": "Historial d'Estadístiques",
+        "filter": "Filtrar per",
         "filters": {
             "ALL": "Tots",
             "LEVELS": "Nivells",
@@ -9,32 +10,41 @@
         },
         "clear": "Esborra l'Historial",
         "confirmClear": "Vols esborrar tot l'historial d'estadístiques?",
+        "noData": "No hi ha dades disponibles",
         "columns": {
             "date": "Data",
+            "sourceComponent": "Component",
             "origin": "Origen",
             "level": "Nivell",
             "wpm": "PPM",
             "accuracy": "Precisió",
             "errors": "Errors",
+            "elapsedTime": "Temps",
             "time": "Temps"
         }
     },
+    "progress": {
+        "title": "Panell de Progrés",
+        "avgWPM": "PPM Mitjà",
+        "bestWPM": "Millor PPM",
+        "avgAccuracy": "Precisió Mitjana",
+        "totalTime": "Temps Total",
+        "wpmProgress": "Progrés de PPM",
+        "accuracyProgress": "Progrés de Precisió"
+    },
     "settings": {
         "title": "Configuració",
-        "theme": {
-            "light": "Mode Clar",
-            "dark": "Mode Fosc",
-            "switchTo": "Canvia a"
-        },
-        "language": {
-            "label": "Selecciona idioma:"
-        },
-        "languages": {
-            "en": "Anglès",
-            "es": "Espanyol (Castellà)",
-            "ca": "Català",
-            "va": "Valencià"
-        }
+        "userInfo": "Usuari",
+        "notLoggedIn": "No has iniciat sessió",
+        "loginPrompt": "Inicia sessió per guardar el teu progrés i accedir a totes les funcions.",
+        "loginButton": "Iniciar Sessió / Registrar-se",
+        "theme": "Tema",
+        "lightMode": "Mode Clar",
+        "darkMode": "Mode Fosc",
+        "language": "Idioma",
+        "logout": "Tancar Sessió",
+        "confirmLogout": "Segur que vols tancar sessió?",
+        "viewProfile": "Veure Perfil i Activitat"
     },
     "stats": {
         "feedback": {
@@ -93,11 +103,41 @@
     },
     "menu": {
         "title": "Aplicació d'Escriptura",
+        "sections": {
+            "practice": "Pràctica",
+            "games": "Jocs",
+            "create": "Crear",
+            "progress": "Progrés"
+        },
+        "practice": {
+            "guided": "Nivells Guiats",
+            "free": "Pràctica Lliure",
+            "speed": "Mode Velocitat",
+            "precision": "Mode Precisió",
+            "zen": "Mode Zen",
+            "numbers": "Mode Números",
+            "symbols": "Mode Símbols",
+            "code": "Mode Codi",
+            "dictation": "Mode Dictat"
+        },
+        "games": {
+            "falling": "Lletres Caient"
+        },
+        "create": {
+            "texts": "Textos Personalitzats",
+            "levels": "Nivells Personalitzats"
+        },
+        "progress": {
+            "stats": "Estadístiques",
+            "achievements": "Assoliments",
+            "leaderboard": "Classificació"
+        },
         "items": {
             "game": "Joc",
             "practice": "Pràctica",
             "createText": "Crear Text",
-            "settings": "Configuració"
+            "settings": "Configuració",
+            "login": "Iniciar Sessió"
         }
     },
     "levels": {
@@ -156,5 +196,61 @@
             "index": "Índex",
             "thumb": "Polze"
         }
+    },
+    "freePractice": {
+        "title": "Pràctica Lliure",
+        "selectKeys": "Selecciona Tecles",
+        "keysSelected": "Tecles seleccionades",
+        "keysLocked": "Tecles bloquejades durant la pràctica",
+        "session": "Sessió de Pràctica",
+        "reset": "Reiniciar",
+        "saved": "Guardat",
+        "limitInfo": "Límit: 100 caràcters. Registra't per 500 caràcters.",
+        "configSaved": "La teva configuració es guarda automàticament",
+        "unlimitedChars": "Pràctica il·limitada",
+        "instructions": "Practica sense límits de temps o errors. Selecciona les tecles que vols practicar i comença a escriure."
+    },
+    "profile": {
+        "title": "Perfil d'Usuari",
+        "notLoggedIn": "Has d'iniciar sessió per veure el teu perfil",
+        "totalTime": "Temps Total",
+        "totalActivities": "Sessions",
+        "averageWPM": "PPM Mitjà",
+        "completed": "Completats",
+        "timeByComponent": "Temps per Component",
+        "sessions": "sessions",
+        "recentActivity": "Activitat Recent",
+        "noActivity": "No hi ha activitat registrada",
+        "date": "Data",
+        "component": "Component",
+        "duration": "Durada",
+        "wpm": "PPM",
+        "accuracy": "Precisió"
+    },
+    "login": {
+        "back": "Tornar a l'aplicació",
+        "welcome": "Benvingut a Mecano",
+        "inviteText": "Preparat per millorar la teva velocitat d'escriptura? Uneix-te a la nostra comunitat i descobreix tot el teu potencial. Amb Mecano, no només practicaràs mecanografia, sinó que mesuraràs el teu progrés, competiràs amb altres usuaris i desbloquejaràs assoliments mentre millores. Comença ara i veu com les teves habilitats creixen dia a dia!",
+        "whyRegister": "Registrar-te et permet guardar el teu progrés, competir a la classificació global, desbloquejar assoliments i accedir a estadístiques detallades de la teva evolució. Les teves dades estan segures i pots practicar des de qualsevol dispositiu.",
+        "benefits": "Beneficis de registrar-te",
+        "benefit1": "Guarda el teu progrés i estadístiques",
+        "benefit2": "Competeix a la classificació global",
+        "benefit3": "Desbloqueja assoliments i medalles",
+        "benefit4": "Accedeix des de qualsevol dispositiu",
+        "benefit5": "Crea nivells i textos personalitzats",
+        "loginTab": "Iniciar Sessió",
+        "registerTab": "Registrar-se",
+        "displayName": "Nom",
+        "displayNamePlaceholder": "El teu nom",
+        "email": "Email",
+        "password": "Contrasenya",
+        "passwordHint": "Mínim 6 caràcters",
+        "loginButton": "Entrar",
+        "registerButton": "Crear Compte",
+        "googleButton": "Continuar amb Google",
+        "or": "o",
+        "loading": "Carregant...",
+        "error": "Error en iniciar sessió",
+        "googleError": "Error amb Google"
     }
 }

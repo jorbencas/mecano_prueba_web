@@ -3,7 +3,8 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import { getActivityLogs, getActivityStats, getRecentActivities, ActivityLog } from '../utils/activityTracker';
-import { FaClock, FaTrophy, FaChartLine, FaFire } from 'react-icons/fa';
+import { FaClock, FaTrophy, FaChartLine, FaFire, FaUserShield } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const UserProfile: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -63,10 +64,40 @@ const UserProfile: React.FC = () => {
 
         {/* User Info */}
         <div className={`p-6 rounded-lg mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-          <h2 className="text-2xl font-bold mb-4">{user.displayName || user.email}</h2>
-          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            {user.email}
-          </p>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-gray-300 overflow-hidden flex items-center justify-center text-2xl">
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt={user.displayName || ''} className="w-full h-full object-cover" />
+                ) : (
+                  <FaUserShield className="text-gray-500" />
+                )}
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold mb-1">{user.displayName || user.email}</h2>
+                <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {user.email}
+                </p>
+                <div className="flex gap-4 mt-2 text-sm">
+                  <Link to={`/profile/${user.id}`} className="text-blue-500 hover:underline flex items-center gap-1">
+                    <FaUserShield /> Ver Perfil Público
+                  </Link>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col items-end gap-2">
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                  user.role === 'admin'
+                    ? 'bg-blue-500 bg-opacity-20 text-blue-500'
+                    : 'bg-green-500 bg-opacity-20 text-green-500'
+                }`}
+              >
+                {user.role === 'admin' ? 'Administrador' : 'Estudiante'}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Statistics Cards */}
