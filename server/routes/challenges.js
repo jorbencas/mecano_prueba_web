@@ -247,7 +247,7 @@ const generateDailyChallenges = async (userId) => {
         AVG(wpm) as avg_wpm,
         AVG(accuracy) as avg_accuracy,
         COUNT(*) as total_sessions,
-        SUM(elapsed_time) as total_time
+        SUM(duration) as total_time
       FROM practice_stats
       WHERE user_id = ${userId}
       AND created_at >= CURRENT_DATE - INTERVAL '30 days'

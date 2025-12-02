@@ -256,6 +256,24 @@ async function initializeSchema() {
       )
     `;
 
+    // Audit Logs for User Management
+    await sql`
+      CREATE TABLE IF NOT EXISTS audit_logs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        admin_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        action VARCHAR(50) NOT NULL,
+        target_user_id UUID,
+        target_user_email VARCHAR(255),
+        changes JSONB,
+        ip_address VARCHAR(45),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    await sql`CREATE INDEX IF NOT EXISTS idx_audit_logs_admin ON audit_logs(admin_user_id)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_audit_logs_target ON audit_logs(target_user_id)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs(created_at)`;
+
     console.log('✅ Database schema initialized');
   } catch (error) {
     console.error('❌ Schema initialization error:', error);

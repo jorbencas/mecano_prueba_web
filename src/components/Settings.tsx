@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSun, FaMoon, FaSignOutAlt, FaSignInAlt, FaUser, FaUniversalAccess, FaFont, FaEye, FaPalette, FaRunning } from 'react-icons/fa';
+import { FaSun, FaMoon, FaUniversalAccess, FaFont, FaEye, FaPalette, FaRunning } from 'react-icons/fa';
 import { useTheme, ThemeVariant } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -7,13 +7,12 @@ import { useAccessibility, FontSize, ColorblindMode } from '../context/Accessibi
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 
 interface SettingsProps {
-  onShowLogin?: () => void;
   onNavigate?: (view: string) => void;
 }
 
-const Settings: React.FC<SettingsProps> = ({ onShowLogin, onNavigate }) => {
+const Settings: React.FC<SettingsProps> = ({ onNavigate }) => {
   const { isDarkMode, themeVariant, setThemeVariant } = useTheme();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { language, setLanguage } = useLanguage();
   const { t } = useDynamicTranslations();
   const {
@@ -30,12 +29,6 @@ const Settings: React.FC<SettingsProps> = ({ onShowLogin, onNavigate }) => {
   } = useAccessibility();
 
   const [showAccessibilityPanel, setShowAccessibilityPanel] = useState(false);
-
-  const handleLogout = async () => {
-    if (window.confirm(t('settings.confirmLogout', '¿Seguro que quieres cerrar sesión?'))) {
-      await logout();
-    }
-  };
 
   const fontSizeLabels: Record<FontSize, string> = {
     small: t('settings.fontSizeSmall', 'Pequeño'),
@@ -55,41 +48,6 @@ const Settings: React.FC<SettingsProps> = ({ onShowLogin, onNavigate }) => {
     <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
       <h2 className="text-2xl font-bold mb-6">{t('settings.title', 'Configuración')}</h2>
 
-      {/* User Info or Login Prompt */}
-      {user ? (
-        <div className="mb-6 p-4 bg-blue-500 bg-opacity-20 rounded-lg">
-          <h3 className="font-bold mb-2">{t('settings.userInfo', 'Usuario')}</h3>
-          <p className="text-sm">{user.displayName || user.email}</p>
-          <p className="text-xs opacity-75">{user.email}</p>
-          
-          {/* View Profile Button */}
-          {onNavigate && (
-            <button
-              onClick={() => onNavigate('profile')}
-              className="mt-3 w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold flex items-center justify-center gap-2"
-              aria-label={t('settings.viewProfile', 'Ver Perfil y Actividad')}
-            >
-              <FaUser />
-              {t('settings.viewProfile', 'Ver Perfil y Actividad')}
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className={`mb-6 p-4 rounded-lg border-2 ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-gray-50'}`}>
-          <h3 className="font-bold mb-2">{t('settings.notLoggedIn', 'No has iniciado sesión')}</h3>
-          <p className="text-sm mb-4 opacity-75">
-            {t('settings.loginPrompt', 'Inicia sesión para guardar tu progreso y acceder a todas las funciones.')}
-          </p>
-          <button
-            onClick={onShowLogin}
-            className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold flex items-center justify-center gap-2"
-            aria-label={t('settings.loginButton', 'Iniciar Sesión / Registrarse')}
-          >
-            <FaSignInAlt />
-            {t('settings.loginButton', 'Iniciar Sesión / Registrarse')}
-          </button>
-        </div>
-      )}
 
       {/* Theme */}
       <div className="mb-6">
@@ -250,19 +208,6 @@ const Settings: React.FC<SettingsProps> = ({ onShowLogin, onNavigate }) => {
         )}
       </div>
 
-      {/* Logout - Only show if logged in */}
-      {user && (
-        <div className={`mt-8 pt-6 border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}>
-          <button
-            onClick={handleLogout}
-            className="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-bold flex items-center justify-center gap-2"
-            aria-label={t('settings.logout', 'Cerrar Sesión')}
-          >
-            <FaSignOutAlt />
-            {t('settings.logout', 'Cerrar Sesión')}
-          </button>
-        </div>
-      )}
     </div>
   );
 };

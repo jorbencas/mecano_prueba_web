@@ -44,10 +44,11 @@ import FriendsSystem from './components/FriendsSystem';
 // Daily Challenges
 import DailyChallenges from './components/DailyChallenges';
 import DailyChallengesModal from './components/DailyChallengesModal';
+import AuthCallback from './components/AuthCallback';
 
 const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isDarkMode } = useTheme();
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
   const [currentView, setCurrentView] = useState<string>('practice');
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -71,7 +72,12 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       return;
     }
 
-    if (view === 'settings') {
+    if (view === 'logout') {
+      if (window.confirm('¿Seguro que quieres cerrar sesión?')) {
+        logout();
+        setCurrentView('practice');
+      }
+    } else if (view === 'settings') {
       setShowSettingsModal(true);
     } else {
       setCurrentView(view);
@@ -110,7 +116,7 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
-      <Menu onSelectOption={handleNavigation} currentView={currentView} isAuthenticated={!!user} />
+      <Menu onSelectOption={handleNavigation} currentView={currentView} isAuthenticated={!!user} user={user} />
       <div className="container mx-auto p-4 pt-20">
         {/* Practice Section */}
         {currentView === 'practice' && <Levels />}
@@ -151,7 +157,6 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         {showSettingsModal && (
           <ErrorModal isOpen={showSettingsModal} onClose={() => setShowSettingsModal(false)}>
             <Settings 
-              onShowLogin={handleShowLogin}
               onNavigate={(view) => {
                 setShowSettingsModal(false);
                 setCurrentView(view);
@@ -181,19 +186,26 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
 const App: React.FC = () => {
   return (
-    <LanguageProvider>
-      <AccessibilityProvider>
-        <ThemeProvider>
-          <AuthProvider>
-            <MultiplayerProvider>
-              <AppContainer>
-                <p></p>
-              </AppContainer>
-            </MultiplayerProvider>
-          </AuthProvider>
-        </ThemeProvider>
-      </AccessibilityProvider>
-    </LanguageProvider>
+    <Router>
+      <LanguageProvider>
+        <AccessibilityProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <MultiplayerProvider>
+                <Routes>
+                  <Route path="/auth/callback" element={<AuthCallback />} />
+                  <Route path="*" element={
+                    <AppContainer>
+                      <p></p>
+                    </AppContainer>
+                  } />
+                </Routes>
+              </MultiplayerProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </AccessibilityProvider>
+      </LanguageProvider>
+    </Router>
   );
 };
 

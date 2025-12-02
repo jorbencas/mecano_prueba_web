@@ -33,6 +33,56 @@ router.post('/', authenticate, async (req, res) => {
 });
 
 /**
+ * GET /api/stats/leaderboard
+ * Get global leaderboard
+ */
+router.get('/leaderboard', authenticate, async (req, res) => {
+  try {
+    const { mode = 'all', limit = 10 } = req.query;
+
+    let query;
+    if (mode === 'all') {
+      query = sql`
+        SELECT 
+          u.id, 
+          u.display_name, 
+          u.photo_url,
+          MAX(ps.wpm) as max_wpm,
+          AVG(ps.accuracy) as avg_accuracy,
+          COUNT(ps.id) as total_games
+        FROM users u
+        JOIN practice_stats ps ON u.id = ps.user_id
+        GROUP BY u.id, u.display_name, u.photo_url
+        ORDER BY max_wpm DESC
+        LIMIT ${limit}
+      `;
+    } else {
+      query = sql`
+        SELECT 
+          u.id, 
+          u.display_name, 
+          u.photo_url,
+          MAX(ps.wpm) as max_wpm,
+          AVG(ps.accuracy) as avg_accuracy,
+          COUNT(ps.id) as total_games
+        FROM users u
+        JOIN practice_stats ps ON u.id = ps.user_id
+        WHERE ps.mode = ${mode}
+        GROUP BY u.id, u.display_name, u.photo_url
+        ORDER BY max_wpm DESC
+        LIMIT ${limit}
+      `;
+    }
+
+    const leaderboard = await query;
+    res.json(leaderboard);
+  } catch (error) {
+    console.error('Leaderboard error:', error);
+    res.status(500).json({ error: 'Failed to get leaderboard' });
+  }
+});
+
+/**
  * GET /api/stats/:userId
  * Get comprehensive user statistics
  */

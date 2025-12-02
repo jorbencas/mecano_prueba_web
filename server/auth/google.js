@@ -30,11 +30,16 @@ passport.use(
         let user;
 
         if (users.length === 0) {
+          // Check if this is the first user ever
+          const userCount = await sql`SELECT count(*) FROM users`;
+          const isFirstUser = parseInt(userCount[0].count) === 0;
+          const role = isFirstUser ? 'admin' : 'student';
+
           // Create new user
           const result = await sql`
-            INSERT INTO users (email, google_id, display_name, photo_url, last_login)
-            VALUES (${email}, ${googleId}, ${displayName}, ${photoURL}, NOW())
-            RETURNING id, email, display_name, photo_url
+            INSERT INTO users (email, google_id, display_name, photo_url, last_login, role)
+            VALUES (${email}, ${googleId}, ${displayName}, ${photoURL}, NOW(), ${role})
+            RETURNING id, email, display_name, photo_url, role
           `;
           user = result[0];
         } else {

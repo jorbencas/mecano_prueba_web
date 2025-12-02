@@ -1,105 +1,150 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { loadStats, SavedStat } from '../utils/saveStats';
+import { activityAPI } from '../api/auth';
 
 interface LeaderboardEntry {
   rank: number;
-  name: string;
-  wpm: number;
-  accuracy: number;
-  date: string;
+  id: string;
+  display_name: string;
+  photo_url: string;
+  max_wpm: number;
+  avg_accuracy: number;
+  total_games: number;
 }
 
 const Leaderboard: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
-  const [category, setCategory] = useState<'wpm' | 'accuracy'>('wpm');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<string>('all');
 
   useEffect(() => {
-    const stats = loadStats();
-    const sorted = [...stats].sort((a, b) => 
-      category === 'wpm' ? b.wpm - a.wpm : b.accuracy - a.accuracy
+    const fetchLeaderboard = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('auth_token');
+        if (!token) return;
+
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:3001/api'}/stats/leaderboard?mode=${mode}&limit=10`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch leaderboard');
+
+        const data = await response.json();
+        
+        // Map and sort data
+        const mappedData = data.map((entry: any, index: number) => ({
+          rank: index + 1,
+          id: entry.id,
+          display_name: entry.display_name || 'Usuario',
+          photo_url: entry.photo_url,
+          max_wpm: entry.max_wpm,
+          avg_accuracy: parseFloat(entry.avg_accuracy),
+          total_games: parseInt(entry.total_games)
+        }));
+
+        setEntries(mappedData);
+      } catch (err) {
+        console.error('Leaderboard error:', err);
+        setError('Error loading leaderboard');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLeaderboard();
+  }, [mode]);
+
+  if (loading) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
     );
-    
-    const top10 = sorted.slice(0, 10).map((stat, index) => ({
-      rank: index + 1,
-      name: 'Usuario',
-      wpm: stat.wpm,
-      accuracy: stat.accuracy,
-      date: stat.date || new Date().toISOString(),
-    }));
-    
-    setEntries(top10);
-  }, [category]);
+  }
 
   return (
     <div className={`min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">{t('leaderboard.title', 'Clasificación')}</h1>
+        <h1 className="text-3xl font-bold mb-6">{t('leaderboard.title', 'Clasificación Global')}</h1>
 
-        <div className="flex gap-4 mb-6">
-          <button
-            onClick={() => setCategory('wpm')}
-            className={`px-6 py-3 rounded ${
-              category === 'wpm'
-                ? 'bg-blue-500 text-white'
-                : isDarkMode
-                ? 'bg-gray-700 hover:bg-gray-600'
-                : 'bg-gray-200 hover:bg-gray-300'
-            }`}
-          >
-            {t('leaderboard.byWPM', 'Por WPM')}
-          </button>
-          <button
-            onClick={() => setCategory('accuracy')}
-            className={`px-6 py-3 rounded ${
-              category === 'accuracy'
-                ? 'bg-blue-500 text-white'
-                : isDarkMode
-                ? 'bg-gray-700 hover:bg-gray-600'
-                : 'bg-gray-200 hover:bg-gray-300'
-            }`}
-          >
-            {t('leaderboard.byAccuracy', 'Por Precisión')}
-          </button>
+        <div className="flex gap-4 mb-6 overflow-x-auto pb-2">
+          {['all', 'time_15', 'time_30', 'time_60', 'words_10', 'words_25', 'words_50'].map((m) => (
+            <button
+              key={m}
+              onClick={() => setMode(m)}
+              className={`px-4 py-2 rounded whitespace-nowrap ${
+                mode === m
+                  ? 'bg-blue-500 text-white'
+                  : isDarkMode
+                  ? 'bg-gray-700 hover:bg-gray-600'
+                  : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              {m === 'all' ? 'General' : m.replace('_', ' ')}
+            </button>
+          ))}
         </div>
 
-        <div className={`rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+
+        <div className={`rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
           <table className="w-full">
             <thead className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
               <tr>
-                <th className="p-4 text-left">{t('leaderboard.rank', 'Puesto')}</th>
-                <th className="p-4 text-left">{t('leaderboard.name', 'Nombre')}</th>
-                <th className="p-4 text-right">{t('leaderboard.wpm', 'WPM')}</th>
-                <th className="p-4 text-right">{t('leaderboard.accuracy', 'Precisión')}</th>
-                <th className="p-4 text-right">{t('leaderboard.date', 'Fecha')}</th>
+                <th className="p-4 text-left w-16">#</th>
+                <th className="p-4 text-left">{t('leaderboard.player', 'Jugador')}</th>
+                <th className="p-4 text-right">{t('leaderboard.wpm', 'Mejor WPM')}</th>
+                <th className="p-4 text-right">{t('leaderboard.accuracy', 'Precisión Media')}</th>
+                <th className="p-4 text-right">{t('leaderboard.games', 'Partidas')}</th>
               </tr>
             </thead>
             <tbody>
-              {entries.map((entry, index) => (
-                <tr
-                  key={index}
-                  className={`border-b ${isDarkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-50'}`}
-                >
-                  <td className="p-4">
-                    <span className={`text-2xl font-bold ${
-                      entry.rank === 1 ? 'text-yellow-500' :
-                      entry.rank === 2 ? 'text-gray-400' :
-                      entry.rank === 3 ? 'text-orange-600' : ''
-                    }`}>
-                      {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
-                    </span>
-                  </td>
-                  <td className="p-4">{entry.name}</td>
-                  <td className="p-4 text-right font-bold">{entry.wpm}</td>
-                  <td className="p-4 text-right">{entry.accuracy.toFixed(1)}%</td>
-                  <td className="p-4 text-right text-sm opacity-75">
-                    {new Date(entry.date).toLocaleDateString()}
+              {entries.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center opacity-50">
+                    No hay datos disponibles para este modo
                   </td>
                 </tr>
-              ))}
+              ) : (
+                entries.map((entry) => (
+                  <tr
+                    key={entry.id}
+                    className={`border-b ${isDarkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-50'}`}
+                  >
+                    <td className="p-4">
+                      <span className={`text-xl font-bold ${
+                        entry.rank === 1 ? 'text-yellow-500' :
+                        entry.rank === 2 ? 'text-gray-400' :
+                        entry.rank === 3 ? 'text-orange-600' : ''
+                      }`}>
+                        {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
+                      </span>
+                    </td>
+                    <td className="p-4 flex items-center gap-3">
+                      {entry.photo_url ? (
+                        <img src={entry.photo_url} alt={entry.display_name} className="w-8 h-8 rounded-full" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                          {entry.display_name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <span className="font-medium">{entry.display_name}</span>
+                    </td>
+                    <td className="p-4 text-right font-bold text-xl">{entry.max_wpm}</td>
+                    <td className="p-4 text-right">{entry.avg_accuracy.toFixed(1)}%</td>
+                    <td className="p-4 text-right opacity-75">{entry.total_games}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
