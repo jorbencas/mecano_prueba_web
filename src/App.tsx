@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AccessibilityProvider } from './context/AccessibilityContext';
-import Menu from './components/Menu';
+import Sidebar from './components/Sidebar';
+import { FaBars } from 'react-icons/fa';
 import PlayGame from './components/PlayGame';
 import Levels from './components/Levels';
 import CreateText from './components/CreateText';
@@ -18,9 +19,13 @@ import RegistrationModal from './components/RegistrationModal';
 // New components
 import FreePractice from './components/FreePractice';
 import SpeedMode from './components/SpeedMode';
+import RoomLobby from './components/RoomLobby';
+import CustomLevelsViewer from './components/CustomLevelsViewer';
 import PrecisionMode from './components/PrecisionMode';
 import LevelCreator from './components/LevelCreator';
 import ProgressDashboard from './components/ProgressDashboard';
+import PracticeRoom from './components/PracticeRoom';
+import RaceMode from './components/RaceMode';
 import Achievements from './components/Achievements';
 import Leaderboard from './components/Leaderboard';
 import UserProfile from './components/UserProfile';
@@ -37,8 +42,6 @@ import PublicProfile from './components/social/PublicProfile';
 import CommunityForum from './components/social/CommunityForum';
 
 // Multiplayer Components
-import RaceMode from './components/RaceMode';
-import PracticeRoom from './components/PracticeRoom';
 import FriendsSystem from './components/FriendsSystem';
 
 // Daily Challenges
@@ -53,10 +56,11 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [blockedFeatureName, setBlockedFeatureName] = useState<string>('');
 
   // Features that require authentication
-  const lockedFeatures = ['leaderboard', 'achievements', 'create', 'create-level', 'statistics'];
+  const lockedFeatures = ['leaderboard', 'achievements', 'create', 'create-level', 'statistics', 'race-mode', 'practice-room', 'friends', 'challenges', 'my-levels'];
 
   const handleNavigation = (view: string) => {
     // Handle login view
@@ -91,6 +95,11 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       'create': 'Crear Textos',
       'create-level': 'Crear Niveles',
       'statistics': 'Estadísticas',
+      'race-mode': 'Carrera Competitiva',
+      'practice-room': 'Sala de Práctica',
+      'friends': 'Sistema de Amigos',
+      'challenges': 'Retos Diarios',
+      'my-levels': 'Mis Niveles Personalizados',
     };
     return featureNames[view] || view;
   };
@@ -115,9 +124,34 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   }
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
-      <Menu onSelectOption={handleNavigation} currentView={currentView} isAuthenticated={!!user} user={user} />
-      <div className="container mx-auto p-4 pt-20">
+    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
+      <Sidebar 
+        onSelectOption={handleNavigation} 
+        currentView={currentView}
+        isAuthenticated={!!user}
+        user={user}
+        isOpen={isSidebarOpen}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+      />
+
+      {/* Mobile Header */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-gray-800 z-40 flex items-center px-4 shadow-md">
+        <button 
+          onClick={() => setIsSidebarOpen(true)}
+          className="text-white p-2"
+        >
+          <FaBars size={24} />
+        </button>
+        <span className="ml-4 text-xl font-bold text-white">MecanoWeb</span>
+      </div>
+
+      {/* Main Content Area */}
+      <div className={`
+        transition-all duration-300 
+        md:ml-64 
+        pt-20 md:pt-4 
+        p-4
+      `}>
         {/* Practice Section */}
         {currentView === 'practice' && <Levels />}
         {currentView === 'free-practice' && <FreePractice />}
@@ -132,6 +166,19 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         {/* Games Section */}
         {currentView === 'game' && <PlayGame />}
         
+        {/* Multiplayer Section */}
+        {currentView === 'race-mode' && user && <RaceMode />}
+        {currentView === 'practice-room' && user && <PracticeRoom />}
+        {currentView === 'friends' && user && (
+          <RoomLobby 
+            mode="practice" // Friends view could just show lobby or specific friends list
+            onJoinRoom={() => {}} 
+          />
+        )}
+
+        {/* Custom Levels Section */}
+        {currentView === 'my-levels' && user && <CustomLevelsViewer />}
+
         {/* Create Section - Only accessible when authenticated */}
         {currentView === 'create' && user && <CreateText />}
         {currentView === 'create-level' && user && <LevelCreator />}

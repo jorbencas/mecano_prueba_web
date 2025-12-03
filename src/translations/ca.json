@@ -94,10 +94,17 @@
         "buttons": {
             "createNewText": "Crear Nou Text"
         },
+        "loadingProgress": "Carregant progrés...",
         "modal": {
             "title": "Crear Nou Text",
-            "placeholder": "Escriu un nou text aquí...",
-            "add": "Afegir Nou Text",
+            "textLabel": "Text",
+            "textPlaceholder": "Escriu un nou text aquí...",
+            "charCount": "caràcters",
+            "minChars": "mínim 10",
+            "wpmGoalLabel": "Objectiu WPM",
+            "errorLimitLabel": "Límit d'Errors",
+            "addButton": "Afegir Nou Text",
+            "cancelButton": "Cancel·lar",
             "close": "Tancar"
         }
     },
@@ -106,8 +113,9 @@
         "sections": {
             "practice": "Pràctica",
             "games": "Jocs",
-            "create": "Crear",
-            "progress": "Progrés"
+            "custom": "Personalitzat",
+            "progress": "Progrés",
+            "multiplayer": "Multijugador"
         },
         "practice": {
             "guided": "Nivells Guiats",
@@ -123,14 +131,20 @@
         "games": {
             "falling": "Lletres Caient"
         },
-        "create": {
+        "custom": {
             "texts": "Textos Personalitzats",
-            "levels": "Nivells Personalitzats"
+            "myLevels": "Els Meus Nivells"
+        },
+        "multiplayer": {
+            "race": "Carrera Competitiva",
+            "practice": "Sala de Pràctica",
+            "friends": "Amics"
         },
         "progress": {
             "stats": "Estadístiques",
             "achievements": "Assoliments",
-            "leaderboard": "Classificació"
+            "leaderboard": "Classificació",
+            "challenges": "Reptes Diaris"
         },
         "items": {
             "game": "Joc",

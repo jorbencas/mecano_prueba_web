@@ -35,25 +35,14 @@ const CreateText: React.FC = () => {
   const [currentLevel, setCurrentLevel] = useState(0);
 
   useEffect(() => {
-    const storedTexts = localStorage.getItem('texts');
-    if (storedTexts) {
-      const parsedTexts = JSON.parse(storedTexts);
-      setTexts(parsedTexts);
-      // Set initial text on mount
-      if (parsedTexts.length > 0 && !selectedText) {
-        setSelectedText(parsedTexts[0].text);
-        setNextKey(parsedTexts[0].text[0].toLowerCase());
-      }
-    } else if (sampleTexts.length > 0 && !selectedText) {
-      // If no stored texts, use first sample text
+    // Initialize with sample texts
+    if (sampleTexts.length > 0 && !selectedText) {
       setSelectedText(sampleTexts[0].text);
       setNextKey(sampleTexts[0].text[0].toLowerCase());
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('texts', JSON.stringify(texts));
-  }, [texts]);
+
 
   const handleKeyPress = (key: string) => {
     if (!selectedText) return;
@@ -107,20 +96,7 @@ const CreateText: React.FC = () => {
     setNextKey('');
   };
 
-  const handleAddNewText = (text: string, wpmGoal: number = 60, errorLimit: number = 5) => {
-    const newLevel: Level = {
-      keys: text.split(''),
-      name: `${t('createText.newText')} ${texts.length + 1}`,
-      text: text,
-      wpmGoal: wpmGoal,
-      errorLimit: errorLimit,
-    };
-    setTexts(prev => [...prev, newLevel]);
-    setSelectedText(text);
-    setNextKey(text[0].toLowerCase());
-    setCurrentIndex(0);
-    setErrors({});
-  };
+
 
   const handleLevelChange = (index: number) => {
     setCurrentLevel(index);
@@ -135,7 +111,6 @@ const CreateText: React.FC = () => {
       <MenuLevels
         source="CreateText"
         onLevelChange={handleLevelChange}
-        onCreateNewText={handleAddNewText}
         currentLevel={currentLevel}
         levels={texts}
       />

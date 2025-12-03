@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useMultiplayer } from '../context/MultiplayerContext';
 import LiveChat from './LiveChat';
+import RoomLobby from './RoomLobby';
 import { FaPlay, FaUsers, FaCopy, FaLock } from 'react-icons/fa';
 
 const PracticeRoom: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { currentRoom, startRace, leaveRoom } = useMultiplayer();
   const [selectedText, setSelectedText] = useState('');
+
+
 
   const sampleTexts = [
     'The quick brown fox jumps over the lazy dog.',
@@ -30,6 +33,10 @@ const PracticeRoom: React.FC = () => {
     }
   };
 
+  if (!currentRoom) {
+    return <RoomLobby mode="practice" onJoinRoom={() => {}} />;
+  }
+
   const copyRoomLink = () => {
     if (currentRoom) {
       const link = `${window.location.origin}/practice-room/${currentRoom.id}`;
@@ -37,6 +44,11 @@ const PracticeRoom: React.FC = () => {
       alert('¡Enlace copiado al portapapeles!');
     }
   };
+
+  // Show RoomLobby if not in a room
+  if (!currentRoom) {
+    return <RoomLobby mode="practice" onJoinRoom={() => {}} />;
+  }
 
   return (
     <div className={`min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>

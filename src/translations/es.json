@@ -94,10 +94,17 @@
         "buttons": {
             "createNewText": "Crear Nuevo Texto"
         },
+        "loadingProgress": "Cargando progreso...",
         "modal": {
             "title": "Crear Nuevo Texto",
-            "placeholder": "Escribe un nuevo texto aquí...",
-            "add": "Agregar Nuevo Texto",
+            "textLabel": "Texto",
+            "textPlaceholder": "Escribe un nuevo texto aquí...",
+            "charCount": "caracteres",
+            "minChars": "mínimo 10",
+            "wpmGoalLabel": "Objetivo WPM",
+            "errorLimitLabel": "Límite de Errores",
+            "addButton": "Agregar Nuevo Texto",
+            "cancelButton": "Cancelar",
             "close": "Cerrar"
         }
     },
@@ -106,8 +113,9 @@
         "sections": {
             "practice": "Práctica",
             "games": "Juegos",
-            "create": "Crear",
-            "progress": "Progreso"
+            "custom": "Personalizado",
+            "progress": "Progreso",
+            "multiplayer": "Multijugador"
         },
         "practice": {
             "guided": "Niveles Guiados",
@@ -123,9 +131,14 @@
         "games": {
             "falling": "Letras Cayendo"
         },
-        "create": {
+        "custom": {
             "texts": "Textos Personalizados",
-            "levels": "Niveles Personalizados"
+            "myLevels": "Mis Niveles"
+        },
+        "multiplayer": {
+            "race": "Carrera Competitiva",
+            "practice": "Sala de Práctica",
+            "friends": "Amigos"
         },
         "progress": {
             "stats": "Estadísticas",

@@ -3,11 +3,14 @@ import { useTheme } from '../context/ThemeContext';
 import { useMultiplayer } from '../context/MultiplayerContext';
 import Keyboard from './Keyboard';
 import LiveChat from './LiveChat';
+import RoomLobby from './RoomLobby';
 import { FaTrophy, FaBolt, FaCheckCircle } from 'react-icons/fa';
 
 const RaceMode: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { currentRoom, updateProgress, finishRace, leaveRoom } = useMultiplayer();
+  
+
   
   const [userInput, setUserInput] = useState('');
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -32,6 +35,10 @@ const RaceMode: React.FC = () => {
       setFinished(false);
     }
   }, [isRacing]);
+
+  if (!currentRoom) {
+    return <RoomLobby mode="race" onJoinRoom={() => {}} />;
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isRacing || finished) return;
@@ -69,6 +76,11 @@ const RaceMode: React.FC = () => {
     const sorted = [...currentRoom.players].sort((a, b) => b.progress - a.progress);
     return sorted.findIndex(p => p.id === playerId) + 1;
   };
+
+  // Show RoomLobby if not in a room
+  if (!currentRoom) {
+    return <RoomLobby mode="race" onJoinRoom={() => {}} />;
+  }
 
   return (
     <div className={`min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>

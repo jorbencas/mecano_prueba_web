@@ -24,7 +24,6 @@ interface LevelProgress {
 interface MenuLevelsProps {
   source: 'Levels' | 'PlayGame' | 'CreateText' | 'ZenMode' | 'NumbersMode' | 'SymbolsMode' | 'CodeMode' | 'DictationMode';
   onLevelChange: (level: number) => void;
-  onCreateNewText?: (text: string, wpmGoal?: number, errorLimit?: number) => void;
   currentLevel: number;
   levels: Level[];
   user?: any;
@@ -33,15 +32,10 @@ interface MenuLevelsProps {
 const MenuLevels: React.FC<MenuLevelsProps> = ({
   source,
   onLevelChange,
-  onCreateNewText,
   currentLevel,
   levels,
   user,
 }) => {
-  const [showCreateTextModal, setShowCreateTextModal] = useState(false);
-  const [newText, setNewText] = useState('');
-  const [wpmGoal, setWpmGoal] = useState(60);
-  const [errorLimit, setErrorLimit] = useState(5);
   const [levelProgress, setLevelProgress] = useState<LevelProgress[]>([]);
   const [loading, setLoading] = useState(false);
   const { isDarkMode } = useTheme();
@@ -85,15 +79,6 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
     }
   };
 
-  const handleAddNewText = () => {
-    if (newText.trim() && newText.length >= 10 && onCreateNewText) {
-      onCreateNewText(newText.trim(), wpmGoal, errorLimit);
-      setNewText('');
-      setWpmGoal(60);
-      setErrorLimit(5);
-      setShowCreateTextModal(false);
-    }
-  };
 
   const isLevelUnlocked = (levelIndex: number): boolean => {
     // First level always unlocked
@@ -199,91 +184,6 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
           );
         })}
       </ul>
-
-      {source === 'CreateText' && (
-        <button
-          onClick={() => setShowCreateTextModal(true)}
-          className={`mt-4 px-4 py-2 ${isDarkMode ? 'bg-red-700 hover:bg-red-800' : 'bg-red-500 hover:bg-red-600'} text-white rounded-md transition-colors duration-300`}
-        >
-          {t('menuLevels.buttons.createNewText')}
-        </button>
-      )}
-
-      {showCreateTextModal && (
-        <div className={`fixed inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-black'} bg-opacity-50 flex items-center justify-center z-50`}>
-          <div className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'} p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto`}>
-            <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-blue-300' : 'text-blue-600'}`}>
-              {t('menuLevels.modal.title')}
-            </h2>
-            
-            <div className="mb-4">
-              <label className="block mb-2 font-semibold">
-                {t('menuLevels.modal.textLabel')}
-              </label>
-              <textarea
-                value={newText}
-                onChange={(e) => setNewText(e.target.value)}
-                className={`w-full p-2 border rounded ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-black'}`}
-                rows={6}
-                placeholder={t('menuLevels.modal.textPlaceholder')}
-              />
-              <p className="text-sm mt-1 opacity-75">
-                {newText.length} {t('menuLevels.modal.charCount', 'caracteres')} ({t('menuLevels.modal.minChars', 'mínimo 10')})
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block mb-2 font-semibold">
-                  {t('menuLevels.modal.wpmGoalLabel')}
-                </label>
-                <input
-                  type="number"
-                  value={wpmGoal}
-                  onChange={(e) => setWpmGoal(Number(e.target.value))}
-                  className={`w-full p-2 border rounded ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-black'}`}
-                  min={20}
-                  max={150}
-                />
-              </div>
-              <div>
-                <label className="block mb-2 font-semibold">
-                  {t('menuLevels.modal.errorLimitLabel')}
-                </label>
-                <input
-                  type="number"
-                  value={errorLimit}
-                  onChange={(e) => setErrorLimit(Number(e.target.value))}
-                  className={`w-full p-2 border rounded ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-black'}`}
-                  min={0}
-                  max={20}
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                onClick={handleAddNewText}
-                disabled={newText.length < 10}
-                className={`flex-1 px-4 py-2 ${isDarkMode ? 'bg-blue-700 hover:bg-blue-800' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed`}
-              >
-                {t('menuLevels.modal.addButton')}
-              </button>
-              <button
-                onClick={() => {
-                  setShowCreateTextModal(false);
-                  setNewText('');
-                  setWpmGoal(60);
-                  setErrorLimit(5);
-                }}
-                className={`flex-1 px-4 py-2 ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-300 hover:bg-gray-400'} rounded-md`}
-              >
-                {t('menuLevels.modal.cancelButton')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

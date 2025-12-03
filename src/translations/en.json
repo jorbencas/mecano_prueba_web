@@ -94,10 +94,17 @@
         "buttons": {
             "createNewText": "Create New Text"
         },
+        "loadingProgress": "Loading progress...",
         "modal": {
             "title": "Create New Text",
-            "placeholder": "Write a new text here...",
-            "add": "Add New Text",
+            "textLabel": "Text",
+            "textPlaceholder": "Write a new text here...",
+            "charCount": "characters",
+            "minChars": "minimum 10",
+            "wpmGoalLabel": "WPM Goal",
+            "errorLimitLabel": "Error Limit",
+            "addButton": "Add New Text",
+            "cancelButton": "Cancel",
             "close": "Close"
         }
     },
@@ -106,8 +113,9 @@
         "sections": {
             "practice": "Practice",
             "games": "Games",
-            "create": "Create",
-            "progress": "Progress"
+            "custom": "Custom",
+            "progress": "Progress",
+            "multiplayer": "Multiplayer"
         },
         "practice": {
             "guided": "Guided Levels",
@@ -123,14 +131,20 @@
         "games": {
             "falling": "Falling Letters"
         },
-        "create": {
+        "custom": {
             "texts": "Custom Texts",
-            "levels": "Custom Levels"
+            "myLevels": "My Levels"
+        },
+        "multiplayer": {
+            "race": "Competitive Race",
+            "practice": "Practice Room",
+            "friends": "Friends"
         },
         "progress": {
             "stats": "Statistics",
             "achievements": "Achievements",
-            "leaderboard": "Leaderboard"
+            "leaderboard": "Leaderboard",
+            "challenges": "Daily Challenges"
         },
         "items": {
             "game": "Game",
