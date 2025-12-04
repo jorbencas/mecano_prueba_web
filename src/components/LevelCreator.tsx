@@ -14,7 +14,7 @@ const LevelCreator: React.FC = () => {
   const [errorLimit, setErrorLimit] = useState(5);
   const [wpmGoal, setWpmGoal] = useState(60);
 
-  const allKeys = 'abcdefghijklmnopqrstuvwxyz0123456789'.split('');
+  const allKeys = 'abcdefghijklmnñopqrstuvwxyz0123456789'.split('');
 
   const toggleKey = (key: string) => {
     setSelectedKeys(prev =>

@@ -12,6 +12,8 @@ interface TypingAreaProps {
   source?: string;
   standalone?: boolean; // If true, only show text without stats
   maxHeight?: string; // Optional max height for scrollable text
+  completedClass?: string; // Custom class for completed text
+  activeClass?: string; // Custom class for the current character
 }
 
 const TypingArea: React.FC<TypingAreaProps> = ({ 
@@ -23,7 +25,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   errors = 0, 
   source,
   standalone = false,
-  maxHeight
+  maxHeight,
+  completedClass = 'text-green-500',
+  activeClass = 'font-bold text-blue-500'
 }) => {
   const textAreaRef = useRef<HTMLParagraphElement>(null);
   const { isDarkMode } = useTheme();

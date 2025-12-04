@@ -136,20 +136,28 @@ const PrecisionMode: React.FC = () => {
   return (
     <div className={`min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">{t('precisionMode.title', 'Modo Precisión')}</h1>
+        <div className="text-center mb-8">
+          <h1 className={`text-4xl font-extrabold mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-teal-400 via-cyan-400 to-blue-400' : 'from-teal-600 via-cyan-600 to-blue-600'}`}>
+            {t('precisionMode.title', 'Modo Precisión')}
+          </h1>
+        </div>
 
         {/* Start Screen */}
         {!isActive && !showStats && (
-          <div className={`p-6 rounded-lg text-center mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className={`p-8 rounded-2xl text-center shadow-xl border backdrop-blur-sm transition-all duration-300 ${isDarkMode ? 'bg-gray-800/60 border-teal-900/30' : 'bg-white/80 border-teal-100'}`}>
             <h2 className="text-2xl font-bold mb-4">
               {t('precisionMode.readyToStart', '¿Listo para el desafío de precisión?')}
             </h2>
-            <p className={`mb-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`mb-8 text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               {t('precisionMode.startInstructions', `Tienes ${TIME_LIMIT} segundos para escribir el texto con la mayor precisión posible`)}
             </p>
             <button
               onClick={handleStart}
-              className="px-8 py-4 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xl font-bold"
+              className={`px-10 py-4 rounded-xl font-bold text-xl shadow-lg shadow-teal-500/30 transition-all hover:scale-105 hover:shadow-teal-500/40 active:scale-95 ${
+                isDarkMode 
+                  ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
+                  : 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white'
+              }`}
             >
               {t('precisionMode.start', 'Comenzar Desafío')}
             </button>
@@ -158,27 +166,43 @@ const PrecisionMode: React.FC = () => {
 
         {/* Active Practice Indicator */}
         {isActive && (
-          <div className={`p-4 rounded-lg mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-            <div className="flex justify-between items-center mb-4">
-              <div className="text-4xl font-bold text-blue-500">{Math.max(0, TIME_LIMIT - timeElapsed)}s</div>
+          <div className={`p-6 rounded-2xl mb-6 shadow-lg border backdrop-blur-sm ${isDarkMode ? 'bg-gray-800/60 border-teal-900/30' : 'bg-white/80 border-teal-100'}`}>
+            <div className="flex justify-between items-center mb-6">
+              <div className={`text-5xl font-black tracking-tighter ${isDarkMode ? 'text-teal-400' : 'text-teal-600'}`}>
+                {Math.max(0, TIME_LIMIT - timeElapsed)}s
+              </div>
               <button
                 onClick={handleStop}
-                className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white font-bold"
+                className={`px-6 py-2 rounded-lg font-bold shadow-lg transition-all hover:scale-105 active:scale-95 ${
+                  isDarkMode ? 'bg-red-600 hover:bg-red-700' : 'bg-red-500 hover:bg-red-600'
+                } text-white`}
               >
                 {t('precisionMode.stop', 'Detener')}
               </button>
             </div>
-            <div className="flex gap-6 text-lg">
-              <span>{t('typingArea.stats.accuracy')}: <span className={accuracy >= 98 ? 'text-green-500' : accuracy >= 95 ? 'text-yellow-500' : 'text-red-500'}>{accuracy}%</span></span>
-              <span>{t('typingArea.stats.errors')}: <span className="text-red-500">{totalErrors}</span></span>
-              <span>{t('precisionMode.progress', 'Progreso')}: {currentIndex}/{currentText.length}</span>
+            
+            <div className={`flex gap-8 p-4 rounded-xl ${isDarkMode ? 'bg-gray-900/50' : 'bg-teal-50/50'}`}>
+              <div className="flex-1 text-center">
+                <div className={`text-xs uppercase font-bold mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('typingArea.stats.accuracy')}</div>
+                <div className={`text-3xl font-bold ${accuracy >= 98 ? 'text-green-500' : accuracy >= 95 ? 'text-yellow-500' : 'text-red-500'}`}>{accuracy}%</div>
+              </div>
+              <div className="w-px bg-gray-300/20"></div>
+              <div className="flex-1 text-center">
+                <div className={`text-xs uppercase font-bold mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('typingArea.stats.errors')}</div>
+                <div className="text-3xl font-bold text-red-500">{totalErrors}</div>
+              </div>
+              <div className="w-px bg-gray-300/20"></div>
+              <div className="flex-1 text-center">
+                <div className={`text-xs uppercase font-bold mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('precisionMode.progress', 'Progreso')}</div>
+                <div className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{currentIndex}/{currentText.length}</div>
+              </div>
             </div>
           </div>
         )}
 
         {/* Text Display */}
         {isActive && (
-          <div className={`p-6 rounded-lg mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className={`p-6 rounded-2xl mb-6 shadow-lg border backdrop-blur-sm ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
             <TypingArea
               text={currentText}
               currentIndex={currentIndex}
@@ -190,13 +214,15 @@ const PrecisionMode: React.FC = () => {
 
         {/* Problematic Keys */}
         {isActive && mostProblematicKeys.length > 0 && (
-          <div className={`p-4 rounded-lg mb-6 ${isDarkMode ? 'bg-red-900' : 'bg-red-100'}`}>
-            <h3 className="font-bold mb-2">{t('precisionMode.problematicKeys', 'Teclas Problemáticas')}:</h3>
-            <div className="flex gap-4">
+          <div className={`p-6 rounded-2xl mb-6 border backdrop-blur-sm ${isDarkMode ? 'bg-red-900/20 border-red-900/30' : 'bg-red-50/80 border-red-100'}`}>
+            <h3 className="font-bold mb-4 text-red-500 flex items-center gap-2">
+              <span>⚠️</span> {t('precisionMode.problematicKeys', 'Teclas Problemáticas')}
+            </h3>
+            <div className="flex gap-4 flex-wrap">
               {mostProblematicKeys.map(({key, count}) => (
-                <div key={key} className="text-center">
-                  <div className="text-2xl font-mono font-bold">{key}</div>
-                  <div className="text-sm">{count} {t('precisionMode.errors', 'errores')}</div>
+                <div key={key} className={`flex flex-col items-center p-3 rounded-xl min-w-[80px] ${isDarkMode ? 'bg-red-900/40' : 'bg-white shadow-sm border border-red-100'}`}>
+                  <div className={`text-2xl font-mono font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{key}</div>
+                  <div className="text-xs font-bold text-red-500">{count} err</div>
                 </div>
               ))}
             </div>
@@ -204,16 +230,20 @@ const PrecisionMode: React.FC = () => {
         )}
 
         {isActive && (
-          <>
-            <Keyboard activeKey={nextKey} levelKeys={[]} />
+          <div className="mt-8">
+            <div className="mb-8">
+              <Keyboard activeKey={nextKey} levelKeys={[]} />
+            </div>
             <Hands nextKey={nextKey} />
-          </>
+          </div>
         )}
         
-        <InstruccionesButton
-          instructions={t('precisionMode.instructions', 'Concéntrate en la precisión. Cada error se registra y se muestran tus teclas más problemáticas.')}
-          source="PrecisionMode"
-        />
+        <div className="mt-8">
+          <InstruccionesButton
+            instructions={t('precisionMode.instructions', 'Concéntrate en la precisión. Cada error se registra y se muestran tus teclas más problemáticas.')}
+            source="PrecisionMode"
+          />
+        </div>
 
         {/* Stats Modal */}
         {showStats && (

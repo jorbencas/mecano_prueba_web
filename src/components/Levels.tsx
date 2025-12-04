@@ -180,28 +180,38 @@ const Levels: React.FC = () => {
         levels={levels}
         user={user}
       />
-      <div className="w-3/4">
-        <h1 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+      <div className="w-full lg:w-3/4">
+        <h1 className={`text-4xl font-extrabold mb-8 tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-blue-400 via-purple-400 to-indigo-400' : 'from-blue-600 via-purple-600 to-indigo-600'}`}>
           {t('levels.title')}
         </h1>
 
-        <TypingArea
-          text={text}
-          currentIndex={currentIndex}
-          onKeyPress={handleKeyPress}
-          wpm={wpm}
-          accuracy={accuracy}
-          errors={errors}
-          source="Levels"
-        />
+        <div className={`p-6 rounded-2xl shadow-xl border backdrop-blur-sm transition-all duration-300 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
+          <TypingArea
+            text={text}
+            currentIndex={currentIndex}
+            onKeyPress={handleKeyPress}
+            wpm={wpm}
+            accuracy={accuracy}
+            errors={errors}
+            source="Levels"
+          />
 
-        <Keyboard activeKey={nextKey} levelKeys={extractKeysFromText(levels[level].text)} />
-        <Hands nextKey={nextKey} />
+          <div className="mt-8">
+            <Keyboard activeKey={nextKey} levelKeys={extractKeysFromText(levels[level].text)} />
+          </div>
+          
+          <div className="mt-8">
+            <Hands nextKey={nextKey} />
+          </div>
 
-        <InstruccionesButton
-          instructions={t('levels.instructions')}
-          source="Levels"
-        />
+          <div className="mt-8">
+            <InstruccionesButton
+              instructions={t('levels.instructions')}
+              source="Levels"
+            />
+          </div>
+        </div>
+
         {showStatsModal && (
           <Stats
             stats={getStatsData({

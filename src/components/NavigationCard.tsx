@@ -8,8 +8,102 @@ interface NavigationCardProps {
   icon: React.ReactNode;
   onClick: () => void;
   locked?: boolean;
-  color?: string; // Tailwind color class prefix, e.g., 'blue', 'green'
+  color?: string; // Color name: 'blue', 'green', 'red', etc.
 }
+
+// HSL to Hex conversion
+const hslToHex = (h: number, s: number, l: number): string => {
+  l /= 100;
+  const a = s * Math.min(l, 1 - l) / 100;
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+};
+
+// Generate comprehensive color palette - 120 colors
+const generateColorMap = () => {
+  const colors: Record<string, {
+    border: string;
+    borderHover: string;
+    iconBg: string;
+    iconBgDark: string;
+    iconText: string;
+    iconTextDark: string;
+    bgDecorative: string;
+  }> = {};
+
+  // Base colors with semantic names
+  const baseColors = [
+    { name: 'blue', hue: 210 },
+    { name: 'sky', hue: 200 },
+    { name: 'cyan', hue: 180 },
+    { name: 'teal', hue: 170 },
+    { name: 'emerald', hue: 150 },
+    { name: 'green', hue: 140 },
+    { name: 'lime', hue: 90 },
+    { name: 'yellow', hue: 60 },
+    { name: 'amber', hue: 45 },
+    { name: 'orange', hue: 30 },
+    { name: 'red', hue: 0 },
+    { name: 'rose', hue: 350 },
+    { name: 'pink', hue: 330 },
+    { name: 'fuchsia', hue: 300 },
+    { name: 'purple', hue: 270 },
+    { name: 'violet', hue: 260 },
+    { name: 'indigo', hue: 240 },
+    { name: 'slate', hue: 215 },
+  ];
+
+  // Generate base semantic colors
+  baseColors.forEach(({ name, hue }) => {
+    colors[name] = {
+      border: '#e5e7eb',
+      borderHover: hslToHex(hue, 75, 55),
+      iconBg: hslToHex(hue, 70, 95),
+      iconBgDark: '#374151',
+      iconText: hslToHex(hue, 75, 45),
+      iconTextDark: hslToHex(hue, 70, 65),
+      bgDecorative: hslToHex(hue, 75, 55),
+    };
+  });
+
+  // Generate numbered variations (color-1 to color-100)
+  for (let i = 1; i <= 100; i++) {
+    const hue = (i * 3.6) % 360; // Distribute evenly across color wheel
+    const saturation = 60 + (i % 3) * 10; // Vary saturation: 60, 70, 80
+    
+    colors[`color-${i}`] = {
+      border: '#e5e7eb',
+      borderHover: hslToHex(hue, saturation, 55),
+      iconBg: hslToHex(hue, saturation - 10, 95),
+      iconBgDark: '#374151',
+      iconText: hslToHex(hue, saturation, 45),
+      iconTextDark: hslToHex(hue, saturation - 10, 65),
+      bgDecorative: hslToHex(hue, saturation, 55),
+    };
+  }
+
+  // Add grayscale variations
+  for (let i = 1; i <= 10; i++) {
+    const lightness = 30 + i * 5;
+    colors[`gray-${i}`] = {
+      border: '#e5e7eb',
+      borderHover: hslToHex(0, 0, lightness),
+      iconBg: hslToHex(0, 0, 95),
+      iconBgDark: '#374151',
+      iconText: hslToHex(0, 0, lightness - 10),
+      iconTextDark: hslToHex(0, 0, lightness + 20),
+      bgDecorative: hslToHex(0, 0, lightness),
+    };
+  }
+
+  return colors;
+};
+
+const colorMap = generateColorMap();
 
 const NavigationCard: React.FC<NavigationCardProps> = ({ 
   title, 
@@ -20,46 +114,70 @@ const NavigationCard: React.FC<NavigationCardProps> = ({
   color = 'blue'
 }) => {
   const { isDarkMode } = useTheme();
-
-  const baseClasses = `
-    relative overflow-hidden rounded-xl p-6 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl cursor-pointer
-    border-2
-  `;
-
-  const themeClasses = isDarkMode
-    ? `bg-gray-800 border-gray-700 hover:border-${color}-500`
-    : `bg-white border-gray-100 hover:border-${color}-500 shadow-md`;
-
-  const iconContainerClasses = `
-    w-12 h-12 rounded-lg flex items-center justify-center mb-4 text-2xl
-    ${isDarkMode ? `bg-gray-700 text-${color}-400` : `bg-${color}-50 text-${color}-600`}
-  `;
+  const colors = colorMap[color] || colorMap.blue;
 
   return (
     <div 
       onClick={locked ? undefined : onClick}
-      className={`${baseClasses} ${themeClasses} ${locked ? 'opacity-75 cursor-not-allowed grayscale' : ''}`}
+      className={`
+        relative overflow-hidden rounded-xl transition-all duration-300 transform 
+        hover:-translate-y-2 hover:shadow-2xl cursor-pointer
+        border-2 group
+        p-4 md:p-6
+        ${isDarkMode ? 'bg-gray-800 hover:bg-gray-750' : 'bg-white hover:bg-gray-50 shadow-lg'}
+        ${locked ? 'opacity-75 cursor-not-allowed grayscale' : ''}
+      `}
+      style={{
+        borderColor: isDarkMode ? '#374151' : colors.border,
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}
+      onMouseEnter={(e) => {
+        if (!locked) {
+          e.currentTarget.style.borderColor = colors.borderHover;
+          e.currentTarget.style.boxShadow = `0 20px 25px -5px ${colors.borderHover}20, 0 10px 10px -5px ${colors.borderHover}10`;
+        }
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = isDarkMode ? '#374151' : colors.border;
+        e.currentTarget.style.boxShadow = '';
+      }}
     >
       <div className="flex justify-between items-start">
-        <div className={iconContainerClasses}>
+        <div 
+          className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center mb-3 md:mb-4 text-xl md:text-2xl transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300"
+          style={{
+            backgroundColor: isDarkMode ? colors.iconBgDark : colors.iconBg,
+            color: isDarkMode ? colors.iconTextDark : colors.iconText,
+          }}
+        >
           {icon}
         </div>
         {locked && <FaLock className="text-gray-400" />}
       </div>
       
-      <h3 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+      <h3 className={`text-lg md:text-xl font-bold mb-1 md:mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r transition-all duration-300 ${isDarkMode ? 'text-white group-hover:from-white group-hover:to-gray-300' : 'text-gray-900 group-hover:from-gray-900 group-hover:to-gray-600'}`}>
         {title}
       </h3>
       
-      <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+      <p className={`text-xs md:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
         {description}
       </p>
 
       {/* Decorative background element */}
-      <div className={`
-        absolute -bottom-4 -right-4 w-24 h-24 rounded-full opacity-5
-        ${isDarkMode ? 'bg-white' : `bg-${color}-500`}
-      `} />
+      <div 
+        className="absolute -bottom-4 -right-4 w-20 h-20 md:w-24 md:h-24 rounded-full opacity-5 group-hover:opacity-10 transition-opacity duration-300"
+        style={{
+          backgroundColor: isDarkMode ? '#ffffff' : colors.bgDecorative,
+        }}
+      />
+      
+      {/* Hover glow effect */}
+      <div 
+        className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at 50% 50%, ${colors.borderHover}10, transparent 70%)`,
+        }}
+      />
     </div>
   );
 };

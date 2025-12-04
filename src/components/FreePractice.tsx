@@ -6,7 +6,7 @@ import { useActivityTracker } from '../hooks/useActivityTracker';
 import Keyboard from './Keyboard';
 import Hands from './Hands';
 import InstruccionesButton from './Instrucciones';
-import { FaRedo, FaCheck } from 'react-icons/fa';
+import { FaRedo, FaCheck, FaKeyboard } from 'react-icons/fa';
 import TypingArea from './TypingArea';
 import RegistrationModal from './RegistrationModal';
 
@@ -195,16 +195,21 @@ const FreePractice: React.FC = () => {
     }
   }, [user]);
 
-  const allKeys = 'abcdefghijklmnopqrstuvwxyz'.split('');
+  const allKeys = 'abcdefghijklmnñopqrstuvwxyz'.split('');
 
   return (
     <div className={`min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">{t('freePractice.title', 'Práctica Libre')}</h1>
+        <div className="text-center mb-8">
+          <h1 className={`text-4xl font-extrabold mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r flex items-center justify-center gap-4 ${isDarkMode ? 'from-blue-400 via-cyan-400 to-teal-400' : 'from-blue-600 via-cyan-600 to-teal-600'}`}>
+            <FaKeyboard className={isDarkMode ? 'text-blue-400' : 'text-blue-600'} />
+            {t('freePractice.title', 'Práctica Libre')}
+          </h1>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Key Selector */}
-          <div className={`lg:col-span-1 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className={`lg:col-span-1 p-6 rounded-2xl shadow-xl border backdrop-blur-sm transition-all duration-300 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">{t('freePractice.selectKeys', 'Selecciona Teclas')}</h2>
               {user && configSaved && (
@@ -262,7 +267,7 @@ const FreePractice: React.FC = () => {
           <div className="lg:col-span-3 space-y-6">
             {/* Control Panel */}
             {!isActive && (
-              <div className={`p-6 rounded-lg text-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <div className={`p-8 rounded-2xl text-center shadow-xl border backdrop-blur-sm transition-all duration-300 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
                 <h2 className="text-2xl font-bold mb-4">
                   {t('freePractice.readyToStart', '¿Listo para practicar?')}
                 </h2>
@@ -293,7 +298,7 @@ const FreePractice: React.FC = () => {
             
             {/* Stats Panel */}
             {isActive && (
-              <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+              <div className={`p-6 rounded-2xl shadow-lg border backdrop-blur-sm mb-6 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
                 <div className="flex justify-between items-center mb-2">
                   <h2 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
                     {t('freePractice.session', 'Sesión de Práctica')}
@@ -330,7 +335,7 @@ const FreePractice: React.FC = () => {
             )}
 
             {/* Text Display */}
-            <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+            <div className={`p-6 rounded-2xl shadow-lg border backdrop-blur-sm ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
               <TypingArea
                 text={currentText}
                 currentIndex={currentIndex}

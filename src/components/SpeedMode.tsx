@@ -95,22 +95,26 @@ const SpeedMode: React.FC = () => {
   return (
     <div className={`min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">{t('speedMode.title', 'Modo Velocidad')}</h1>
+        <div className="text-center mb-8">
+          <h1 className={`text-4xl font-extrabold mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-orange-400 via-red-400 to-yellow-400' : 'from-orange-600 via-red-600 to-yellow-600'}`}>
+            {t('speedMode.title', 'Modo Velocidad')}
+          </h1>
+        </div>
 
         {!isActive && !showStats && (
-          <div className={`p-6 rounded-lg mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <h2 className="text-2xl font-bold mb-4">{t('speedMode.selectDuration', 'Selecciona Duración')}</h2>
-            <div className="flex gap-4 mb-6">
+          <div className={`p-8 rounded-2xl text-center shadow-xl border backdrop-blur-sm transition-all duration-300 ${isDarkMode ? 'bg-gray-800/60 border-orange-900/30' : 'bg-white/80 border-orange-100'}`}>
+            <h2 className="text-2xl font-bold mb-6">{t('speedMode.selectDuration', 'Selecciona Duración')}</h2>
+            <div className="flex justify-center gap-4 mb-8">
               {[30, 60, 120].map(d => (
                 <button
                   key={d}
                   onClick={() => setDuration(d)}
-                  className={`px-6 py-3 rounded text-lg font-bold ${
+                  className={`px-8 py-4 rounded-xl text-xl font-bold transition-all duration-200 ${
                     duration === d
-                      ? 'bg-blue-500 text-white'
+                      ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg scale-105'
                       : isDarkMode
-                      ? 'bg-gray-700 hover:bg-gray-600'
-                      : 'bg-gray-200 hover:bg-gray-300'
+                      ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                   }`}
                 >
                   {d}s
@@ -119,7 +123,11 @@ const SpeedMode: React.FC = () => {
             </div>
             <button
               onClick={startChallenge}
-              className="px-8 py-4 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xl font-bold"
+              className={`px-10 py-4 rounded-xl font-bold text-xl shadow-lg shadow-orange-500/30 transition-all hover:scale-105 hover:shadow-orange-500/40 active:scale-95 ${
+                isDarkMode 
+                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white' 
+                  : 'bg-gradient-to-r from-orange-600 to-red-600 text-white'
+              }`}
             >
               {t('speedMode.start', 'Comenzar Desafío')}
             </button>
@@ -128,18 +136,32 @@ const SpeedMode: React.FC = () => {
 
         {isActive && (
           <>
-            <div className={`p-4 rounded-lg mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-              <div className="flex justify-between items-center">
-                <div className="text-4xl font-bold text-blue-500">{timeLeft}s</div>
-                <div className="flex gap-6 text-lg">
-                  <span>{t('typingArea.stats.wpm')}: {wpm}</span>
-                  <span>{t('typingArea.stats.accuracy')}: {accuracy}%</span>
-                  <span>{t('typingArea.stats.errors')}: {errors}</span>
+            <div className={`p-6 rounded-2xl mb-6 shadow-lg border backdrop-blur-sm ${isDarkMode ? 'bg-gray-800/60 border-orange-900/30' : 'bg-white/80 border-orange-100'}`}>
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className={`text-6xl font-black tracking-tighter ${timeLeft <= 10 ? 'animate-pulse text-red-500' : isDarkMode ? 'text-orange-400' : 'text-orange-600'}`}>
+                  {timeLeft}s
+                </div>
+                
+                <div className={`flex gap-8 p-4 rounded-xl ${isDarkMode ? 'bg-gray-900/50' : 'bg-orange-50/50'}`}>
+                  <div className="text-center">
+                    <div className={`text-xs uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('typingArea.stats.wpm')}</div>
+                    <div className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{wpm}</div>
+                  </div>
+                  <div className="w-px bg-gray-300/20"></div>
+                  <div className="text-center">
+                    <div className={`text-xs uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('typingArea.stats.accuracy')}</div>
+                    <div className="text-2xl font-bold text-blue-500">{accuracy}%</div>
+                  </div>
+                  <div className="w-px bg-gray-300/20"></div>
+                  <div className="text-center">
+                    <div className={`text-xs uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('typingArea.stats.errors')}</div>
+                    <div className="text-2xl font-bold text-red-500">{errors}</div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className={`p-6 rounded-lg mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+            <div className={`p-6 rounded-2xl mb-6 shadow-lg border backdrop-blur-sm ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
               <TypingArea
                 text={currentText}
                 currentIndex={currentIndex}
@@ -148,15 +170,21 @@ const SpeedMode: React.FC = () => {
               />
             </div>
 
-            <Keyboard activeKey={nextKey} levelKeys={[]} />
-            <Hands nextKey={nextKey} />
+            <div className="mt-8">
+              <Keyboard activeKey={nextKey} levelKeys={[]} />
+            </div>
+            <div className="mt-8">
+              <Hands nextKey={nextKey} />
+            </div>
           </>
         )}
 
-        <InstruccionesButton
-          instructions={t('speedMode.instructions', 'Escribe lo más rápido posible durante el tiempo seleccionado. Tu objetivo es maximizar tu WPM.')}
-          source="SpeedMode"
-        />
+        <div className="mt-8">
+          <InstruccionesButton
+            instructions={t('speedMode.instructions', 'Escribe lo más rápido posible durante el tiempo seleccionado. Tu objetivo es maximizar tu WPM.')}
+            source="SpeedMode"
+          />
+        </div>
 
         {showStats && (
           <ErrorModal isOpen={showStats} onClose={() => {

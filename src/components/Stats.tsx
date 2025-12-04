@@ -27,16 +27,17 @@ const StatRow: React.FC<{
   value: React.ReactNode;
   highlight?: boolean;
   color?: string;
-}> = ({ label, value, highlight, color }) => (
-  <div className="flex justify-between">
-    <span className="text-gray-600">{label}:</span>
+  isDarkMode: boolean;
+}> = ({ label, value, highlight, color, isDarkMode }) => (
+  <div className="flex justify-between items-center">
+    <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} font-medium`}>{label}</span>
     <span
-      className={`font-bold ${
+      className={`text-xl font-bold ${
         color
           ? color
           : highlight
-          ? 'text-green-600'
-          : 'text-red-600'
+          ? 'text-green-500'
+          : 'text-red-500'
       }`}
     >
       {value}
@@ -44,32 +45,39 @@ const StatRow: React.FC<{
   </div>
 );
 
-const StatCard: React.FC<{ title: string; className?: string; children: React.ReactNode }> = ({
+const StatCard: React.FC<{ title: string; className?: string; children: React.ReactNode; isDarkMode: boolean }> = ({
   title,
   className = '',
   children,
+  isDarkMode
 }) => (
-  <div className={`p-4 rounded-lg shadow-sm ${className}`}>
-    <h3 className="text-lg font-semibold mb-3">{title}</h3>
-    <div className="space-y-2">{children}</div>
+  <div className={`p-6 rounded-2xl border backdrop-blur-md shadow-lg transition-all duration-300 hover:scale-[1.02] ${
+    isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/60 border-white/50'
+  } ${className}`}>
+    <h3 className={`text-xs uppercase tracking-wider font-bold mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{title}</h3>
+    <div className="space-y-3">{children}</div>
   </div>
 );
 
-const ErrorTable: React.FC<{ errorList: { expected: string; actual: string }[]; t: any }> = ({ errorList, t }) => (
-  <div className="mt-4 bg-red-100 p-4 rounded-lg max-h-[200px] overflow-y-auto">
-    <h3 className="font-semibold mb-2 text-lg text-red-800">{t('stats.errors.title')}</h3>
+const ErrorTable: React.FC<{ errorList: { expected: string; actual: string }[]; t: any; isDarkMode: boolean }> = ({ errorList, t, isDarkMode }) => (
+  <div className={`mt-6 p-6 rounded-2xl border backdrop-blur-sm max-h-[250px] overflow-y-auto ${
+    isDarkMode ? 'bg-red-900/20 border-red-900/30' : 'bg-red-50/80 border-red-100'
+  }`}>
+    <h3 className="font-bold mb-4 text-lg text-red-500 flex items-center gap-2">
+      <span>⚠️</span> {t('stats.errors.title')}
+    </h3>
     <table className="w-full text-sm table-auto">
-      <thead className="bg-red-200">
+      <thead className={`${isDarkMode ? 'bg-red-900/40 text-red-200' : 'bg-red-100/50 text-red-800'}`}>
         <tr>
-          <th className="px-2 py-1 text-left font-bold">{t('stats.errors.expected')}</th>
-          <th className="px-2 py-1 text-left font-bold">{t('stats.errors.actual')}</th>
+          <th className="px-4 py-2 text-left font-bold rounded-l-lg">{t('stats.errors.expected')}</th>
+          <th className="px-4 py-2 text-left font-bold rounded-r-lg">{t('stats.errors.actual')}</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody className="divide-y divide-red-200/20">
         {errorList.map((error, index) => (
-          <tr key={index} className="bg-red-50">
-            <td className="px-2 py-1 font-mono">{error.expected === ' ' ? '_' : error.expected}</td>
-            <td className="px-2 py-1 font-mono">{error.actual === ' ' ? '_' : error.actual}</td>
+          <tr key={index} className={`${isDarkMode ? 'hover:bg-red-900/30' : 'hover:bg-red-50'}`}>
+            <td className="px-4 py-2 font-mono text-lg">{error.expected === ' ' ? '␣' : error.expected}</td>
+            <td className="px-4 py-2 font-mono text-lg text-red-500">{error.actual === ' ' ? '␣' : error.actual}</td>
           </tr>
         ))}
       </tbody>
@@ -77,10 +85,12 @@ const ErrorTable: React.FC<{ errorList: { expected: string; actual: string }[]; 
   </div>
 );
 
-const Requirements: React.FC<{ wpmGoal: number; t: any }> = ({ wpmGoal, t }) => (
-  <div className="mt-4 bg-yellow-50 p-4 rounded-lg">
-    <h3 className="font-semibold mb-2 text-lg text-gray-700">{t('stats.requirements.title')}</h3>
-    <ul className="list-disc list-inside space-y-1 text-gray-700">
+const Requirements: React.FC<{ wpmGoal: number; t: any; isDarkMode: boolean }> = ({ wpmGoal, t, isDarkMode }) => (
+  <div className={`mt-6 p-6 rounded-2xl border backdrop-blur-sm ${
+    isDarkMode ? 'bg-yellow-900/20 border-yellow-900/30' : 'bg-yellow-50/80 border-yellow-100'
+  }`}>
+    <h3 className={`font-bold mb-3 text-lg ${isDarkMode ? 'text-yellow-400' : 'text-yellow-700'}`}>{t('stats.requirements.title')}</h3>
+    <ul className={`list-disc list-inside space-y-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
       <li>{t('stats.requirements.wpm', { wpmGoal })}</li>
       <li>{t('stats.requirements.accuracy')}</li>
       <li>{t('stats.requirements.errors')}</li>
@@ -88,25 +98,32 @@ const Requirements: React.FC<{ wpmGoal: number; t: any }> = ({ wpmGoal, t }) => 
   </div>
 );
 
-const HighlightedText: React.FC<{ text: string; errorList: { expected: string; actual: string }[]; t: any }> = ({
+const HighlightedText: React.FC<{ text: string; errorList: { expected: string; actual: string }[]; t: any; isDarkMode: boolean }> = ({
   text,
   errorList,
   t,
+  isDarkMode
 }) => (
-  <div className="mt-4 bg-gray-100 p-4 rounded-lg max-h-[200px] overflow-y-auto">
-    <h3 className="font-semibold mb-2 text-lg">{t('stats.highlighted.title')}</h3>
-    <p className="font-mono whitespace-pre-wrap break-all">
+  <div className={`mt-6 p-6 rounded-2xl border backdrop-blur-sm max-h-[250px] overflow-y-auto ${
+    isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-gray-50/80 border-gray-200'
+  }`}>
+    <h3 className={`font-bold mb-4 text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{t('stats.highlighted.title')}</h3>
+    <p className="font-mono whitespace-pre-wrap break-all text-lg leading-relaxed">
       {text.split('').map((char, index) => {
         const error = errorList.find((e) => e.expected === char && e.actual !== char);
         return (
           <span
             key={index}
-            className={`inline-block ${error ? 'bg-red-300 relative' : ''}`}
+            className={`inline-block px-0.5 rounded ${
+              error 
+                ? 'bg-red-500/30 text-red-500 font-bold' 
+                : isDarkMode ? 'text-gray-300' : 'text-gray-700'
+            }`}
             data-tooltip-id={`char-${index}`}
             data-tooltip-content={error ? `${t('stats.highlighted.tooltip')} ${error.actual}` : ''}
           >
             {char}
-            {error && <Tooltip id={`char-${index}`} place="top" />}
+            {error && <Tooltip id={`char-${index}`} place="top" className="z-50" />}
           </span>
         );
       })}
@@ -152,19 +169,19 @@ const Stats: React.FC<StatsProps> = ({
       if (errorList.length === 0) {
         return {
           message: t('stats.feedback.createtext.perfect', '¡Perfecto! Sin errores'),
-          color: 'text-green-600',
+          color: 'text-green-500',
           icon: '🎉'
         };
       } else if (accuracy >= 95) {
         return {
           message: t('stats.feedback.createtext.good', 'Buen trabajo, sigue practicando'),
-          color: 'text-blue-600',
+          color: 'text-blue-500',
           icon: '👍'
         };
       } else {
         return {
           message: t('stats.feedback.createtext.improve', 'Revisa los errores y vuelve a intentarlo'),
-          color: 'text-orange-600',
+          color: 'text-orange-500',
           icon: '💪'
         };
       }
@@ -175,19 +192,19 @@ const Stats: React.FC<StatsProps> = ({
         if (wpm >= wpmGoal * 1.2) {
           return {
             message: t('stats.feedback.playgame.excellent', '¡Excelente! Superaste el objetivo'),
-            color: 'text-green-600',
+            color: 'text-green-500',
             icon: '🏆'
           };
         }
         return {
           message: t('stats.feedback.playgame.complete', '¡Nivel completado!'),
-          color: 'text-green-600',
+          color: 'text-green-500',
           icon: '✅'
         };
       } else {
         return {
           message: t('stats.feedback.playgame.fail', 'Sigue intentándolo'),
-          color: 'text-red-600',
+          color: 'text-red-500',
           icon: '🎯'
         };
       }
@@ -197,19 +214,19 @@ const Stats: React.FC<StatsProps> = ({
       if (accuracy >= 98) {
         return {
           message: t('stats.feedback.precision.perfect', '¡Precisión excepcional!'),
-          color: 'text-green-600',
+          color: 'text-green-500',
           icon: '🎯'
         };
       } else if (accuracy >= 95) {
         return {
           message: t('stats.feedback.precision.good', 'Buena precisión, sigue mejorando'),
-          color: 'text-blue-600',
+          color: 'text-blue-500',
           icon: '👍'
         };
       } else {
         return {
           message: t('stats.feedback.precision.improve', 'Concéntrate en reducir errores'),
-          color: 'text-orange-600',
+          color: 'text-orange-500',
           icon: '💪',
           suggestion: t('stats.suggestions.precision', 'Reduce la velocidad y enfócate en la precisión')
         };
@@ -220,19 +237,19 @@ const Stats: React.FC<StatsProps> = ({
       if (wpm >= 60) {
         return {
           message: t('stats.feedback.speed.excellent', '¡Velocidad impresionante!'),
-          color: 'text-green-600',
+          color: 'text-green-500',
           icon: '⚡'
         };
       } else if (wpm >= 40) {
         return {
           message: t('stats.feedback.speed.good', 'Buena velocidad, sigue practicando'),
-          color: 'text-blue-600',
+          color: 'text-blue-500',
           icon: '🚀'
         };
       } else {
         return {
           message: t('stats.feedback.speed.improve', 'Sigue practicando para mejorar tu velocidad'),
-          color: 'text-orange-600',
+          color: 'text-orange-500',
           icon: '💪',
           suggestion: t('stats.suggestions.speed', 'Practica los mismos caracteres para ganar fluidez')
         };
@@ -243,19 +260,19 @@ const Stats: React.FC<StatsProps> = ({
       if (errorList.length === 0) {
         return {
           message: t('stats.feedback.freepractice.perfect', '¡Práctica perfecta!'),
-          color: 'text-green-600',
+          color: 'text-green-500',
           icon: '🎉'
         };
       } else if (accuracy >= 95) {
         return {
           message: t('stats.feedback.freepractice.good', 'Buen trabajo en tu práctica'),
-          color: 'text-blue-600',
+          color: 'text-blue-500',
           icon: '👍'
         };
       } else {
         return {
           message: t('stats.feedback.freepractice.improve', 'Sigue practicando para mejorar'),
-          color: 'text-orange-600',
+          color: 'text-orange-500',
           icon: '💪'
         };
       }
@@ -298,34 +315,34 @@ const Stats: React.FC<StatsProps> = ({
       if (wpm >= wpmGoal && accuracy >= 98) {
         return {
           message: t('stats.feedback.levels.perfect', '¡Perfecto! Dominas este nivel'),
-          color: 'text-green-600',
+          color: 'text-green-500',
           icon: '⭐'
         };
       }
       return {
         message: t('stats.feedback.levels.complete', '¡Nivel superado!'),
-        color: 'text-green-600',
+        color: 'text-green-500',
         icon: '✅'
       };
     } else {
       if (wpm < wpmGoal) {
         return {
           message: t('stats.feedback.levels.slowSpeed', 'Necesitas más velocidad'),
-          color: 'text-orange-600',
+          color: 'text-orange-500',
           icon: '⚡',
           suggestion: t('stats.suggestions.speed', 'Practica los mismos caracteres para ganar fluidez')
         };
       } else if (accuracy < 95) {
         return {
           message: t('stats.feedback.levels.lowAccuracy', 'Necesitas más precisión'),
-          color: 'text-orange-600',
+          color: 'text-orange-500',
           icon: '🎯',
           suggestion: t('stats.suggestions.accuracy', 'Reduce la velocidad y concéntrate en la precisión')
         };
       } else {
         return {
           message: t('stats.feedback.levels.tooManyErrors', 'Demasiados errores'),
-          color: 'text-red-600',
+          color: 'text-red-500',
           icon: '❌',
           suggestion: t('stats.suggestions.errors', 'Revisa tu posición de manos y teclea con calma')
         };
@@ -337,44 +354,52 @@ const Stats: React.FC<StatsProps> = ({
 
   return (
     <Modal isOpen={true} size="xl" onClose={onClose} showCloseButton={!!onClose}>
-      <div className={`p-6 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-        <div className="text-center mb-6">
-          <div className={`text-6xl mb-2`}>{feedback.icon}</div>
-          <p className={`text-2xl font-bold ${feedback.color}`}>
+      <div className={`p-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+        <div className="text-center mb-8">
+          <div className="text-7xl mb-4 animate-bounce-slow">{feedback.icon}</div>
+          <h2 className={`text-3xl font-black mb-2 tracking-tight ${feedback.color}`}>
             {feedback.message}
-          </p>
+          </h2>
           {feedback.suggestion && (
-            <p className={`mt-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} italic`}>
+            <div className={`inline-block px-4 py-2 rounded-full text-sm font-medium mt-2 ${
+              isDarkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'
+            }`}>
               💡 {feedback.suggestion}
-            </p>
+            </div>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <StatCard title={t('stats.cards.performance')} className="bg-blue-50 text-blue-700">
-            <StatRow label={t('stats.labels.currentWpm')} value={wpm} highlight={wpm >= wpmGoal} />
-            <StatRow label={t('stats.labels.goalWpm')} value={wpmGoal} color="text-blue-600" />
-            <StatRow label={t('stats.labels.accuracy')} value={`${accuracy.toFixed(2)}%`} highlight={accuracy >= 95} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <StatCard title={t('stats.cards.performance')} isDarkMode={isDarkMode}>
+            <StatRow label={t('stats.labels.currentWpm')} value={wpm} highlight={wpm >= wpmGoal} isDarkMode={isDarkMode} />
+            <StatRow label={t('stats.labels.goalWpm')} value={wpmGoal} color="text-blue-500" isDarkMode={isDarkMode} />
+            <StatRow label={t('stats.labels.accuracy')} value={`${accuracy.toFixed(1)}%`} highlight={accuracy >= 95} isDarkMode={isDarkMode} />
           </StatCard>
 
-          <StatCard title={t('stats.cards.details')} className="bg-green-50 text-green-700">
-            <StatRow label={t('stats.labels.level')} value={level} color="text-blue-600" />
-            <StatRow label={t('stats.labels.errors')} value={`${errors} / ${errorLimit}`} highlight={errors === 0} />
-            <StatRow label={t('stats.labels.time')} value={formatElapsedTime(elapsedTime)} color="text-purple-600" />
+          <StatCard title={t('stats.cards.details')} isDarkMode={isDarkMode}>
+            <StatRow label={t('stats.labels.level')} value={level} color="text-purple-500" isDarkMode={isDarkMode} />
+            <StatRow label={t('stats.labels.errors')} value={`${errors} / ${errorLimit}`} highlight={errors === 0} isDarkMode={isDarkMode} />
+            <StatRow label={t('stats.labels.time')} value={formatElapsedTime(elapsedTime)} color="text-indigo-500" isDarkMode={isDarkMode} />
           </StatCard>
         </div>
 
-        {sourceComponent !== 'Levels' && errorList.length > 0 && <ErrorTable errorList={errorList} t={t} />}
-        {sourceComponent === 'Levels' && text && <HighlightedText text={text} errorList={errorList} t={t} />}
-        {(sourceComponent === 'Levels' || sourceComponent === 'PlayGame') && <Requirements wpmGoal={wpmGoal} t={t} />}
+        {sourceComponent !== 'Levels' && errorList.length > 0 && <ErrorTable errorList={errorList} t={t} isDarkMode={isDarkMode} />}
+        {sourceComponent === 'Levels' && text && <HighlightedText text={text} errorList={errorList} t={t} isDarkMode={isDarkMode} />}
+        {(sourceComponent === 'Levels' || sourceComponent === 'PlayGame') && <Requirements wpmGoal={wpmGoal} t={t} isDarkMode={isDarkMode} />}
 
-        <div className="mt-6 flex flex-wrap gap-3 justify-center">
-          <button onClick={onRepeatLevel} className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
+        <div className="mt-8 flex flex-wrap gap-4 justify-center">
+          <button 
+            onClick={onRepeatLevel} 
+            className="px-8 py-3.5 bg-gray-500 hover:bg-gray-600 text-white rounded-xl transition-all duration-200 font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
+          >
             {sourceComponent === 'CreateText' ? t('stats.buttons.close') : t('stats.buttons.repeat')}
           </button>
 
           {sourceComponent !== 'CreateText' && levelCompleted && (
-            <button onClick={onNextLevel} className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-700 transition font-semibold">
+            <button 
+              onClick={onNextLevel} 
+              className="px-8 py-3.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white rounded-xl transition-all duration-200 font-bold shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 hover:-translate-y-0.5 active:scale-95"
+            >
               {t('stats.buttons.next')}
             </button>
           )}

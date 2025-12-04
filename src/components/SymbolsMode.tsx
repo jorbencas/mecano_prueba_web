@@ -143,41 +143,54 @@ const SymbolsMode: React.FC = () => {
         user={user}
       />
 
-      <div className="w-3/4 pl-4">
-        <div className="text-center mb-6">
-          <h1 className={`text-3xl font-bold mb-2 flex items-center justify-center gap-3 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-            <FaAsterisk />
+      <div className="w-full lg:w-3/4 pl-0 lg:pl-8">
+        <div className="text-center mb-8">
+          <h1 className={`text-4xl font-extrabold mb-3 flex items-center justify-center gap-4 tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-amber-400 via-orange-400 to-yellow-400' : 'from-amber-600 via-orange-600 to-yellow-600'}`}>
+            <FaAsterisk className={isDarkMode ? 'text-amber-400' : 'text-amber-600'} />
             {t('symbolsMode.title', 'Modo Símbolos')}
           </h1>
-          <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className={`text-lg font-medium ${isDarkMode ? 'text-amber-200/70' : 'text-amber-800/60'}`}>
             {t('symbolsMode.subtitle', 'Domina los caracteres especiales')}
           </p>
         </div>
 
-        <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+        <div className={`mb-8 p-6 rounded-2xl border backdrop-blur-sm shadow-xl transition-all duration-300 ${isDarkMode ? 'bg-gray-800/60 border-amber-900/30' : 'bg-white/80 border-amber-100'}`}>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
               {symbolsLevels[level].name}
             </h2>
-            <div className={`text-3xl font-bold ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}>
+            <div className={`text-4xl font-black tracking-tighter ${isDarkMode ? 'text-amber-400' : 'text-amber-600'}`}>
               {elapsedTime}s
             </div>
           </div>
           
-          <div className={`flex flex-col sm:flex-row justify-between ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-lg`}>
-            <p>WPM: <span className="font-bold">{currentWpm}</span></p>
-            <p>{t('stats.labels.errors', 'Errores')}: <span className="font-bold text-red-500">{errors}</span></p>
-            <p>{t('stats.labels.accuracy', 'Precisión')}: <span className="font-bold text-blue-500">{currentAccuracy}%</span></p>
+          <div className={`flex flex-col sm:flex-row justify-between items-center p-4 rounded-xl ${isDarkMode ? 'bg-gray-900/50' : 'bg-amber-50/50'} text-lg`}>
+            <div className="flex flex-col items-center">
+              <span className={`text-sm uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>WPM</span>
+              <span className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{currentWpm}</span>
+            </div>
+            <div className="w-px h-8 bg-gray-300/20 hidden sm:block"></div>
+            <div className="flex flex-col items-center">
+              <span className={`text-sm uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('stats.labels.errors', 'Errores')}</span>
+              <span className="text-2xl font-bold text-red-500">{errors}</span>
+            </div>
+            <div className="w-px h-8 bg-gray-300/20 hidden sm:block"></div>
+            <div className="flex flex-col items-center">
+              <span className={`text-sm uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('stats.labels.accuracy', 'Precisión')}</span>
+              <span className="text-2xl font-bold text-blue-500">{currentAccuracy}%</span>
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-center gap-4 mb-6">
+        <div className="flex justify-center gap-6 mb-8">
           {!isActive ? (
             <button
               onClick={handleStart}
-              className={`px-8 py-3 rounded-lg font-bold flex items-center gap-2 ${
-                isDarkMode ? 'bg-purple-600 hover:bg-purple-700' : 'bg-purple-500 hover:bg-purple-600'
-              } text-white shadow-lg transition-transform hover:scale-105`}
+              className={`px-10 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg shadow-amber-500/30 transition-all hover:scale-105 hover:shadow-amber-500/40 active:scale-95 ${
+                isDarkMode 
+                  ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white' 
+                  : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+              }`}
             >
               <FaPlay />
               {t('symbolsMode.start', 'Comenzar')}
@@ -185,9 +198,11 @@ const SymbolsMode: React.FC = () => {
           ) : (
             <button
               onClick={handleStop}
-              className={`px-8 py-3 rounded-lg font-bold flex items-center gap-2 ${
-                isDarkMode ? 'bg-red-600 hover:bg-red-700' : 'bg-red-500 hover:bg-red-600'
-              } text-white shadow-lg transition-transform hover:scale-105`}
+              className={`px-10 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg shadow-red-500/30 transition-all hover:scale-105 hover:shadow-red-500/40 active:scale-95 ${
+                isDarkMode 
+                  ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white' 
+                  : 'bg-gradient-to-r from-red-500 to-rose-500 text-white'
+              }`}
             >
               <FaStop />
               {t('symbolsMode.stop', 'Detener')}
@@ -196,7 +211,7 @@ const SymbolsMode: React.FC = () => {
         </div>
 
         {isActive && (
-          <>
+          <div className={`p-6 rounded-2xl border backdrop-blur-sm shadow-lg mb-8 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
             <div className="mb-8">
               <TypingArea
                 text={text}
@@ -205,10 +220,10 @@ const SymbolsMode: React.FC = () => {
               />
             </div>
 
-            <div className="mb-8">
+            <div className="mb-4">
               <Keyboard activeKey={currentChar} levelKeys={[]} isFullKeyboard={true} />
             </div>
-          </>
+          </div>
         )}
 
         {showStats && stats && (

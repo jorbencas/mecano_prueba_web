@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AccessibilityProvider } from './context/AccessibilityContext';
-import Sidebar from './components/Sidebar';
-import { FaBars } from 'react-icons/fa';
+import HorizontalMenu from './components/HorizontalMenu';
 import PlayGame from './components/PlayGame';
 import Levels from './components/Levels';
 import CreateText from './components/CreateText';
@@ -56,7 +55,7 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const [blockedFeatureName, setBlockedFeatureName] = useState<string>('');
 
   // Features that require authentication
@@ -125,33 +124,15 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
-      <Sidebar 
+      <HorizontalMenu 
         onSelectOption={handleNavigation} 
         currentView={currentView}
         isAuthenticated={!!user}
         user={user}
-        isOpen={isSidebarOpen}
-        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
-      {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-gray-800 z-40 flex items-center px-4 shadow-md">
-        <button 
-          onClick={() => setIsSidebarOpen(true)}
-          className="text-white p-2"
-        >
-          <FaBars size={24} />
-        </button>
-        <span className="ml-4 text-xl font-bold text-white">MecanoWeb</span>
-      </div>
-
       {/* Main Content Area */}
-      <div className={`
-        transition-all duration-300 
-        md:ml-64 
-        pt-20 md:pt-4 
-        p-4
-      `}>
+      <div className="pt-20 px-4 container mx-auto">
         {/* Practice Section */}
         {currentView === 'practice' && <Levels />}
         {currentView === 'free-practice' && <FreePractice />}

@@ -25,7 +25,7 @@ interface SidebarItemProps {
   locked?: boolean;
 }
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, onClick, isActive, isSubItem = false, locked = false }) => {
+const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, onClick, isActive, isSubItem = false }) => {
   const { isDarkMode } = useTheme();
   
   return (
@@ -43,7 +43,6 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, onClick, isActive
     >
       {icon && <span className="mr-3 text-lg">{icon}</span>}
       <span className="flex-1 text-left">{text}</span>
-      {locked && <span className="text-xs ml-2">🔒</span>}
     </button>
   );
 };
@@ -89,20 +88,20 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const customItems = [
     { text: t('menu.custom.texts', 'Textos Personalizados'), option: 'create' },
-    { text: t('menu.custom.myLevels', 'Mis Niveles'), option: 'my-levels', locked: !isAuthenticated },
+    { text: t('menu.custom.myLevels', 'Mis Niveles'), option: 'my-levels' },
   ];
 
   const multiplayerItems = [
-    { text: t('menu.multiplayer.race', 'Carrera Competitiva'), option: 'race-mode', locked: !isAuthenticated },
-    { text: t('menu.multiplayer.practice', 'Sala de Práctica'), option: 'practice-room', locked: !isAuthenticated },
-    { text: t('menu.multiplayer.friends', 'Amigos'), option: 'friends', locked: !isAuthenticated },
+    { text: t('menu.multiplayer.race', 'Carrera Competitiva'), option: 'race-mode' },
+    { text: t('menu.multiplayer.practice', 'Sala de Práctica'), option: 'practice-room' },
+    { text: t('menu.multiplayer.friends', 'Amigos'), option: 'friends' },
   ];
 
   const progressItems = [
-    { text: t('menu.progress.stats', 'Estadísticas'), option: 'statistics', locked: !isAuthenticated },
-    { text: t('menu.progress.achievements', 'Logros'), option: 'achievements', locked: !isAuthenticated },
-    { text: t('menu.progress.leaderboard', 'Clasificación'), option: 'leaderboard', locked: !isAuthenticated },
-    { text: t('menu.progress.challenges', 'Retos Diarios'), option: 'challenges', locked: !isAuthenticated },
+    { text: t('menu.progress.stats', 'Estadísticas'), option: 'statistics' },
+    { text: t('menu.progress.achievements', 'Logros'), option: 'achievements' },
+    { text: t('menu.progress.leaderboard', 'Clasificación'), option: 'leaderboard' },
+    { text: t('menu.progress.challenges', 'Retos Diarios'), option: 'challenges' },
   ];
 
   const renderSection = (title: string, icon: React.ReactNode, items: any[], sectionKey: string) => (
@@ -119,19 +118,27 @@ const Sidebar: React.FC<SidebarProps> = ({
       </button>
       
       {expandedSections[sectionKey] && (
-        <div className={`overflow-hidden transition-all duration-300 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+        <div className={`overflow-hidden transition-all duration-300 p-2 space-y-2 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
           {items.map(item => (
-            <SidebarItem
+            <button
               key={item.option}
-              text={item.text}
               onClick={() => {
                 onSelectOption(item.option);
                 if (window.innerWidth < 768) toggleSidebar();
               }}
-              isActive={currentView === item.option}
-              isSubItem={true}
-              locked={item.locked}
-            />
+              className={`
+                w-full p-3 rounded-lg text-left text-sm font-medium transition-all duration-200
+                ${currentView === item.option 
+                  ? 'bg-blue-600 text-white shadow-md transform scale-105' 
+                  : isDarkMode 
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:shadow-sm' 
+                    : 'bg-white text-gray-700 hover:bg-gray-100 hover:shadow-sm border border-gray-200'
+                }
+                hover:transform hover:scale-102
+              `}
+            >
+              <span>{item.text}</span>
+            </button>
           ))}
         </div>
       )}

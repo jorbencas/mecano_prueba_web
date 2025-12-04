@@ -84,7 +84,15 @@ const FallingLetterComponent: React.FC<{
     requestAnimationFrame(() => {
       controls.start({
         y: containerHeight,
-        transition: { duration, ease: 'linear' },
+        scale: 1,
+        opacity: 1,
+        rotate: 0,
+        transition: { 
+          y: { duration, ease: 'linear' },
+          scale: { duration: 0.4, type: 'spring' },
+          opacity: { duration: 0.2 },
+          rotate: { duration: 0.4 }
+        },
       });
     });
   }, [isPaused, containerHeight, controls]);
@@ -115,22 +123,29 @@ const FallingLetterComponent: React.FC<{
   return (
     <motion.div
       ref={elRef}
-      className="absolute font-bold"
+      className="absolute font-bold flex items-center justify-center rounded-xl backdrop-blur-sm transition-all duration-200"
       style={{
         left: `${letter.x}%`,
-        backgroundColor: letter.color,
-        color: textColor,
-        width: 50,
-        height: 50,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 4,
+        backgroundColor: `${letter.color}40`, // 25% opacity background
+        borderColor: letter.color,
+        borderWidth: '2px',
+        color: '#fff', // Always white text for neon contrast
+        width: 56,
+        height: 56,
+        boxShadow: `0 0 15px ${letter.color}, inset 0 0 10px ${letter.color}40`,
+        textShadow: `0 0 5px ${letter.color}, 0 0 10px #fff`,
+        zIndex: 10
       }}
-      initial={{ y: -40 }}
+      initial={{ y: -60, scale: 0, opacity: 0, rotate: -180 }}
       animate={controls}
+      onUpdate={(latest) => {
+        // Ensure scale/opacity are set if controls doesn't handle them explicitly after initial
+        if (typeof latest.y === 'number' && latest.y > 0) {
+           // This is just a hook, visual updates are handled by style/className
+        }
+      }}
     >
-      <span style={{ fontSize: 24 }}>{letter.char}</span>
+      <span className="text-3xl font-mono">{letter.char.toUpperCase()}</span>
     </motion.div>
   );
 };
@@ -330,10 +345,12 @@ const PlayGame: React.FC = () => {
         user={user}
       />
 
-      <div className="w-3/4">
-        <h1 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-          {t('playgame.title', 'Juego de Letras Cayendo')}
-        </h1>
+      <div className="w-full lg:w-3/4">
+        <div className="text-center mb-8">
+          <h1 className={`text-4xl font-extrabold mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-indigo-400 via-purple-400 to-pink-400' : 'from-indigo-600 via-purple-600 to-pink-600'}`}>
+            {t('playgame.title', 'Juego de Letras Cayendo')}
+          </h1>
+        </div>
 
         <div className="mb-4">
           {!gameStarted && (
@@ -358,30 +375,62 @@ const PlayGame: React.FC = () => {
           )}
         </div>
 
-        <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-          <div className="flex justify-between items-center mb-2">
-            <h2 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
-              {levels[level]?.name}
-            </h2>
-            <div className="text-4xl font-bold text-blue-500">
-              {time}s
-            </div>
+        {/* Stats Bar - Glassmorphism */}
+        <div className={`mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4`}>
+          <div className={`p-4 rounded-xl border backdrop-blur-md shadow-lg flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 ${
+            isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/60 border-white/50'
+          }`}>
+            <span className="text-sm uppercase tracking-wider opacity-70 mb-1">{t('playgame.score', 'Puntuación')}</span>
+            <span className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-600">
+              {score}
+            </span>
           </div>
           
-          <div className={`flex flex-col sm:flex-row justify-between ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-            <p className="inline-block mr-0 sm:mr-4 text-lg">
-              {t('playgame.score', 'Puntuación (WPM)')}: {score}
-            </p>
-            <p className="inline-block mr-0 sm:mr-4 text-lg">
-              {t('playgame.errors', 'Errores')}: {errors}/{levels[level]?.errorLimit ?? '-'}
-            </p>
-            <p className="inline-block text-lg">
-              {t('playgame.accuracy', 'Precisión')}: {Math.round((score / Math.max(1, (score + errors))) * 100) || 0}%
-            </p>
+          <div className={`p-4 rounded-xl border backdrop-blur-md shadow-lg flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 ${
+            isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/60 border-white/50'
+          }`}>
+            <span className="text-sm uppercase tracking-wider opacity-70 mb-1">{t('playgame.errors', 'Errores')}</span>
+            <div className="flex items-baseline gap-1">
+              <span className={`text-3xl font-black ${errors > 0 ? 'text-red-500' : isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                {errors}
+              </span>
+              <span className="text-sm opacity-50">/{levels[level]?.errorLimit ?? '-'}</span>
+            </div>
+          </div>
+
+          <div className={`p-4 rounded-xl border backdrop-blur-md shadow-lg flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 ${
+            isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/60 border-white/50'
+          }`}>
+            <span className="text-sm uppercase tracking-wider opacity-70 mb-1">{t('playgame.accuracy', 'Precisión')}</span>
+            <span className={`text-3xl font-black ${
+              (Math.round((score / Math.max(1, (score + errors))) * 100) || 0) >= 90 ? 'text-blue-500' : 'text-yellow-500'
+            }`}>
+              {Math.round((score / Math.max(1, (score + errors))) * 100) || 0}%
+            </span>
           </div>
         </div>
 
-        <div ref={containerRef} className="relative h-[calc(100vh-300px)] border-2 border-gray-300 rounded-lg overflow-hidden">
+        {/* Game Container - Modern & Neon */}
+        <div 
+          ref={containerRef} 
+          className={`relative h-[calc(100vh-350px)] min-h-[400px] rounded-2xl overflow-hidden border-2 transition-colors duration-500 shadow-2xl ${
+            isDarkMode 
+              ? 'bg-gray-900 border-gray-700 shadow-blue-900/20' 
+              : 'bg-slate-50 border-gray-200 shadow-blue-100'
+          }`}
+        >
+          {/* Background Grid Effect */}
+          <div className="absolute inset-0 opacity-[0.03]" 
+            style={{ 
+              backgroundImage: `linear-gradient(${isDarkMode ? '#fff' : '#000'} 1px, transparent 1px), linear-gradient(90deg, ${isDarkMode ? '#fff' : '#000'} 1px, transparent 1px)`, 
+              backgroundSize: '40px 40px' 
+            }} 
+          />
+          
+          {/* Danger Zone Gradient */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-red-500/10 to-transparent pointer-events-none z-0" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-orange-500 to-red-500 opacity-50" />
+
           {fallingLetters.map(letter => (
             <FallingLetterComponent
               key={letter.id}

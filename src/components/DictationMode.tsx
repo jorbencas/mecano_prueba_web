@@ -160,42 +160,55 @@ const DictationMode: React.FC = () => {
         user={user}
       />
 
-      <div className="w-3/4 pl-4">
-        <div className="text-center mb-6">
-          <h1 className={`text-3xl font-bold mb-2 flex items-center justify-center gap-3 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-            <FaMicrophone />
+      <div className="w-full lg:w-3/4 pl-0 lg:pl-8">
+        <div className="text-center mb-8">
+          <h1 className={`text-4xl font-extrabold mb-3 flex items-center justify-center gap-4 tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-rose-400 via-red-400 to-orange-400' : 'from-rose-600 via-red-600 to-orange-600'}`}>
+            <FaMicrophone className={isDarkMode ? 'text-rose-400' : 'text-rose-600'} />
             {t('dictationMode.title', 'Modo Dictado')}
           </h1>
-          <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className={`text-lg font-medium ${isDarkMode ? 'text-rose-200/70' : 'text-rose-800/60'}`}>
             {t('dictationMode.subtitle', 'Escribe lo que escuchas')}
           </p>
         </div>
 
-        <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+        <div className={`mb-8 p-6 rounded-2xl border backdrop-blur-sm shadow-xl transition-all duration-300 ${isDarkMode ? 'bg-gray-800/60 border-rose-900/30' : 'bg-white/80 border-rose-100'}`}>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
               {dictationLevels[level].name}
             </h2>
-            <div className={`text-3xl font-bold ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+            <div className={`text-4xl font-black tracking-tighter ${isDarkMode ? 'text-rose-400' : 'text-rose-600'}`}>
               {elapsedTime}s
             </div>
           </div>
           
-          <div className={`flex flex-col sm:flex-row justify-between ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-lg`}>
-            <p>WPM: <span className="font-bold">{currentWpm}</span></p>
-            <p>{t('stats.labels.errors', 'Errores')}: <span className="font-bold text-red-500">{errors}</span></p>
-            <p>{t('stats.labels.accuracy', 'Precisión')}: <span className="font-bold text-blue-500">{currentAccuracy}%</span></p>
+          <div className={`flex flex-col sm:flex-row justify-between items-center p-4 rounded-xl ${isDarkMode ? 'bg-gray-900/50' : 'bg-rose-50/50'} text-lg`}>
+            <div className="flex flex-col items-center">
+              <span className={`text-sm uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>WPM</span>
+              <span className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{currentWpm}</span>
+            </div>
+            <div className="w-px h-8 bg-gray-300/20 hidden sm:block"></div>
+            <div className="flex flex-col items-center">
+              <span className={`text-sm uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('stats.labels.errors', 'Errores')}</span>
+              <span className="text-2xl font-bold text-red-500">{errors}</span>
+            </div>
+            <div className="w-px h-8 bg-gray-300/20 hidden sm:block"></div>
+            <div className="flex flex-col items-center">
+              <span className={`text-sm uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('stats.labels.accuracy', 'Precisión')}</span>
+              <span className="text-2xl font-bold text-blue-500">{currentAccuracy}%</span>
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-4 mb-6">
+        <div className="flex flex-col items-center gap-6 mb-8">
           <div className="flex gap-4">
             {!isActive ? (
               <button
                 onClick={handleStart}
-                className={`px-8 py-3 rounded-lg font-bold flex items-center gap-2 ${
-                  isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'
-                } text-white shadow-lg transition-transform hover:scale-105`}
+                className={`px-10 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg shadow-rose-500/30 transition-all hover:scale-105 hover:shadow-rose-500/40 active:scale-95 ${
+                  isDarkMode 
+                    ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white' 
+                    : 'bg-gradient-to-r from-rose-500 to-red-500 text-white'
+                }`}
               >
                 <FaPlay />
                 {t('dictationMode.start', 'Comenzar')}
@@ -204,26 +217,28 @@ const DictationMode: React.FC = () => {
               <>
                 <button
                   onClick={handleStop}
-                  className={`px-8 py-3 rounded-lg font-bold flex items-center gap-2 ${
-                    isDarkMode ? 'bg-red-600 hover:bg-red-700' : 'bg-red-500 hover:bg-red-600'
-                  } text-white shadow-lg transition-transform hover:scale-105`}
+                  className={`px-10 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg shadow-red-500/30 transition-all hover:scale-105 hover:shadow-red-500/40 active:scale-95 ${
+                    isDarkMode 
+                      ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white' 
+                      : 'bg-gradient-to-r from-red-500 to-rose-500 text-white'
+                  }`}
                 >
                   <FaStop />
                   {t('dictationMode.stop', 'Detener')}
                 </button>
                 <button
                   onClick={toggleSpeech}
-                  className={`px-4 py-3 rounded-lg font-bold flex items-center gap-2 ${
+                  className={`px-6 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg transition-all hover:scale-105 active:scale-95 ${
                     isDarkMode ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-yellow-500 hover:bg-yellow-600'
-                  } text-white shadow-lg`}
+                  } text-white`}
                 >
                   {isSpeechPaused ? <FaPlay /> : <FaPause />}
                 </button>
                 <button
                   onClick={() => speak(text.substring(currentIndex), speechRate)}
-                  className={`px-4 py-3 rounded-lg font-bold flex items-center gap-2 ${
+                  className={`px-6 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg transition-all hover:scale-105 active:scale-95 ${
                     isDarkMode ? 'bg-gray-600 hover:bg-gray-700' : 'bg-gray-500 hover:bg-gray-600'
-                  } text-white shadow-lg`}
+                  } text-white`}
                 >
                   <FaRedo />
                 </button>
@@ -231,8 +246,8 @@ const DictationMode: React.FC = () => {
             )}
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Velocidad:</span>
+          <div className={`flex items-center gap-4 p-4 rounded-xl backdrop-blur-sm ${isDarkMode ? 'bg-gray-800/40' : 'bg-white/60'}`}>
+            <span className={`font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Velocidad:</span>
             <input
               type="range"
               min="0.5"
@@ -240,14 +255,14 @@ const DictationMode: React.FC = () => {
               step="0.1"
               value={speechRate}
               onChange={(e) => setSpeechRate(parseFloat(e.target.value))}
-              className="w-32"
+              className="w-48 accent-rose-500"
             />
-            <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{speechRate}x</span>
+            <span className={`font-mono font-bold w-12 text-right ${isDarkMode ? 'text-rose-400' : 'text-rose-600'}`}>{speechRate}x</span>
           </div>
         </div>
 
         {isActive && (
-          <>
+          <div className={`p-6 rounded-2xl border backdrop-blur-sm shadow-lg mb-8 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
             <div className="mb-8">
               <TypingArea
                 text={text}
@@ -256,10 +271,10 @@ const DictationMode: React.FC = () => {
               />
             </div>
 
-            <div className="mb-8">
+            <div className="mb-4">
               <Keyboard activeKey={currentChar} levelKeys={[]} isFullKeyboard={true} />
             </div>
-          </>
+          </div>
         )}
 
         {showStats && stats && (
