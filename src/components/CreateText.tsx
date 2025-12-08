@@ -10,6 +10,7 @@ import { getStatsData } from '../utils/getStatsData';
 import sampleTexts from '../data/texts.json';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import { useTheme } from '../context/ThemeContext';
+import { useActivityTracker } from '../hooks/useActivityTracker';
 
 interface Level {
   keys: string[];
@@ -22,6 +23,7 @@ interface Level {
 const CreateText: React.FC = () => {
   const { t } = useDynamicTranslations();
   const { isDarkMode } = useTheme();
+  const { startTracking, stopTracking } = useActivityTracker('CreateText', 'createText');
   
   const [texts, setTexts] = useState<Level[]>(sampleTexts);
   const [selectedText, setSelectedText] = useState('');
@@ -84,6 +86,17 @@ const CreateText: React.FC = () => {
 
     setWpm(calculatedWPM);
     setErrorList(errorDetails);
+    
+    const errorCount = Object.keys(errors).length;
+    const finalAccuracy = currentIndex > 0 ? Math.round(((currentIndex - errorCount) / currentIndex) * 100) : 100;
+    
+    stopTracking({
+      level: currentLevel,
+      wpm: calculatedWPM,
+      accuracy: finalAccuracy,
+      errors: errorCount,
+      completed: true,
+    });
 
     resetInput();
     setShowStatsModal(true);
@@ -104,6 +117,7 @@ const CreateText: React.FC = () => {
     setNextKey(texts[index].text[0].toLowerCase());
     setCurrentIndex(0);
     setErrors({});
+    startTracking();
   };
 
   return (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import { usersAPI } from '../api/users';
 import { FaUserShield, FaUserGraduate, FaTrash, FaEdit, FaTimes, FaHistory } from 'react-icons/fa';
 
@@ -17,6 +18,7 @@ interface User {
 const UserManagement: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { user: currentUser } = useAuth();
+  const { t } = useDynamicTranslations();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +66,7 @@ const UserManagement: React.FC = () => {
     if (editForm.role !== editingUser.role) changes.push(`Rol: ${editingUser.role} → ${editForm.role}`);
 
     if (changes.length === 0) {
-      alert('No hay cambios para guardar');
+      alert(t('alerts.noChanges'));
       return;
     }
 
@@ -83,9 +85,9 @@ const UserManagement: React.FC = () => {
       // Update local state
       setUsers(users.map(u => u.id === editingUser.id ? { ...u, ...editForm } : u));
       setEditingUser(null);
-      alert('Usuario actualizado correctamente');
+      alert(t('alerts.userUpdated'));
     } catch (err: any) {
-      alert(err.message || 'Failed to update user');
+      alert(t('alerts.userUpdateError'));
     }
   };
 
@@ -93,7 +95,7 @@ const UserManagement: React.FC = () => {
     const userToDelete = users.find(u => u.id === userId);
     if (!userToDelete) return;
 
-    const confirmMessage = `⚠️ ADVERTENCIA: Esta acción es irreversible\n\n¿Estás seguro de que quieres eliminar al usuario?\n\nEmail: ${userToDelete.email}\nNombre: ${userToDelete.display_name || 'Sin nombre'}\nRol: ${userToDelete.role}\n\nTodos sus datos serán eliminados permanentemente.\nEsta acción quedará registrada en el historial.`;
+    const confirmMessage = t('confirmations.deleteUser');
     
     if (!window.confirm(confirmMessage)) {
       return;
@@ -105,9 +107,9 @@ const UserManagement: React.FC = () => {
 
       await usersAPI.deleteUser(token, userId);
       setUsers(users.filter(u => u.id !== userId));
-      alert('Usuario eliminado correctamente');
+      alert(t('alerts.userDeleted'));
     } catch (err: any) {
-      alert(err.message || 'Failed to delete user');
+      alert(t('alerts.userDeleteError'));
     }
   };
 
@@ -126,7 +128,7 @@ const UserManagement: React.FC = () => {
       setAuditLogs(data.logs);
       setShowAuditLogs(true);
     } catch (err: any) {
-      alert(err.message || 'Failed to load audit logs');
+      alert(t('alerts.auditLogsError'));
     }
   };
 

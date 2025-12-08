@@ -1,20 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import { loadStats } from '../utils/saveStats';
 import { checkAchievements, Achievement } from '../utils/achievements';
 
-const Achievements: React.FC = () => {
+interface AchievementsProps {
+  userId?: string;
+  userEmail?: string;
+  readOnly?: boolean;
+}
+
+const Achievements: React.FC<AchievementsProps> = ({ userId, userEmail, readOnly = false }) => {
   const { isDarkMode } = useTheme();
+  const { user } = useAuth();
   const { t } = useDynamicTranslations();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [filter, setFilter] = useState<'all' | 'unlocked' | 'locked'>('all');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const stats = loadStats();
-    const checked = checkAchievements(stats);
-    setAchievements(checked);
-  }, []);
+    loadAchievements();
+  }, [userId]);
+
+  const loadAchievements = async () => {
+    setLoading(true);
+    try {
+      if (userId && user?.role === 'admin') {
+        // Admin viewing another user's achievements
+        // Note: Since achievements are in localStorage, we can't fetch them from server
+        // This is a placeholder - in production, achievements should be stored in DB
+        const stats = loadStats();
+        const checked = checkAchievements(stats);
+        setAchievements(checked);
+      } else {
+        // User viewing their own achievements
+        const stats = loadStats();
+        const checked = checkAchievements(stats);
+        setAchievements(checked);
+      }
+    } catch (error) {
+      console.error('Error loading achievements:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filtered = achievements.filter(a => {
     if (filter === 'unlocked') return a.unlocked;
@@ -25,9 +55,20 @@ const Achievements: React.FC = () => {
   const unlockedCount = achievements.filter(a => a.unlocked).length;
 
   return (
-    <div className={`min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">{t('achievements.title', 'Logros')}</h1>
+    <div className={readOnly ? '' : `min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
+      <div className={readOnly ? '' : 'max-w-6xl mx-auto'}>
+        {!readOnly && (
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold">
+              {t('achievements.title', 'Logros')}
+              {userEmail && readOnly && (
+                <span className="text-lg ml-4 opacity-75">
+                  - {userEmail}
+                </span>
+              )}
+            </h1>
+          </div>
+        )}
 
         <div className={`p-6 rounded-lg mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex justify-between items-center mb-4">

@@ -5,6 +5,7 @@ import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import { useActivityTracker } from '../hooks/useActivityTracker';
 import TypingArea from './TypingArea';
 import Keyboard from './Keyboard';
+import InstruccionesButton from './Instrucciones';
 import Stats from './Stats';
 import { SavedStat } from '../utils/saveStats';
 import { FaMicrophone, FaPlay, FaStop, FaPause, FaRedo } from 'react-icons/fa';
@@ -261,6 +262,18 @@ const DictationMode: React.FC = () => {
           </div>
         </div>
 
+        {!isActive && !showStats && (
+          <>
+            <div className={`text-center p-10 rounded-2xl border backdrop-blur-sm mb-6 ${isDarkMode ? 'bg-gray-800/40 border-rose-700/50 text-gray-400' : 'bg-white/60 border-rose-100/60 text-gray-500'}`}>
+              <p className="italic text-xl">{text}</p>
+            </div>
+            <InstruccionesButton
+              instructions={t('dictationMode.instructions', 'Escucha el audio y escribe lo que oyes. Perfecto para mejorar la escritura al dictado y la comprensión auditiva.')}
+              source="DictationMode"
+            />
+          </>
+        )}
+
         {isActive && (
           <div className={`p-6 rounded-2xl border backdrop-blur-sm shadow-lg mb-8 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
             <div className="mb-8">
@@ -272,7 +285,7 @@ const DictationMode: React.FC = () => {
             </div>
 
             <div className="mb-4">
-              <Keyboard activeKey={currentChar} levelKeys={[]} isFullKeyboard={true} />
+              <Keyboard activeKey={currentChar} levelKeys={[]} />
             </div>
           </div>
         )}

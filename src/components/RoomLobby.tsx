@@ -47,7 +47,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
 
   const handleCreateRoom = async () => {
     if (!roomName.trim()) {
-      alert('Por favor ingresa un nombre para la sala');
+      alert(t('alerts.roomNameRequired'));
       return;
     }
 
@@ -74,7 +74,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
       setIsPrivate(false);
     } catch (error) {
       console.error('Error creating room:', error);
-      alert('Error al crear la sala. Por favor intenta de nuevo.');
+      alert(t('alerts.roomCreateError'));
     } finally {
       setCreating(false);
     }

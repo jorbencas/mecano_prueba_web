@@ -14,6 +14,7 @@ const progressRoutes = require('./routes/progress');
 const multiplayerRoutes = require('./routes/multiplayer');
 const socialRoutes = require('./routes/social');
 const challengesRoutes = require('./routes/challenges');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -36,7 +37,7 @@ app.use('/api/progress', progressRoutes);
 app.use('/api/multiplayer', multiplayerRoutes);
 app.use('/api/social', socialRoutes);
 app.use('/api/challenges', challengesRoutes);
-app.use('/api/social', socialRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

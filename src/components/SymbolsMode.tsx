@@ -5,6 +5,7 @@ import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import { useActivityTracker } from '../hooks/useActivityTracker';
 import TypingArea from './TypingArea';
 import Keyboard from './Keyboard';
+import InstruccionesButton from './Instrucciones';
 import Stats from './Stats';
 import { SavedStat } from '../utils/saveStats';
 import { FaAsterisk, FaPlay, FaStop } from 'react-icons/fa';
@@ -209,6 +210,18 @@ const SymbolsMode: React.FC = () => {
             </button>
           )}
         </div>
+
+        {!isActive && !showStats && (
+          <>
+            <div className={`text-center p-10 rounded-2xl border backdrop-blur-sm mb-6 ${isDarkMode ? 'bg-gray-800/40 border-amber-700/50 text-gray-400' : 'bg-white/60 border-amber-100/60 text-gray-500'}`}>
+              <p className="italic text-xl font-mono">{text}</p>
+            </div>
+            <InstruccionesButton
+              instructions={t('symbolsMode.instructions', 'Domina los caracteres especiales y símbolos. Esencial para programadores y usuarios avanzados que necesitan velocidad con símbolos.')}
+              source="SymbolsMode"
+            />
+          </>
+        )}
 
         {isActive && (
           <div className={`p-6 rounded-2xl border backdrop-blur-sm shadow-lg mb-8 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>

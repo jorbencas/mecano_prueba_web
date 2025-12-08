@@ -9,6 +9,7 @@ import InstruccionesButton from './Instrucciones';
 import { FaRedo, FaCheck, FaKeyboard } from 'react-icons/fa';
 import TypingArea from './TypingArea';
 import RegistrationModal from './RegistrationModal';
+import ParticleExplosion from './ParticleExplosion';
 
 const FreePractice: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -34,6 +35,7 @@ const FreePractice: React.FC = () => {
   // New states for practice control
   const [isActive, setIsActive] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
+  const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; color: string }>>([]);
 
   const generateText = useCallback(() => {
     const maxChars = user ? MAX_CHARS_PREMIUM : MAX_CHARS_FREE;
@@ -79,6 +81,16 @@ const FreePractice: React.FC = () => {
     if (key === currentText[currentIndex]) {
       setTotalChars(prev => prev + 1);
       setCurrentIndex(prev => prev + 1);
+      
+      // Trigger particle explosion
+      const colors = ['#4ade80', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6'];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      setParticles(prev => [...prev, {
+        id: Date.now(),
+        x: window.innerWidth / 2 + (Math.random() - 0.5) * 200,
+        y: window.innerHeight / 2 + (Math.random() - 0.5) * 200,
+        color: randomColor,
+      }]);
       
       if (currentIndex + 1 < currentText.length) {
         setNextKey(currentText[currentIndex + 1]);
@@ -365,6 +377,17 @@ const FreePractice: React.FC = () => {
             featureName={t('freePractice.unlimitedChars', 'Práctica ilimitada')}
           />
         )}
+        
+        {/* Particle Explosions */}
+        {particles.map(particle => (
+          <ParticleExplosion
+            key={particle.id}
+            x={particle.x}
+            y={particle.y}
+            color={particle.color}
+            onComplete={() => setParticles(prev => prev.filter(p => p.id !== particle.id))}
+          />
+        ))}
       </div>
     </div>
   );

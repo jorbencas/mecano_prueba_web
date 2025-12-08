@@ -5,7 +5,7 @@ import { FaKeyboard, FaHandPaper, FaBullseye, FaLightbulb } from 'react-icons/fa
 
 interface InstruccionesButtonProps {
   instructions?: string;
-  source?: 'Levels' | 'PlayGame' | 'CreateText' | 'LevelCreator' | 'FreePractice' | 'SpeedMode' | 'PrecisionMode';
+  source?: 'Levels' | 'PlayGame' | 'CreateText' | 'LevelCreator' | 'FreePractice' | 'SpeedMode' | 'PrecisionMode' | 'ZenMode' | 'NumbersMode' | 'SymbolsMode' | 'CodeMode' | 'DictationMode' | 'RaceMode';
   showKeyboardShortcuts?: boolean;
 }
 

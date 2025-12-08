@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import { useActivityTracker } from '../hooks/useActivityTracker';
 import Keyboard from './Keyboard';
 import Hands from './Hands';
 import InstruccionesButton from './Instrucciones';
@@ -12,6 +13,7 @@ import TypingArea from './TypingArea';
 const SpeedMode: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
+  const { startTracking, stopTracking } = useActivityTracker('SpeedMode', 'speedMode');
   
   const [duration, setDuration] = useState(30); // 30, 60, or 120 seconds
   const [timeLeft, setTimeLeft] = useState(duration);
@@ -50,8 +52,15 @@ const SpeedMode: React.FC = () => {
     } else if (timeLeft === 0 && isActive) {
       setIsActive(false);
       setShowStats(true);
+      const finalAccuracy = totalChars > 0 ? Math.round(((totalChars - errors) / totalChars) * 100) : 100;
+      stopTracking({
+        wpm,
+        accuracy: finalAccuracy,
+        errors,
+        completed: true,
+      });
     }
-  }, [isActive, timeLeft, totalChars, duration]);
+  }, [isActive, timeLeft, totalChars, duration, wpm, errors, stopTracking]);
 
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
     if (!isActive || timeLeft === 0) return;
@@ -88,6 +97,7 @@ const SpeedMode: React.FC = () => {
     const newText = generateText();
     setCurrentText(newText);
     setNextKey(newText[0]);
+    startTracking();
   };
 
   const accuracy = totalChars > 0 ? Math.round(((totalChars - errors) / totalChars) * 100) : 100;

@@ -39,6 +39,7 @@ import UserManagement from './components/UserManagement';
 import SettingsConfiguration from './components/SettingsConfiguration';
 import PublicProfile from './components/social/PublicProfile';
 import CommunityForum from './components/social/CommunityForum';
+import AdminDashboard from './components/AdminDashboard';
 
 // Multiplayer Components
 import FriendsSystem from './components/FriendsSystem';
@@ -46,20 +47,39 @@ import FriendsSystem from './components/FriendsSystem';
 // Daily Challenges
 import DailyChallenges from './components/DailyChallenges';
 import DailyChallengesModal from './components/DailyChallengesModal';
+import DailyChallengePopup from './components/DailyChallengePopup';
+import { getTodayChallenge, hasSeenChallengeToday, markChallengeAsSeen } from './utils/dailyChallengeUtils';
 import AuthCallback from './components/AuthCallback';
+import { useDynamicTranslations } from './hooks/useDynamicTranslations';
 
-const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AppContent: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const { isDarkMode } = useTheme();
   const { user, loading, logout } = useAuth();
+  const { t } = useDynamicTranslations();
   const [currentView, setCurrentView] = useState<string>('practice');
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+  const [showChallengesModal, setShowChallengesModal] = useState(false);
+  const [showChallengePopup, setShowChallengePopup] = useState(false);
+  const [todayChallenge, setTodayChallenge] = useState(getTodayChallenge());
 
   const [blockedFeatureName, setBlockedFeatureName] = useState<string>('');
 
+  // Show daily challenge popup on login
+  React.useEffect(() => {
+    if (user && !hasSeenChallengeToday()) {
+      // Small delay for better UX
+      const timer = setTimeout(() => {
+        setTodayChallenge(getTodayChallenge());
+        setShowChallengePopup(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [user]);
+
   // Features that require authentication
-  const lockedFeatures = ['leaderboard', 'achievements', 'create', 'create-level', 'statistics', 'race-mode', 'practice-room', 'friends', 'challenges', 'my-levels'];
+  const lockedFeatures = ['leaderboard', 'achievements', 'create', 'create-level', 'statistics', 'race-mode', 'practice-room', 'friends', 'challenges', 'my-levels', 'admin-dashboard'];
 
   const handleNavigation = (view: string) => {
     // Handle login view
@@ -76,7 +96,7 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     }
 
     if (view === 'logout') {
-      if (window.confirm('¿Seguro que quieres cerrar sesión?')) {
+      if (window.confirm(t('confirmations.logout'))) {
         logout();
         setCurrentView('practice');
       }
@@ -99,6 +119,7 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       'friends': 'Sistema de Amigos',
       'challenges': 'Retos Diarios',
       'my-levels': 'Mis Niveles Personalizados',
+      'admin-dashboard': 'Panel de Administrador',
     };
     return featureNames[view] || view;
   };
@@ -169,7 +190,7 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         {currentView === 'achievements' && user && <Achievements />}
         {currentView === 'leaderboard' && user && <Leaderboard />}
         {currentView === 'profile' && user && <UserProfile />}
-        {currentView === 'user-management' && user && user.role === 'admin' && <UserManagement />}
+        {currentView === 'admin-dashboard' && user && user.role === 'admin' && <AdminDashboard />}
         {currentView === 'settings-config' && user && <SettingsConfiguration />}
         {currentView === 'community' && <CommunityForum />}
         {currentView === 'public-profile' && <PublicProfile />}
@@ -202,6 +223,23 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
           />
         )}
         
+        {/* Daily Challenge Popup */}
+        {showChallengePopup && user && (
+          <DailyChallengePopup
+            challenge={todayChallenge}
+            onClose={() => {
+              setShowChallengePopup(false);
+              markChallengeAsSeen();
+            }}
+            onAccept={() => {
+              setShowChallengePopup(false);
+              markChallengeAsSeen();
+              // Redirect to practice mode
+              setCurrentView('practice');
+            }}
+          />
+        )}
+
         {/* Daily Challenges Modal */}
         <DailyChallengesModal />
         
@@ -221,11 +259,10 @@ const App: React.FC = () => {
             <AuthProvider>
               <MultiplayerProvider>
                 <Routes>
-                  <Route path="/auth/callback" element={<AuthCallback />} />
+                  <Route path="/auth/callback" element={<AppContent><AuthCallback /></AppContent>} />
                   <Route path="*" element={
-                    <AppContainer>
-                      <p></p>
-                    </AppContainer>
+                    <AppContent>
+                    </AppContent>
                   } />
                 </Routes>
               </MultiplayerProvider>

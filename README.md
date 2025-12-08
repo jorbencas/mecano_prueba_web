@@ -5,11 +5,55 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-Una aplicación web completa de práctica de mecanografía con múltiples modos de juego, estadísticas avanzadas, sistema de logros y características sociales.
+## Tabla de Contenidos
+- [Características](#características)
+- [Tecnologías](#tecnologías)
+- [Instalación](#instalación)
+- [Uso](#uso)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Documentación](#documentación)
+- [Contribuir](#contribuir)
+- [Licencia](#licencia)
 
-## 🚀 Características Principales
+## 📚 Documentación
 
-### 🎮 Modos de Práctica
+Para entender el código en profundidad, consulta nuestra documentación técnica:
+
+
+## ✨ Características
+
+### Para Usuarios
+- 🎯 **12 Modos de Práctica** diferentes con instrucciones detalladas
+- 📊 **Seguimiento de Progreso** con estadísticas detalladas
+- 🏆 **Sistema de Logros** para motivar el aprendizaje
+- ⭐ **Sistema de Niveles y XP** - Gana experiencia y sube de nivel
+- 🎯 **Retos Diarios** - Popup motivador con retos temáticos
+- 👥 **Características Sociales**: Clasificación, perfiles públicos, sistema de amigos
+- 🎮 **Modo Competitivo**: Carreras en tiempo real con otros usuarios
+- 🌍 **Multiidioma**: Soporte para español e inglés
+- 🌓 **Modo Oscuro/Claro** con diseño moderno
+- 💾 **Guardado Automático** de progreso y configuración
+
+### Para Administradores
+- 📊 **Panel de Administración Centralizado** con 6 pestañas:
+  1. **👥 Gestión de Usuarios**: Editar, eliminar usuarios y gestionar roles
+  2. **📈 Actividad y Estadísticas**: Métricas globales, gráficos y análisis
+  3. **🏆 Logros de Usuarios**: Ver logros desbloqueados por cada usuario (doble click en usuario)
+  4. **⭐ Retos y Niveles**: Sistema de XP, niveles de usuarios y estadísticas de retos
+  5. **📊 Tracking Detallado**: Seguimiento avanzado de actividad
+  6. **📜 Historial de Auditoría**: Registro de acciones administrativas
+- 🔐 **Control de Acceso** basado en roles
+- 📉 **Visualizaciones** de datos con gráficos interactivos
+- 🔍 **Búsqueda y Filtros** avanzados
+- 🌐 **Interfaz Completamente en Español**
+
+#### Acceso al Panel de Administración
+Para acceder al panel de admin, inicia sesión como administrador y:
+- **Opción 1**: Click en tu foto/nombre (esquina superior derecha) → "Panel de Admin"
+- **Opción 2**: En el menú lateral izquierdo → "Panel de Admin"
+- **Opción 3**: En el menú móvil (☰) → "Panel de Admin"
+
+## 🎮 Modos de Práctica
 - **Niveles Progresivos**: 10 niveles con dificultad creciente
 - **Práctica Libre**: Selección personalizada de teclas sin límites
 - **Modo Velocidad**: Textos cortos para mejorar WPM
@@ -28,6 +72,8 @@ Una aplicación web completa de práctica de mecanografía con múltiples modos 
 - **Predictor de Progreso**: Estimación de tiempo para alcanzar objetivos
 - **Recomendaciones IA**: Sugerencias personalizadas de práctica
 - **Exportación de Datos**: Descarga de estadísticas en CSV/JSON
+- **Activity Tracking**: Sistema completo de seguimiento de actividad del usuario
+- **Visualizaciones de Datos**: Gráficos interactivos de uso por componente y tipo
 
 ### 👥 Características Sociales
 - **Perfiles Públicos**: Comparte logros y estadísticas
@@ -36,20 +82,56 @@ Una aplicación web completa de práctica de mecanografía con múltiples modos 
 - **Clasificación Global**: Compite con otros usuarios
 - **Sistema de Logros**: Desbloquea medallas y trofeos
 
-### 🎯 Gamificación
-- **Sistema de Retos Diarios**: Desafíos personalizados cada 24h
-- **Temas Estacionales**: Retos adaptados a festividades (Navidad, Halloween, etc.)
-- **Sistema de Achievements**: 15+ logros desbloqueables
+### 🎯 Sistema de Gamificación
+
+#### ⭐ Sistema de Niveles y XP
+**Gana experiencia y sube de nivel mientras practicas:**
+- **Fórmula de Progresión**: Nivel N requiere `100 * N * (N-1) / 2` XP
+- **Recompensas de XP**:
+  - Completar reto diario: **50 XP**
+  - Completar nivel de práctica: **20 XP**
+  - 10 minutos de práctica: **10 XP**
+  - Alcanzar 60 WPM: **30 XP**
+  - Alcanzar 95% precisión: **25 XP**
+
+**Visualización:**
+- Badge de nivel con gradiente dorado
+- Barra de progreso animada (efecto shimmer)
+- XP actual y XP necesario para siguiente nivel
+- Visible en perfil de usuario y admin dashboard
+
+#### 🎯 Retos Diarios
+**Popup motivador que aparece al iniciar sesión:**
+- **Retos Temáticos**: Navidad 🎄, Año Nuevo 🎆, Halloween 🎃, San Valentín 💖
+- **Retos Genéricos**: Velocidad ⚡, Precisión 🎯, Resistencia 🔥, Estrella 🌟, Diamante 💎
+- **Características**:
+  - Aparece una vez al día
+  - Diseño colorido con gradientes temáticos
+  - Mensajes motivadores personalizados
+  - Barra de progreso con animación
+  - Otorga 50 XP al completarse
+  - Tracking completo en admin dashboard
+
+#### 🏆 Sistema de Logros
+- **15+ Logros Desbloqueables**: Desde principiante hasta maestro
+- **Categorías**: Velocidad, Precisión, Práctica, Completitud
+- **Visualización**: Modal con logros desbloqueados y bloqueados
+- **Admin View**: Los administradores pueden ver logros de cualquier usuario
+
+#### 📊 Estadísticas y Tracking
+- **Activity Tracking**: Sistema completo de seguimiento
+- **Visualizaciones**: Gráficos interactivos por componente y tipo
 - **Tabla de Clasificación**: Rankings globales
-- **Niveles de Usuario**: Sistema de XP y progresión
-- **Estadísticas Detalladas**: Seguimiento completo del rendimiento
+- **Efectos Visuales**: Partículas al acertar teclas
 
 ### 🔐 Autenticación y Usuarios
 - **Registro/Login**: Sistema completo de autenticación
 - **Roles de Usuario**: Estudiante y Administrador
 - **Seguridad**: El primer usuario es automáticamente administrador
-- **Panel de Admin**: Gestión de usuarios (solo admins)
+- **Panel de Admin**: Gestión de usuarios con promoción de roles desde UI
+- **Dashboard de Administrador**: Visualización de actividad de todos los usuarios
 - **Perfil de Usuario**: Visualización de actividad y estadísticas
+- **Gestión de Roles**: Promoción/degradación de usuarios sin scripts
 
 ### 🌍 Internacionalización
 - **4 Idiomas Soportados**:
@@ -64,6 +146,9 @@ Una aplicación web completa de práctica de mecanografía con múltiples modos 
 - **Accesibilidad**: Soporte ARIA y navegación por teclado
 - **Teclado Visual**: Representación interactiva
 - **Visualización de Manos**: Guía de posición de dedos
+- **Dropdowns Mejorados**: Con búsqueda, navegación por teclado y favoritos
+- **Animaciones Suaves**: Transiciones fluidas con Framer Motion
+- **Efectos Visuales**: Partículas y feedback visual mejorado
 
 ## 📦 Instalación
 
@@ -136,11 +221,12 @@ npm test HeatMap.test.tsx
 ```
 
 ### Suite de Tests
-- ✅ Tests de componentes (28+ archivos)
+- ✅ Tests de componentes (31+ archivos)
 - ✅ Tests de analytics (HeatMap, PatternAnalysis, ProgressPredictor, RecommendationEngine)
 - ✅ Tests de features sociales
 - ✅ Tests de autenticación
-- ✅ 122 tests en total
+- ✅ Tests de UI (ParticleExplosion, EnhancedDropdown, ActivityChart)
+- ✅ 130+ tests en total
 
 ## 🏗️ Arquitectura del Proyecto
 
@@ -174,8 +260,10 @@ mecano_prueba_web/
 ### Sistema de Roles
 - **Primer Usuario**: Se convierte automáticamente en **Administrador**
 - **Usuarios Subsecuentes**: Se registran como **Estudiante** por defecto
-- **Promoción de Roles**: Solo administradores pueden promover usuarios
+- **Promoción de Roles**: Administradores pueden promover usuarios desde el Dashboard
 - **Sin Selector Público**: Los usuarios NO pueden elegir ser admin al registrarse
+- **UI de Gestión**: Botones de "Hacer Admin" / "Quitar Admin" en el panel de administración
+- **Protección**: Los administradores no pueden cambiar su propio rol
 
 ### Autenticación
 - Contraseñas hasheadas con bcrypt
@@ -183,6 +271,14 @@ mecano_prueba_web/
 - Tokens con expiración de 24h
 - Validación de inputs
 - Protección contra SQL injection
+
+### Admin Dashboard
+- **Acceso Restringido**: Solo usuarios con rol 'admin'
+- **Gestión de Usuarios**: Ver, promover y degradar usuarios
+- **Visualización de Actividad**: Gráficos de uso por componente
+- **Estadísticas Globales**: Métricas agregadas de todos los usuarios
+- **Búsqueda y Filtros**: Encontrar usuarios rápidamente
+- **Logs de Auditoría**: Registro de cambios administrativos
 
 ## 📚 API Backend
 
@@ -220,9 +316,23 @@ POST /api/social/posts/:id/like     - Like a post
 
 #### Usuarios (Admin)
 ```
-GET    /api/users           - Lista de usuarios
-PUT    /api/users/:id/role  - Cambiar rol de usuario
-DELETE /api/users/:id       - Eliminar usuario
+GET    /api/users              - Lista de usuarios
+PATCH  /api/users/:id/role     - Cambiar rol de usuario
+PATCH  /api/users/:id          - Actualizar usuario
+DELETE /api/users/:id          - Eliminar usuario
+GET    /api/users/audit-logs   - Logs de auditoría
+```
+
+#### Admin Dashboard
+```
+GET    /api/admin/activity     - Actividad de todos los usuarios
+```
+
+#### Activity Tracking
+```
+POST   /api/activity           - Guardar log de actividad
+GET    /api/activity           - Obtener logs de actividad
+GET    /api/activity/stats     - Estadísticas de actividad
 ```
 
 ## 🎯 Scripts Disponibles

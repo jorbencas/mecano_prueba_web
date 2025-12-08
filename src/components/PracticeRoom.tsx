@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { useMultiplayer } from '../context/MultiplayerContext';
+import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import LiveChat from './LiveChat';
 import RoomLobby from './RoomLobby';
-import { FaPlay, FaUsers, FaCopy, FaLock } from 'react-icons/fa';
+import { FaCopy, FaUsers, FaSignOutAlt, FaPlay, FaLock } from 'react-icons/fa';
 
 const PracticeRoom: React.FC = () => {
   const { isDarkMode } = useTheme();
+  const { user } = useAuth();
+  const { t } = useDynamicTranslations();
   const { currentRoom, startRace, leaveRoom } = useMultiplayer();
   const [selectedText, setSelectedText] = useState('');
 
@@ -28,7 +32,7 @@ const PracticeRoom: React.FC = () => {
   };
 
   const handleLeave = () => {
-    if (window.confirm('¿Seguro que quieres salir de la sala?')) {
+    if (window.confirm(t('confirmations.leaveRoom'))) {
       leaveRoom();
     }
   };
@@ -41,7 +45,7 @@ const PracticeRoom: React.FC = () => {
     if (currentRoom) {
       const link = `${window.location.origin}/practice-room/${currentRoom.id}`;
       navigator.clipboard.writeText(link);
-      alert('¡Enlace copiado al portapapeles!');
+      alert(t('alerts.linkCopied'));
     }
   };
 
@@ -58,16 +62,23 @@ const PracticeRoom: React.FC = () => {
           <div className="flex gap-2">
             <button
               onClick={copyRoomLink}
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded flex items-center gap-2"
+              className={`px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-500/30 transition-all hover:scale-105 hover:shadow-blue-500/40 active:scale-95 ${
+                isDarkMode 
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white' 
+                  : 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
+              }`}
             >
               <FaCopy /> Copiar Enlace
             </button>
             <button
-              onClick={handleLeave}
-              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded"
-            >
-              Salir
-            </button>
+            onClick={handleLeave}
+            className={`px-8 py-3 rounded-xl font-bold shadow-lg shadow-red-500/30 transition-all hover:scale-105 hover:shadow-red-500/40 active:scale-95 ${
+              isDarkMode
+                ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white'
+                : 'bg-gradient-to-r from-red-500 to-rose-500 text-white'
+            }`}
+          >
+            {t('practiceRoom.leave', 'Salir de la Sala')}          </button>
           </div>
         </div>
 

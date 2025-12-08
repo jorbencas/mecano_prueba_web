@@ -3,8 +3,10 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import { getActivityLogs, getActivityStats, getRecentActivities, ActivityLog } from '../utils/activityTracker';
-import { FaClock, FaTrophy, FaChartLine, FaFire, FaUserShield } from 'react-icons/fa';
+import { FaClock, FaTrophy, FaChartLine, FaFire, FaUserShield, FaStar, FaAward } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { getUserLevel, getXPProgress, getXPHistory } from '../utils/userLevelSystem';
+import { getTotalCompletedChallenges, getTodayCompletedChallenges } from '../utils/challengeTracker';
 
 const UserProfile: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -13,12 +15,24 @@ const UserProfile: React.FC = () => {
   
   const [stats, setStats] = useState<ReturnType<typeof getActivityStats> | null>(null);
   const [recentActivities, setRecentActivities] = useState<ActivityLog[]>([]);
+  const [levelData, setLevelData] = useState<ReturnType<typeof getXPProgress> | null>(null);
+  const [challengesCompleted, setChallengesCompleted] = useState({ today: 0, total: 0 });
 
   useEffect(() => {
     if (user) {
       const userId = user.email || user.id;
       setStats(getActivityStats(userId));
       setRecentActivities(getRecentActivities(userId, 10));
+      
+      // Cargar datos de nivel
+      const userLevel = getUserLevel(userId);
+      setLevelData(getXPProgress(userLevel.totalXP));
+      
+      // Cargar retos completados
+      setChallengesCompleted({
+        today: getTodayCompletedChallenges(userId),
+        total: getTotalCompletedChallenges(userId),
+      });
     }
   }, [user]);
 
@@ -99,6 +113,73 @@ const UserProfile: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Level and XP Card */}
+        {levelData && (
+          <div className={`p-6 rounded-lg mb-6 bg-gradient-to-br ${isDarkMode ? 'from-purple-900/50 to-blue-900/50' : 'from-purple-100 to-blue-100'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl font-black bg-gradient-to-br from-yellow-400 to-orange-500 text-white shadow-lg`}>
+                  {levelData.level}
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold">Nivel {levelData.level}</h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {levelData.xpToNextLevel} XP para nivel {levelData.level + 1}
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <FaStar className="text-4xl text-yellow-400 inline-block" />
+                <p className="text-sm font-bold mt-1">{levelData.currentXP} XP Total</p>
+              </div>
+            </div>
+            
+            {/* Progress Bar */}
+            <div className="mb-2">
+              <div className="flex justify-between text-sm mb-1">
+                <span>Progreso</span>
+                <span>{levelData.progress}%</span>
+              </div>
+              <div className={`w-full h-4 rounded-full overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}>
+                <div
+                  className="h-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 transition-all duration-500 relative overflow-hidden"
+                  style={{ width: `${levelData.progress}%` }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                </div>
+              </div>
+            </div>
+            
+            {/* Challenges Stats */}
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-800/50' : 'bg-white/50'}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <FaAward className="text-green-500" />
+                  <span className="text-sm font-bold">Retos Hoy</span>
+                </div>
+                <p className="text-2xl font-black">{challengesCompleted.today}</p>
+              </div>
+              <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-800/50' : 'bg-white/50'}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <FaTrophy className="text-yellow-500" />
+                  <span className="text-sm font-bold">Retos Totales</span>
+                </div>
+                <p className="text-2xl font-black">{challengesCompleted.total}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <style>{`
+          @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+          .animate-shimmer {
+            animation: shimmer 2s infinite;
+          }
+        `}</style>
 
         {/* Statistics Cards */}
         {stats && (

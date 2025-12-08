@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useMultiplayer } from '../context/MultiplayerContext';
+import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import { useActivityTracker } from '../hooks/useActivityTracker';
 import Keyboard from './Keyboard';
+import InstruccionesButton from './Instrucciones';
 import LiveChat from './LiveChat';
 import RoomLobby from './RoomLobby';
 import { FaTrophy, FaBolt, FaCheckCircle } from 'react-icons/fa';
 
 const RaceMode: React.FC = () => {
   const { isDarkMode } = useTheme();
+  const { t } = useDynamicTranslations();
   const { currentRoom, updateProgress, finishRace, leaveRoom } = useMultiplayer();
   
 
@@ -89,7 +93,11 @@ const RaceMode: React.FC = () => {
           <h1 className="text-3xl font-bold">🏁 Modo Carrera</h1>
           <button
             onClick={handleLeave}
-            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded"
+            className={`px-8 py-3 rounded-xl font-bold shadow-lg shadow-red-500/30 transition-all hover:scale-105 hover:shadow-red-500/40 active:scale-95 ${
+              isDarkMode 
+                ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white' 
+                : 'bg-gradient-to-r from-red-500 to-rose-500 text-white'
+            }`}
           >
             Salir
           </button>
@@ -165,11 +173,17 @@ const RaceMode: React.FC = () => {
             )}
 
             {!isRacing && !isFinished && (
-              <div className={`p-6 rounded-lg text-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-                <p className="text-xl">Esperando a que el host inicie la carrera...</p>
-              </div>
-            )}
-
+        <>
+          <div className={`text-center p-10 rounded-2xl border backdrop-blur-sm mb-6 ${isDarkMode ? 'bg-gray-800/40 border-blue-700/50 text-gray-400' : 'bg-white/60 border-blue-100/60 text-gray-500'}`}>
+            <p className="text-2xl font-bold mb-4">{t('raceMode.ready', '¿Listo para la carrera?')}</p>
+            <p className="text-lg">{t('raceMode.instruction', 'Escribe el texto lo más rápido posible')}</p>
+          </div>
+          <InstruccionesButton
+            instructions={t('raceMode.instructions', 'Compite contra el tiempo escribiendo el texto completo. Ideal para practicar velocidad bajo presión.')}
+            source="RaceMode"
+          />
+        </>
+      )}
             {isFinished && (
               <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
                 <h2 className="text-2xl font-bold mb-4 text-center">🏆 Resultados Finales</h2>

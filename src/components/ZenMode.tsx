@@ -6,6 +6,7 @@ import { useActivityTracker } from '../hooks/useActivityTracker';
 import TypingArea from './TypingArea';
 import Keyboard from './Keyboard';
 import Stats from './Stats';
+import InstruccionesButton from './Instrucciones';
 import { SavedStat } from '../utils/saveStats';
 import { FaSpa, FaPlay, FaStop } from 'react-icons/fa';
 import MenuLevels from './MenuLevels';
@@ -223,9 +224,15 @@ const ZenMode: React.FC = () => {
         )}
 
         {!isActive && !showStats && (
-          <div className={`text-center p-10 rounded-2xl border backdrop-blur-sm ${isDarkMode ? 'bg-gray-800/40 border-gray-700/50 text-gray-400' : 'bg-white/60 border-white/60 text-gray-500'}`}>
-            <p className="italic text-xl font-serif">"{text}"</p>
-          </div>
+          <>
+            <div className={`text-center p-10 rounded-2xl border backdrop-blur-sm mb-6 ${isDarkMode ? 'bg-gray-800/40 border-gray-700/50 text-gray-400' : 'bg-white/60 border-white/60 text-gray-500'}`}>
+              <p className="italic text-xl font-serif">"{text}"</p>
+            </div>
+            <InstruccionesButton
+              instructions={t('zenMode.instructions', 'Modo Zen: Práctica relajada sin presión de tiempo ni límites de errores. Enfócate en la precisión y disfruta del proceso de escritura.')}
+              source="FreePractice"
+            />
+          </>
         )}
 
         {showStats && stats && (

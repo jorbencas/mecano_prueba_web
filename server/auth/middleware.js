@@ -33,6 +33,19 @@ async function authenticate(req, res, next) {
   }
 }
 
+/**
+ * Middleware to check if user is admin
+ */
+function isAdmin(req, res, next) {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ error: 'Access denied. Admin only.' });
+  }
+}
+
 module.exports = {
   authenticate,
+  authenticateToken: authenticate, // alias for compatibility
+  isAdmin,
 };

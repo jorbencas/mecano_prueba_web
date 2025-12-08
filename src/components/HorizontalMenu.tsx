@@ -64,6 +64,7 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
 
   const customItems = [
     { title: 'Textos Personalizados', description: 'Crea tus propios textos', icon: <FaPen />, option: 'create', color: 'blue' },
+    { title: 'Crear Nivel', description: 'Diseña niveles personalizados', icon: <FaPen />, option: 'create-level', color: 'indigo' },
     { title: 'Mis Niveles', description: 'Gestiona tus niveles', icon: <FaTrophy />, option: 'my-levels', color: 'purple' },
   ];
 
@@ -244,6 +245,11 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
                     <button onClick={() => { onSelectOption('profile'); setActiveDropdown(null); }} className={`block w-full text-left px-4 py-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                       <FaUser className="inline mr-2" /> Ver Perfil
                     </button>
+                    {user.role === 'admin' && (
+                      <button onClick={() => { onSelectOption('admin-dashboard'); setActiveDropdown(null); }} className={`block w-full text-left px-4 py-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                        <FaChartLine className="inline mr-2" /> Panel de Admin
+                      </button>
+                    )}
                     <button onClick={() => { onSelectOption('settings'); setActiveDropdown(null); }} className={`block w-full text-left px-4 py-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                       <FaCog className="inline mr-2" /> Configuración
                     </button>
@@ -426,6 +432,11 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
                   <button onClick={() => { onSelectOption('profile'); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                     <FaUser className="inline mr-2" /> Ver Perfil
                   </button>
+                  {user.role === 'admin' && (
+                    <button onClick={() => { onSelectOption('admin-dashboard'); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                      <FaChartLine className="inline mr-2" /> Panel de Admin
+                    </button>
+                  )}
                   <button onClick={() => { onSelectOption('settings'); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                     <FaCog className="inline mr-2" /> Configuración
                   </button>

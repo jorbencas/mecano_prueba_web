@@ -5,6 +5,7 @@ import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import { useActivityTracker } from '../hooks/useActivityTracker';
 import TypingArea from './TypingArea';
 import Keyboard from './Keyboard';
+import InstruccionesButton from './Instrucciones';
 import Stats from './Stats';
 import { SavedStat } from '../utils/saveStats';
 import { FaCode, FaPlay, FaStop } from 'react-icons/fa';
@@ -207,6 +208,18 @@ const CodeMode: React.FC = () => {
             </button>
           )}
         </div>
+
+        {!isActive && !showStats && (
+          <>
+            <div className={`text-center p-10 rounded-2xl border backdrop-blur-sm mb-6 font-mono ${isDarkMode ? 'bg-gray-800/40 border-slate-700/50 text-gray-400' : 'bg-white/60 border-slate-200/60 text-gray-500'}`}>
+              <p className="italic text-lg">{text}</p>
+            </div>
+            <InstruccionesButton
+              instructions={t('codeMode.instructions', 'Practica sintaxis de programación con fragmentos de código reales. Mejora tu velocidad escribiendo código en diferentes lenguajes.')}
+              source="CodeMode"
+            />
+          </>
+        )}
 
         {isActive && (
           <div className={`p-6 rounded-2xl border backdrop-blur-sm shadow-lg mb-8 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>

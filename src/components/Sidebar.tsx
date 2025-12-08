@@ -88,6 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const customItems = [
     { text: t('menu.custom.texts', 'Textos Personalizados'), option: 'create' },
+    { text: t('menu.custom.createLevel', 'Crear Nivel'), option: 'create-level' },
     { text: t('menu.custom.myLevels', 'Mis Niveles'), option: 'my-levels' },
   ];
 
@@ -213,10 +214,10 @@ const Sidebar: React.FC<SidebarProps> = ({
               
               {user.role === 'admin' && (
                 <SidebarItem 
-                  icon={<FaUsers />} 
-                  text="Gestión Usuarios" 
-                  onClick={() => onSelectOption('user-management')} 
-                  isActive={currentView === 'user-management'} 
+                  icon={<FaChartLine />} 
+                  text="Panel de Admin" 
+                  onClick={() => onSelectOption('admin-dashboard')} 
+                  isActive={currentView === 'admin-dashboard'} 
                 />
               )}
 

@@ -293,5 +293,36 @@
         "loading": "Cargando...",
         "error": "Error al iniciar sesión",
         "googleError": "Error con Google"
+    },
+    "alerts": {
+        "levelSaved": "Nivel guardado correctamente",
+        "settingsSaveError": "Error al guardar preferencias",
+        "exportError": "Error al exportar datos",
+        "exportSummaryError": "Error al exportar resumen",
+        "linkCopied": "¡Enlace copiado al portapapeles!",
+        "noChanges": "No hay cambios para guardar",
+        "userUpdated": "Usuario actualizado correctamente",
+        "userUpdateError": "Error al actualizar usuario",
+        "userDeleted": "Usuario eliminado correctamente",
+        "userDeleteError": "Error al eliminar usuario",
+        "auditLogsError": "Error al cargar logs de auditoría",
+        "roleUpdated": "Usuario actualizado a {{role}} exitosamente",
+        "roleUpdateError": "Error al actualizar el rol del usuario",
+        "roomNameRequired": "Por favor ingresa un nombre para la sala",
+        "roomCreateError": "Error al crear la sala. Por favor intenta de nuevo.",
+        "postCreateError": "Error al crear la publicación",
+        "friendRequestSent": "¡Solicitud de amistad enviada!",
+        "friendRequestError": "Error al enviar solicitud",
+        "levelImported": "Nivel importado correctamente",
+        "levelImportError": "Error al importar el nivel. Verifica que el archivo sea válido.",
+        "gameComingSoon": "Funcionalidad de juego próximamente. Por ahora puedes usar el modo Práctica Libre."
+    },
+    "confirmations": {
+        "logout": "¿Seguro que quieres cerrar sesión?",
+        "leaveRoom": "¿Seguro que quieres salir de la sala?",
+        "leaveRace": "¿Seguro que quieres salir de la carrera?",
+        "deleteLevel": "¿Seguro que quieres eliminar este nivel?",
+        "updateUser": "¿Estás seguro de que deseas actualizar este usuario?",
+        "deleteUser": "¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer."
     }
 }

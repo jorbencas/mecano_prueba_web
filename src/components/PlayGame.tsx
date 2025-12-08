@@ -10,6 +10,7 @@ import levels from '../data/playgames.json';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import { useKeyboardHandler } from '../hooks/useKeyboardHandler';
 import { useAuth } from '../context/AuthContext';
+import { useActivityTracker } from '../hooks/useActivityTracker';
 
 interface FallingLetter {
   id: number;
@@ -157,6 +158,7 @@ const PlayGame: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
   const { user } = useAuth();
+  const { startTracking, stopTracking } = useActivityTracker('PlayGame', 'game');
 
   const [level, setLevel] = useState(0);
   const [fallingLetters, setFallingLetters] = useState<FallingLetter[]>([]);
@@ -205,7 +207,15 @@ const PlayGame: React.FC = () => {
     setGamePaused(false);
     setShowStatsModal(true);
     setFallingLetters([]); // limpiar letras (evita que sigan visualmente)
-  }, [clearAllIntervals]);
+    
+    stopTracking({
+      level,
+      wpm: score,
+      accuracy: Math.round((score / Math.max(1, (score + errors))) * 100) || 0,
+      errors,
+      completed: errors < (levels[level]?.errorLimit ?? 99),
+    });
+  }, [clearAllIntervals, stopTracking, level, score, errors]);
 
   // generación de letras y timer: se recrea cuando cambia gameStarted/gamePaused/level/gameOver
   useEffect(() => {
@@ -288,6 +298,7 @@ const PlayGame: React.FC = () => {
     setFallingLetters([]);
     setTime(0);
     setShowStatsModal(false);
+    startTracking();
   };
 
   const pauseGame = () => {
@@ -352,24 +363,52 @@ const PlayGame: React.FC = () => {
           </h1>
         </div>
 
-        <div className="mb-4">
+        <div className="flex justify-center gap-4 mb-8">
           {!gameStarted && (
-            <button onClick={startGame} className="mr-2 px-4 py-2 bg-green-500 text-white rounded">
+            <button 
+              onClick={startGame} 
+              className={`px-10 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg shadow-green-500/30 transition-all hover:scale-105 hover:shadow-green-500/40 active:scale-95 ${
+                isDarkMode 
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white' 
+                  : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+              }`}
+            >
               {t('playgame.start', 'Iniciar')}
             </button>
           )}
           {gameStarted && !gamePaused && (
-            <button onClick={pauseGame} className="mr-2 px-4 py-2 bg-yellow-500 text-white rounded">
+            <button 
+              onClick={pauseGame} 
+              className={`px-8 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg shadow-yellow-500/30 transition-all hover:scale-105 hover:shadow-yellow-500/40 active:scale-95 ${
+                isDarkMode 
+                  ? 'bg-gradient-to-r from-yellow-600 to-amber-600 text-white' 
+                  : 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white'
+              }`}
+            >
               {t('playgame.pause', 'Pausar')}
             </button>
           )}
           {gamePaused && (
-            <button onClick={resumeGame} className="mr-2 px-4 py-2 bg-green-500 text-white rounded">
+            <button 
+              onClick={resumeGame} 
+              className={`px-8 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg shadow-green-500/30 transition-all hover:scale-105 hover:shadow-green-500/40 active:scale-95 ${
+                isDarkMode 
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white' 
+                  : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+              }`}
+            >
               {t('playgame.resume', 'Reanudar')}
             </button>
           )}
           {gameStarted && (
-            <button onClick={stopGame} className="mr-2 px-4 py-2 bg-red-500 text-white rounded">
+            <button 
+              onClick={stopGame} 
+              className={`px-8 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg shadow-red-500/30 transition-all hover:scale-105 hover:shadow-red-500/40 active:scale-95 ${
+                isDarkMode 
+                  ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white' 
+                  : 'bg-gradient-to-r from-red-500 to-rose-500 text-white'
+              }`}
+            >
               {t('playgame.stop', 'Detener')}
             </button>
           )}
