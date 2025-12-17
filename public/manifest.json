@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Mecano",
+  "name": "Mecano - Aprende Mecanografía",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#1f2937",
+  "background_color": "#111827",
+  "description": "Mejora tu velocidad de escritura con Mecano, la aplicación definitiva de mecanografía."
 }

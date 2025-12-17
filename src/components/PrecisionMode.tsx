@@ -6,7 +6,7 @@ import { useActivityTracker } from '../hooks/useActivityTracker';
 import Keyboard from './Keyboard';
 import Hands from './Hands';
 import InstruccionesButton from './Instrucciones';
-import ErrorModal from './ErrorModal';
+import BaseModal from './BaseModal';
 import Stats from './Stats';
 import { getStatsData } from '../utils/getStatsData';
 import TypingArea from './TypingArea';
@@ -247,8 +247,14 @@ const PrecisionMode: React.FC = () => {
 
         {/* Stats Modal */}
         {showStats && (
-          <ErrorModal isOpen={showStats} onClose={() => {
+          <BaseModal isOpen={showStats} onClose={() => {
             setShowStats(false);
+            // Assuming these states are defined elsewhere and need to be reset
+            // setGameActive(false);
+            // setTypedText('');
+            // setStartTime(null);
+            // setErrors(0); // This might conflict with the 'errors' array state
+            // setIndex(0);
           }}>
             <Stats
               stats={getStatsData({
@@ -275,7 +281,7 @@ const PrecisionMode: React.FC = () => {
               }}
               sourceComponent="PrecisionMode"
             />
-          </ErrorModal>
+          </BaseModal>
         )}
       </div>
     </div>

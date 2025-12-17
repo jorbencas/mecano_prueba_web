@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import { FaSave, FaDownload } from 'react-icons/fa';
 import InstruccionesButton from './Instrucciones';
 
-const LevelCreator: React.FC = () => {
+interface LevelCreatorProps {
+  onSaved?: () => void;
+  onCancel?: () => void;
+}
+
+const LevelCreator: React.FC<LevelCreatorProps> = ({ onSaved, onCancel }) => {
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
   
@@ -13,6 +18,24 @@ const LevelCreator: React.FC = () => {
   const [speed, setSpeed] = useState(1000);
   const [errorLimit, setErrorLimit] = useState(5);
   const [wpmGoal, setWpmGoal] = useState(60);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const editingLevelStr = localStorage.getItem('editingLevel');
+    if (editingLevelStr) {
+      try {
+        const level = JSON.parse(editingLevelStr);
+        setLevelName(level.name);
+        setSelectedKeys(level.keys);
+        setSpeed(level.speed);
+        setErrorLimit(level.errorLimit);
+        setWpmGoal(level.wpmGoal);
+        setEditingId(level.id);
+      } catch (e) {
+        console.error('Error parsing editing level', e);
+      }
+    }
+  }, []);
 
   const allKeys = 'abcdefghijklmnñopqrstuvwxyz0123456789'.split('');
 
@@ -24,7 +47,7 @@ const LevelCreator: React.FC = () => {
 
   const saveLevel = () => {
     const level = {
-      id: Date.now().toString(),
+      id: editingId || Date.now().toString(),
       name: levelName || 'Nivel Personalizado',
       keys: selectedKeys,
       speed,
@@ -34,12 +57,19 @@ const LevelCreator: React.FC = () => {
     };
 
     const saved = localStorage.getItem('customLevels');
-    const levels = saved ? JSON.parse(saved) : [];
-    levels.push(level);
+    let levels = saved ? JSON.parse(saved) : [];
+    
+    if (editingId) {
+      levels = levels.map((l: any) => l.id === editingId ? level : l);
+    } else {
+      levels.push(level);
+    }
+    
     localStorage.setItem('customLevels', JSON.stringify(levels));
     
     alert(t('levelCreator.saved', 'Nivel guardado correctamente'));
     resetForm();
+    if (onSaved) onSaved();
   };
 
   const exportLevel = () => {
@@ -66,6 +96,8 @@ const LevelCreator: React.FC = () => {
     setSpeed(1000);
     setErrorLimit(5);
     setWpmGoal(60);
+    setEditingId(null);
+    localStorage.removeItem('editingLevel');
   };
 
   return (
@@ -149,6 +181,19 @@ const LevelCreator: React.FC = () => {
                   <FaSave className="inline mr-2" />
                   {t('levelCreator.save', 'Guardar')}
                 </button>
+                {onCancel && (
+                  <button
+                    onClick={() => {
+                      resetForm();
+                      onCancel();
+                    }}
+                    className="flex-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded"
+                  >
+                    Cancelar
+                  </button>
+                )}
+              </div>
+              <div className="flex gap-2 mt-2">
                 <button
                   onClick={exportLevel}
                   disabled={selectedKeys.length === 0}

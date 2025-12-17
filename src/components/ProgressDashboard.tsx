@@ -12,7 +12,11 @@ import RecommendationEngine from './RecommendationEngine';
 import ProgressPredictor from './ProgressPredictor';
 import DataExport from './DataExport';
 
-const ProgressDashboard: React.FC = () => {
+interface ProgressDashboardProps {
+  embedded?: boolean;
+}
+
+const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ embedded = false }) => {
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
   const { t } = useDynamicTranslations();
@@ -30,25 +34,52 @@ const ProgressDashboard: React.FC = () => {
   }, [user]);
 
   const loadAllStats = async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
     try {
       setLoading(true);
       const token = localStorage.getItem('auth_token');
-      if (!token) return;
+      if (!token) {
+        console.error('No auth token found');
+        setLoading(false);
+        return;
+      }
 
-      // Load statistics
-      const statsData = await statsAPI.get(token, user.id);
-      setOverallStats(statsData.overall);
-      setStatsByMode(statsData.byMode);
-      setRecentSessions(statsData.recent);
-      setWpmProgression(statsData.wpmProgression);
+      // Load statistics with abort signal
+      const statsPromise = statsAPI.get(token, user.id, controller.signal);
+      const progressPromise = progressAPI.getAll(token, user.id, controller.signal);
 
-      // Load progress
-      const progressData = await progressAPI.getAll(token, user.id);
-      setProgressByMode(progressData.progress);
-    } catch (error) {
-      console.error('Error loading stats:', error);
+      const [statsData, progressData] = await Promise.all([statsPromise, progressPromise]);
+      clearTimeout(timeoutId);
+
+      if (statsData) {
+        setOverallStats(statsData.overall);
+        setStatsByMode(statsData.byMode);
+        setRecentSessions(statsData.recent);
+        setWpmProgression(statsData.wpmProgression);
+      }
+
+      if (progressData) {
+        setProgressByMode(progressData.progress);
+      }
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        console.log('Progress stats request aborted');
+      } else {
+        console.error('Error loading stats:', error);
+      }
+      // Set empty data on error to allow UI to render
+      setOverallStats((prev: any) => prev || {});
+      setStatsByMode((prev: any) => prev || []);
+      setRecentSessions((prev: any) => prev || []);
+      setWpmProgression((prev: any) => prev || []);
+      setProgressByMode((prev: any) => prev || []);
     } finally {
       setLoading(false);
     }
@@ -58,8 +89,8 @@ const ProgressDashboard: React.FC = () => {
     return (
       <div className={`min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6">Panel de Progreso</h1>
-          <p>Debes iniciar sesión para ver tus estadísticas</p>
+          <h1 className="text-3xl font-bold mb-6">{t('progressDashboard.title', 'Panel de Progreso')}</h1>
+          <p>{t('progressDashboard.loginRequired', 'Debes iniciar sesión para ver tus estadísticas')}</p>
         </div>
       </div>
     );
@@ -68,7 +99,7 @@ const ProgressDashboard: React.FC = () => {
   if (loading) {
     return (
       <div className={`min-h-screen p-4 flex items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
-        <div className="text-2xl">Cargando estadísticas...</div>
+        <div className="text-2xl">{t('progressDashboard.loading', 'Cargando estadísticas...')}</div>
       </div>
     );
   }
@@ -85,7 +116,7 @@ const ProgressDashboard: React.FC = () => {
   return (
     <div className={`min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">📊 Panel de Progreso</h1>
+        {!embedded && <h1 className="text-3xl font-bold mb-6">📊 {t('progressDashboard.title', 'Panel de Progreso')}</h1>}
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6 border-b border-gray-600">
@@ -98,7 +129,7 @@ const ProgressDashboard: React.FC = () => {
             }`}
           >
             <FaChartLine className="inline mr-2" />
-            Resumen
+            {t('progressDashboard.tabs.overview', 'Resumen')}
           </button>
           <button
             onClick={() => setActiveTab('analytics')}
@@ -109,7 +140,7 @@ const ProgressDashboard: React.FC = () => {
             }`}
           >
             <FaChartBar className="inline mr-2" />
-            Analíticas Avanzadas
+            {t('progressDashboard.tabs.analytics', 'Analíticas Avanzadas')}
           </button>
           <button
             onClick={() => setActiveTab('export')}
@@ -120,7 +151,7 @@ const ProgressDashboard: React.FC = () => {
             }`}
           >
             <FaFileExport className="inline mr-2" />
-            Exportar Datos
+            {t('progressDashboard.tabs.export', 'Exportar Datos')}
           </button>
         </div>
 
@@ -135,7 +166,7 @@ const ProgressDashboard: React.FC = () => {
               <FaChartLine className="text-3xl text-blue-500" />
               <span className="text-3xl font-bold">{Math.round(overallStats?.avg_wpm || 0)}</span>
             </div>
-            <div className="text-sm opacity-75">WPM Promedio</div>
+            <div className="text-sm opacity-75">{t('progressDashboard.stats.avgWpm', 'WPM Promedio')}</div>
           </div>
 
           <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-green-900' : 'bg-green-100'}`}>
@@ -143,7 +174,7 @@ const ProgressDashboard: React.FC = () => {
               <FaTrophy className="text-3xl text-yellow-500" />
               <span className="text-3xl font-bold">{Math.round(overallStats?.max_wpm || 0)}</span>
             </div>
-            <div className="text-sm opacity-75">Mejor WPM</div>
+            <div className="text-sm opacity-75">{t('progressDashboard.stats.maxWpm', 'Mejor WPM')}</div>
           </div>
 
           <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-purple-900' : 'bg-purple-100'}`}>
@@ -151,7 +182,7 @@ const ProgressDashboard: React.FC = () => {
               <FaFire className="text-3xl text-orange-500" />
               <span className="text-3xl font-bold">{overallStats?.total_sessions || 0}</span>
             </div>
-            <div className="text-sm opacity-75">Sesiones Totales</div>
+            <div className="text-sm opacity-75">{t('progressDashboard.stats.totalSessions', 'Sesiones Totales')}</div>
           </div>
 
           <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-orange-900' : 'bg-orange-100'}`}>
@@ -159,14 +190,14 @@ const ProgressDashboard: React.FC = () => {
               <FaClock className="text-3xl text-blue-500" />
               <span className="text-3xl font-bold">{formatDuration(overallStats?.total_time || 0)}</span>
             </div>
-            <div className="text-sm opacity-75">Tiempo Total</div>
+            <div className="text-sm opacity-75">{t('progressDashboard.stats.totalTime', 'Tiempo Total')}</div>
           </div>
         </div>
 
         {/* WPM Progression Chart */}
         {wpmProgression.length > 0 && (
           <div className={`p-6 rounded-lg mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <h2 className="text-2xl font-bold mb-4">Progresión de WPM (Últimos 30 días)</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('progressDashboard.charts.wpmProgression', 'Progresión de WPM (Últimos 30 días)')}</h2>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={wpmProgression}>
@@ -184,8 +215,8 @@ const ProgressDashboard: React.FC = () => {
                     }}
                   />
                   <Legend />
-                  <Line type="monotone" dataKey="avg_wpm" name="WPM Promedio" stroke="#3b82f6" strokeWidth={2} />
-                  <Line type="monotone" dataKey="max_wpm" name="WPM Máximo" stroke="#10b981" strokeWidth={2} />
+                  <Line type="monotone" dataKey="avg_wpm" name={t('progressDashboard.stats.avgWpm', 'WPM Promedio')} stroke="#3b82f6" strokeWidth={2} />
+                  <Line type="monotone" dataKey="max_wpm" name={t('progressDashboard.stats.maxWpm', 'Mejor WPM')} stroke="#10b981" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -197,7 +228,7 @@ const ProgressDashboard: React.FC = () => {
           {/* Mode Distribution */}
           {statsByMode.length > 0 && (
             <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-              <h2 className="text-2xl font-bold mb-4">Distribución por Modo</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('progressDashboard.charts.modeDistribution', 'Distribución por Modo')}</h2>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -224,7 +255,7 @@ const ProgressDashboard: React.FC = () => {
           {/* Mode Performance */}
           {statsByMode.length > 0 && (
             <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-              <h2 className="text-2xl font-bold mb-4">Rendimiento por Modo</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('progressDashboard.charts.modePerformance', 'Rendimiento por Modo')}</h2>
               <div className="space-y-3">
                 {statsByMode.map((mode, index) => (
                   <div key={index} className={`p-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
@@ -233,7 +264,7 @@ const ProgressDashboard: React.FC = () => {
                       <span>{Math.round(mode.avg_wpm)} WPM</span>
                     </div>
                     <div className="flex justify-between text-sm opacity-75">
-                      <span>{mode.sessions} sesiones</span>
+                      <span>{mode.sessions} {t('progressDashboard.labels.sessions', 'sesiones')}</span>
                       <span>{formatDuration(mode.total_time)}</span>
                     </div>
                   </div>
@@ -246,25 +277,25 @@ const ProgressDashboard: React.FC = () => {
         {/* Progress by Mode */}
         {progressByMode.length > 0 && (
           <div className={`p-6 rounded-lg mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <h2 className="text-2xl font-bold mb-4">Progreso de Niveles</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('progressDashboard.charts.levelProgress', 'Progreso de Niveles')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {progressByMode.map((progress, index) => (
                 <div key={index} className={`p-4 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
                   <h3 className="font-bold text-lg mb-2">{progress.mode}</h3>
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
-                      <span>Niveles completados:</span>
+                      <span>{t('progressDashboard.labels.completedLevels', 'Niveles completados:')}</span>
                       <span className="font-semibold">{progress.completed_levels}/{progress.total_levels}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span>Estrellas:</span>
+                      <span>{t('progressDashboard.labels.stars', 'Estrellas:')}</span>
                       <span className="flex items-center gap-1">
                         <FaStar className="text-yellow-500" />
                         {progress.total_stars}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Mejor WPM:</span>
+                      <span>{t('progressDashboard.labels.bestWpm', 'Mejor WPM:')}</span>
                       <span className="font-semibold">{progress.max_wpm}</span>
                     </div>
                   </div>
@@ -282,17 +313,17 @@ const ProgressDashboard: React.FC = () => {
 
         {/* Recent Sessions */}
         <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-          <h2 className="text-2xl font-bold mb-4">Sesiones Recientes</h2>
+          <h2 className="text-2xl font-bold mb-4">{t('progressDashboard.recentSessions.title', 'Sesiones Recientes')}</h2>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className={`border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                 <tr>
-                  <th className="text-left p-2">Fecha</th>
-                  <th className="text-left p-2">Modo</th>
-                  <th className="text-left p-2">Nivel</th>
-                  <th className="text-left p-2">WPM</th>
-                  <th className="text-left p-2">Precisión</th>
-                  <th className="text-left p-2">Duración</th>
+                  <th className="text-left p-2">{t('progressDashboard.recentSessions.date', 'Fecha')}</th>
+                  <th className="text-left p-2">{t('progressDashboard.recentSessions.mode', 'Modo')}</th>
+                  <th className="text-left p-2">{t('progressDashboard.recentSessions.level', 'Nivel')}</th>
+                  <th className="text-left p-2">{t('progressDashboard.recentSessions.wpm', 'WPM')}</th>
+                  <th className="text-left p-2">{t('progressDashboard.recentSessions.accuracy', 'Precisión')}</th>
+                  <th className="text-left p-2">{t('progressDashboard.recentSessions.duration', 'Duración')}</th>
                 </tr>
               </thead>
               <tbody>

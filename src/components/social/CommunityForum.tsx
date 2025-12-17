@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { socialAPI } from '../../api/social';
-import { FaComments, FaHeart, FaRegHeart, FaPen, FaSearch } from 'react-icons/fa';
+import { FaPlus, FaComment, FaHeart, FaRegHeart, FaComments, FaPen } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 interface Post {
@@ -28,11 +28,7 @@ const CommunityForum: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newPost, setNewPost] = useState({ title: '', content: '', category: 'general' });
 
-  useEffect(() => {
-    loadPosts();
-  }, [category]);
-
-  const loadPosts = async () => {
+  const loadPosts = useCallback(async () => {
     try {
       setLoading(true);
       const data = await socialAPI.getPosts(category);
@@ -42,7 +38,11 @@ const CommunityForum: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [category]);
+
+  useEffect(() => {
+    loadPosts();
+  }, [loadPosts]);
 
   const handleCreatePost = async () => {
     if (!user) return;

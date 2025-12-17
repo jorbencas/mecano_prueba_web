@@ -1,54 +1,11 @@
-const express = require('express');
 const http = require('http');
-const cors = require('cors');
-const passport = require('passport');
-require('dotenv').config();
-
+const app = require('./app');
 const { testConnection, initializeSchema } = require('./db');
 const { initializeWebSocket } = require('./websocket');
-const authRoutes = require('./routes/auth');
-const activityRoutes = require('./routes/activity');
-const usersRoutes = require('./routes/users');
-const statsRoutes = require('./routes/stats');
-const progressRoutes = require('./routes/progress');
-const multiplayerRoutes = require('./routes/multiplayer');
-const socialRoutes = require('./routes/social');
-const challengesRoutes = require('./routes/challenges');
-const adminRoutes = require('./routes/admin');
+require('dotenv').config();
 
-const app = express();
 const httpServer = http.createServer(app);
 const PORT = process.env.PORT || 3001;
-
-// Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true,
-}));
-app.use(express.json());
-app.use(passport.initialize());
-
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/activity', activityRoutes);
-app.use('/api/users', usersRoutes);
-app.use('/api/stats', statsRoutes);
-app.use('/api/progress', progressRoutes);
-app.use('/api/multiplayer', multiplayerRoutes);
-app.use('/api/social', socialRoutes);
-app.use('/api/challenges', challengesRoutes);
-app.use('/api/admin', adminRoutes);
-
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(500).json({ error: 'Internal server error' });
-});
 
 // Initialize and start server
 async function start() {
@@ -89,5 +46,3 @@ async function start() {
 }
 
 start();
-
-module.exports = app;

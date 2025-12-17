@@ -304,13 +304,13 @@ const generateDailyChallenges = async (userId) => {
     // 4. Improvement Challenge (based on weakest mode)
     const modeStats = await sql`
       SELECT 
-        source_component as mode,
+        mode,
         AVG(wpm) as avg_wpm,
         COUNT(*) as sessions
       FROM practice_stats
       WHERE user_id = ${userId}
       AND created_at >= CURRENT_DATE - INTERVAL '30 days'
-      GROUP BY source_component
+      GROUP BY mode
       HAVING COUNT(*) > 2
       ORDER BY AVG(wpm) ASC
       LIMIT 1
@@ -378,7 +378,26 @@ router.get('/daily', authenticate, async (req, res) => {
       
       for (const challenge of newChallenges) {
         await sql`
-          INSERT INTO daily_challenges ${sql(challenge)}
+          INSERT INTO daily_challenges (
+            user_id, 
+            challenge_type, 
+            title, 
+            description, 
+            target_value, 
+            mode, 
+            difficulty, 
+            date
+          )
+          VALUES (
+            ${challenge.user_id}, 
+            ${challenge.challenge_type}, 
+            ${challenge.title}, 
+            ${challenge.description}, 
+            ${challenge.target_value}, 
+            ${challenge.mode || null}, 
+            ${challenge.difficulty}, 
+            ${challenge.date}
+          )
         `;
       }
 

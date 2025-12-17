@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useMultiplayer } from '../context/MultiplayerContext';
@@ -13,8 +13,7 @@ interface RoomLobbyProps {
 
 const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) => {
   const { isDarkMode } = useTheme();
-  const { user } = useAuth();
-  const { joinRoom } = useMultiplayer();
+  const { socket } = useMultiplayer();
   const { t } = useDynamicTranslations();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,26 +23,26 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
   const [isPrivate, setIsPrivate] = useState(false);
   const [creating, setCreating] = useState(false);
 
-  useEffect(() => {
-    fetchRooms();
-    const interval = setInterval(fetchRooms, 5000); // Refresh every 5 seconds
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchRooms = async () => {
+  const fetchRooms = useCallback(async () => {
     try {
       const token = localStorage.getItem('auth_token');
       if (!token) return;
 
       const data = await multiplayerAPI.getRooms(token);
       // Filter by mode
-      setRooms(data.rooms.filter(room => room.mode === mode));
+      setRooms(data.rooms.filter((room: Room) => room.mode === mode));
     } catch (error) {
       console.error('Error fetching rooms:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [mode]);
+
+  useEffect(() => {
+    fetchRooms();
+    const interval = setInterval(fetchRooms, 5000); // Refresh every 5 seconds
+    return () => clearInterval(interval);
+  }, [fetchRooms]);
 
   const handleCreateRoom = async () => {
     if (!roomName.trim()) {
@@ -66,7 +65,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
       const { room } = await multiplayerAPI.createRoom(token, roomData);
       
       // Join the created room
-      joinRoom(room.id);
+      onJoinRoom(room.id);
       
       setShowCreateModal(false);
       setRoomName('');
@@ -81,7 +80,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
   };
 
   const handleJoinRoom = (roomId: string) => {
-    joinRoom(roomId);
+    onJoinRoom(roomId);
   };
 
   const filteredRooms = rooms.filter(room => room.mode === mode);

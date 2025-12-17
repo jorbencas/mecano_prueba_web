@@ -274,6 +274,69 @@ async function initializeSchema() {
     await sql`CREATE INDEX IF NOT EXISTS idx_audit_logs_target ON audit_logs(target_user_id)`;
     await sql`CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs(created_at)`;
 
+    // Tutoring System Tables
+    
+    // Classes
+    await sql`
+      CREATE TABLE IF NOT EXISTS classes (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        teacher_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        invite_code VARCHAR(20) UNIQUE NOT NULL,
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    await sql`CREATE INDEX IF NOT EXISTS idx_classes_teacher ON classes(teacher_id)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_classes_invite_code ON classes(invite_code)`;
+
+    // Class Members (Students)
+    await sql`
+      CREATE TABLE IF NOT EXISTS class_members (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        class_id UUID REFERENCES classes(id) ON DELETE CASCADE,
+        student_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(class_id, student_id)
+      )
+    `;
+    await sql`CREATE INDEX IF NOT EXISTS idx_class_members_student ON class_members(student_id)`;
+
+    // Assignments
+    await sql`
+      CREATE TABLE IF NOT EXISTS assignments (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        class_id UUID REFERENCES classes(id) ON DELETE CASCADE,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        type VARCHAR(50) NOT NULL, -- 'level', 'practice', 'speed', etc.
+        config JSONB, -- { levelNumber: 1, timeLimit: 60, etc. }
+        requirements JSONB, -- { minWpm: 40, minAccuracy: 90 }
+        due_date TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    await sql`CREATE INDEX IF NOT EXISTS idx_assignments_class ON assignments(class_id)`;
+
+    // Assignment Results
+    await sql`
+      CREATE TABLE IF NOT EXISTS assignment_results (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        assignment_id UUID REFERENCES assignments(id) ON DELETE CASCADE,
+        student_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        wpm INTEGER,
+        accuracy DECIMAL(5,2),
+        score INTEGER,
+        passed BOOLEAN DEFAULT FALSE,
+        attempts INTEGER DEFAULT 1,
+        UNIQUE(assignment_id, student_id)
+      )
+    `;
+    await sql`CREATE INDEX IF NOT EXISTS idx_assignment_results_student ON assignment_results(student_id)`;
+
     console.log('✅ Database schema initialized');
   } catch (error) {
     console.error('❌ Schema initialization error:', error);

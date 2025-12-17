@@ -49,9 +49,10 @@ export const progressAPI = {
   /**
    * Get all progress across all modes
    */
-  getAll: async (token: string, userId: string) => {
-    const response = await fetch(`${API_URL}/progress/${userId}/all`, {
+  getAll: async (token: string, userId: string, signal?: AbortSignal) => {
+    const response = await fetch(`${API_URL}/progress/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
+      signal,
     });
 
     const data = await response.json();

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { statsAPI } from '../api/stats';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { FaChartLine, FaCalendar, FaFlag } from 'react-icons/fa';
 
 interface Prediction {
@@ -20,11 +19,7 @@ const ProgressPredictor: React.FC = () => {
   const [targetWPM, setTargetWPM] = useState(80);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    predictProgress();
-  }, [user, targetWPM]);
-
-  const predictProgress = async () => {
+  const predictProgress = useCallback(async () => {
     if (!user) return;
     
     try {
@@ -95,7 +90,11 @@ const ProgressPredictor: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, targetWPM]);
+
+  useEffect(() => {
+    predictProgress();
+  }, [predictProgress]);
 
   if (!user) {
     return (

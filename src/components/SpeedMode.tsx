@@ -5,7 +5,7 @@ import { useActivityTracker } from '../hooks/useActivityTracker';
 import Keyboard from './Keyboard';
 import Hands from './Hands';
 import InstruccionesButton from './Instrucciones';
-import ErrorModal from './ErrorModal';
+import BaseModal from './BaseModal';
 import Stats from './Stats';
 import { getStatsData } from '../utils/getStatsData';
 import TypingArea from './TypingArea';
@@ -25,6 +25,28 @@ const SpeedMode: React.FC = () => {
   const [errors, setErrors] = useState(0);
   const [totalChars, setTotalChars] = useState(0);
   const [showStats, setShowStats] = useState(false);
+  const [activeChallenge, setActiveChallenge] = useState<any>(null);
+
+  useEffect(() => {
+    const challengeStr = localStorage.getItem('active_challenge');
+    if (challengeStr) {
+      try {
+        const challenge = JSON.parse(challengeStr);
+        // Verify if it's a speed challenge
+        if (challenge.mode === 'speed-mode' || challenge.challenge_type === 'speed') {
+          setActiveChallenge(challenge);
+          // If challenge has specific duration (target_value could be words or time, assuming time for now if low, or words if high)
+          // For speed mode, usually fixed time. Let's assume standard 60s if not specified
+          setDuration(60); 
+        }
+      } catch (e) {
+        console.error('Error parsing active challenge', e);
+      }
+      // Clear it so it doesn't persist forever if they leave? 
+      // Or keep it until completed? Let's keep it for this session.
+      localStorage.removeItem('active_challenge');
+    }
+  }, []);
 
   const generateText = useCallback(() => {
     const words = ['the', 'quick', 'brown', 'fox', 'jumps', 'over', 'lazy', 'dog', 'pack', 'my', 'box', 'with', 'five', 'dozen', 'liquor', 'jugs'];
@@ -109,6 +131,11 @@ const SpeedMode: React.FC = () => {
           <h1 className={`text-4xl font-extrabold mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-orange-400 via-red-400 to-yellow-400' : 'from-orange-600 via-red-600 to-yellow-600'}`}>
             {t('speedMode.title', 'Modo Velocidad')}
           </h1>
+          {activeChallenge && (
+            <div className="mt-2 inline-block px-4 py-1 rounded-full bg-blue-500 text-white font-bold text-sm animate-bounce">
+              🎯 Reto: {activeChallenge.title}
+            </div>
+          )}
         </div>
 
         {!isActive && !showStats && (
@@ -197,10 +224,14 @@ const SpeedMode: React.FC = () => {
         </div>
 
         {showStats && (
-          <ErrorModal isOpen={showStats} onClose={() => {
+          <BaseModal isOpen={showStats} onClose={() => {
             setShowStats(false);
-            setTimeLeft(duration);
-            setIsActive(false);
+            setTimeLeft(duration); // Assuming this is equivalent to setGameActive(false) for this component
+            setIsActive(false); // Assuming this is equivalent to setGameActive(false) for this component
+            // setTypedText(''); // Not directly applicable here, currentText is managed differently
+            // setStartTime(null); // Not directly applicable here, timeLeft is managed differently
+            setErrors(0);
+            setCurrentIndex(0); // Assuming this is equivalent to setIndex(0)
           }}>
             <Stats
               stats={getStatsData({
@@ -229,7 +260,7 @@ const SpeedMode: React.FC = () => {
               }}
               sourceComponent="SpeedMode"
             />
-          </ErrorModal>
+          </BaseModal>
         )}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { statsAPI } from '../api/stats';
@@ -18,11 +18,7 @@ const RecommendationEngine: React.FC = () => {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    generateRecommendations();
-  }, [user]);
-
-  const generateRecommendations = async () => {
+  const generateRecommendations = useCallback(async () => {
     if (!user) return;
     
     try {
@@ -107,7 +103,13 @@ const RecommendationEngine: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      generateRecommendations();
+    }
+  }, [user, generateRecommendations]);
 
   const getPriorityColor = (priority: number) => {
     switch (priority) {

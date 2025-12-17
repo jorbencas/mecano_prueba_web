@@ -75,17 +75,25 @@ router.get(
  * GET /api/auth/google/callback
  * Google OAuth callback
  */
-router.get(
-  '/google/callback',
-  passport.authenticate('google', { session: false, failureRedirect: '/login' }),
-  (req, res) => {
-    const { token, user } = req.user;
-    
-    // Redirect to frontend with token
+router.get('/google/callback', (req, res, next) => {
+  passport.authenticate('google', { session: false }, (err, data, info) => {
     const frontendURL = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+    if (err) {
+      console.error('❌ Google Auth Error:', err);
+      return res.redirect(`${frontendURL}/login?error=auth_failed&message=${encodeURIComponent(err.message)}`);
+    }
+
+    if (!data) {
+      console.error('❌ Google Auth Failed: No user data');
+      return res.redirect(`${frontendURL}/login?error=no_user`);
+    }
+
+    // Success
+    const { token } = data;
     res.redirect(`${frontendURL}/auth/callback?token=${token}`);
-  }
-);
+  })(req, res, next);
+});
 
 /**
  * GET /api/auth/me

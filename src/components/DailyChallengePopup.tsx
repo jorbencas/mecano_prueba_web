@@ -4,15 +4,16 @@ import { DailyChallenge } from '../utils/dailyChallengeUtils';
 import { FaTimes, FaFire, FaRocket } from 'react-icons/fa';
 
 interface DailyChallengePopupProps {
-  challenge: DailyChallenge;
+  challenges: DailyChallenge[];
   onClose: () => void;
-  onAccept: () => void;
+  onAccept: (challengeId: string) => void;
 }
 
-const DailyChallengePopup: React.FC<DailyChallengePopupProps> = ({ challenge, onClose, onAccept }) => {
+const DailyChallengePopup: React.FC<DailyChallengePopupProps> = ({ challenges, onClose, onAccept }) => {
   const { isDarkMode } = useTheme();
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
     // Animación de entrada
@@ -26,14 +27,17 @@ const DailyChallengePopup: React.FC<DailyChallengePopupProps> = ({ challenge, on
     }, 300);
   };
 
-  const handleAccept = () => {
+  const handleAccept = (challengeId: string) => {
     setIsClosing(true);
     setTimeout(() => {
-      onAccept();
+      onAccept(challengeId);
     }, 300);
   };
 
-  const progressPercentage = Math.min(100, (challenge.currentProgress / challenge.targetValue) * 100);
+  if (challenges.length === 0) return null;
+
+  const activeChallenge = challenges[activeTab];
+  const progressPercentage = Math.min(100, (activeChallenge.currentProgress / activeChallenge.targetValue) * 100);
 
   return (
     <div
@@ -44,31 +48,56 @@ const DailyChallengePopup: React.FC<DailyChallengePopupProps> = ({ challenge, on
     >
       {/* Popup Container */}
       <div
-        className={`relative rounded-2xl shadow-2xl overflow-hidden border-2 ${
-          isDarkMode ? 'border-gray-700' : 'border-white/50'
+        className={`relative rounded-2xl shadow-2xl overflow-hidden border-2 transition-colors duration-300 ${
+          isDarkMode ? 'border-gray-700 bg-gray-900' : 'border-white/50 bg-white'
         }`}
-        style={{
-          background: isDarkMode
-            ? `linear-gradient(135deg, ${challenge.color}15 0%, ${challenge.color}30 100%)`
-            : `linear-gradient(135deg, ${challenge.color}20 0%, ${challenge.color}40 100%)`,
-        }}
       >
+        {/* Dynamic Background based on active challenge */}
+        <div 
+          className="absolute inset-0 opacity-10 transition-colors duration-500"
+          style={{
+            background: `linear-gradient(135deg, ${activeChallenge.color} 0%, ${activeChallenge.color} 100%)`
+          }}
+        />
+
         {/* Animated Background Gradient */}
         <div
-          className={`absolute inset-0 bg-gradient-to-br ${challenge.gradient} opacity-10 animate-pulse`}
+          className={`absolute inset-0 bg-gradient-to-br ${activeChallenge.gradient} opacity-5 animate-pulse transition-all duration-500`}
           style={{ animationDuration: '3s' }}
         />
 
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className={`absolute top-3 right-3 p-2 rounded-full transition-all hover:scale-110 z-10 ${
-            isDarkMode ? 'bg-gray-800/80 hover:bg-gray-700' : 'bg-white/80 hover:bg-white'
+          className={`absolute top-3 right-3 p-2 rounded-full transition-all hover:scale-110 z-20 ${
+            isDarkMode ? 'bg-gray-800/80 hover:bg-gray-700 text-gray-300' : 'bg-white/80 hover:bg-white text-gray-700'
           }`}
           aria-label="Cerrar"
         >
-          <FaTimes className={isDarkMode ? 'text-gray-300' : 'text-gray-700'} />
+          <FaTimes />
         </button>
+
+        {/* Tabs if multiple challenges */}
+        {challenges.length > 1 && (
+          <div className="flex p-2 gap-2 relative z-10 bg-black/5 dark:bg-white/5 backdrop-blur-sm">
+            {challenges.map((challenge, index) => (
+              <button
+                key={challenge.id}
+                onClick={() => setActiveTab(index)}
+                className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                  activeTab === index
+                    ? isDarkMode 
+                      ? 'bg-gray-800 text-white shadow-lg' 
+                      : 'bg-white text-gray-900 shadow-lg'
+                    : 'text-gray-500 hover:bg-black/5 dark:hover:bg-white/5'
+                }`}
+              >
+                <span>{challenge.icon}</span>
+                <span className="truncate">{challenge.theme === 'christmas' || challenge.theme === 'halloween' ? 'Especial' : 'Diario'}</span>
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Content */}
         <div className="relative p-6">
@@ -78,37 +107,37 @@ const DailyChallengePopup: React.FC<DailyChallengePopupProps> = ({ challenge, on
               className="text-5xl animate-bounce"
               style={{ animationDuration: '2s' }}
             >
-              {challenge.icon}
+              {activeChallenge.icon}
             </div>
             <div className="flex-1">
               <h3
-                className="text-2xl font-black mb-1"
+                className="text-2xl font-black mb-1 transition-all duration-300"
                 style={{
-                  background: `linear-gradient(135deg, ${challenge.color}, ${challenge.color}dd)`,
+                  background: `linear-gradient(135deg, ${activeChallenge.color}, ${activeChallenge.color}dd)`,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
                 }}
               >
-                {challenge.title}
+                {activeChallenge.title}
               </h3>
-              <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                {challenge.description}
+              <p className={`text-sm transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                {activeChallenge.description}
               </p>
             </div>
           </div>
 
           {/* Motivational Message */}
           <div
-            className={`p-4 rounded-xl mb-4 border-l-4 ${
-              isDarkMode ? 'bg-gray-800/50' : 'bg-white/50'
+            className={`p-4 rounded-xl mb-4 border-l-4 transition-colors duration-300 ${
+              isDarkMode ? 'bg-gray-800/50' : 'bg-gray-50'
             }`}
-            style={{ borderColor: challenge.color }}
+            style={{ borderColor: activeChallenge.color }}
           >
             <div className="flex items-start gap-2">
               <FaFire className="text-orange-500 mt-1 flex-shrink-0" />
-              <p className={`font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                {challenge.motivationalMessage}
+              <p className={`font-bold text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                {activeChallenge.motivationalMessage}
               </p>
             </div>
           </div>
@@ -116,23 +145,23 @@ const DailyChallengePopup: React.FC<DailyChallengePopupProps> = ({ challenge, on
           {/* Goal */}
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
-              <span className={`font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+              <span className={`font-bold text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 🎯 Objetivo:
               </span>
               <span
-                className="font-black text-lg"
-                style={{ color: challenge.color }}
+                className="font-black text-lg transition-colors duration-300"
+                style={{ color: activeChallenge.color }}
               >
-                {challenge.goal}
+                {activeChallenge.goal}
               </span>
             </div>
 
             {/* Progress Bar */}
             <div className={`w-full h-3 rounded-full overflow-hidden ${
-              isDarkMode ? 'bg-gray-700' : 'bg-gray-300'
+              isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
             }`}>
               <div
-                className={`h-full bg-gradient-to-r ${challenge.gradient} transition-all duration-500 relative overflow-hidden`}
+                className={`h-full bg-gradient-to-r ${activeChallenge.gradient} transition-all duration-500 relative overflow-hidden`}
                 style={{ width: `${progressPercentage}%` }}
               >
                 {/* Shimmer effect */}
@@ -143,10 +172,10 @@ const DailyChallengePopup: React.FC<DailyChallengePopupProps> = ({ challenge, on
               </div>
             </div>
             <div className="flex justify-between mt-1 text-xs">
-              <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-                {challenge.currentProgress} / {challenge.targetValue}
+              <span className={isDarkMode ? 'text-gray-500' : 'text-gray-500'}>
+                {activeChallenge.currentProgress} / {activeChallenge.targetValue}
               </span>
-              <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+              <span className={isDarkMode ? 'text-gray-500' : 'text-gray-500'}>
                 {Math.round(progressPercentage)}%
               </span>
             </div>
@@ -155,10 +184,10 @@ const DailyChallengePopup: React.FC<DailyChallengePopupProps> = ({ challenge, on
           {/* Action Buttons */}
           <div className="flex gap-3">
             <button
-              onClick={handleAccept}
-              className={`flex-1 py-3 px-4 rounded-xl font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center gap-2 bg-gradient-to-r ${challenge.gradient}`}
+              onClick={() => handleAccept(activeChallenge.id)}
+              className={`flex-1 py-3 px-4 rounded-xl font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center gap-2 bg-gradient-to-r ${activeChallenge.gradient}`}
               style={{
-                boxShadow: `0 4px 20px ${challenge.color}40`,
+                boxShadow: `0 4px 20px ${activeChallenge.color}40`,
               }}
             >
               <FaRocket />
@@ -168,8 +197,8 @@ const DailyChallengePopup: React.FC<DailyChallengePopupProps> = ({ challenge, on
               onClick={handleClose}
               className={`px-4 py-3 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 ${
                 isDarkMode
-                  ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
-                  : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
+                  ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
               }`}
             >
               Cerrar
@@ -178,14 +207,14 @@ const DailyChallengePopup: React.FC<DailyChallengePopupProps> = ({ challenge, on
         </div>
 
         {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-32 h-32 opacity-10">
+        <div className="absolute top-0 right-0 w-32 h-32 opacity-10 pointer-events-none">
           <div
-            className={`w-full h-full rounded-full bg-gradient-to-br ${challenge.gradient} blur-2xl`}
+            className={`w-full h-full rounded-full bg-gradient-to-br ${activeChallenge.gradient} blur-2xl transition-all duration-500`}
           />
         </div>
-        <div className="absolute bottom-0 left-0 w-24 h-24 opacity-10">
+        <div className="absolute bottom-0 left-0 w-24 h-24 opacity-10 pointer-events-none">
           <div
-            className={`w-full h-full rounded-full bg-gradient-to-tr ${challenge.gradient} blur-2xl`}
+            className={`w-full h-full rounded-full bg-gradient-to-tr ${activeChallenge.gradient} blur-2xl transition-all duration-500`}
           />
         </div>
       </div>

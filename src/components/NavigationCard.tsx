@@ -116,35 +116,21 @@ const NavigationCard: React.FC<NavigationCardProps> = ({
   const { isDarkMode } = useTheme();
   const colors = colorMap[color] || colorMap.blue;
 
+
   return (
     <div 
       onClick={locked ? undefined : onClick}
-      className={`
-        relative overflow-hidden rounded-xl transition-all duration-300 transform 
-        hover:-translate-y-2 hover:shadow-2xl cursor-pointer
-        border-2 group
-        p-4 md:p-6
-        ${isDarkMode ? 'bg-gray-800 hover:bg-gray-750' : 'bg-white hover:bg-gray-50 shadow-lg'}
-        ${locked ? 'opacity-75 cursor-not-allowed grayscale' : ''}
+      className={`group relative overflow-hidden rounded-xl p-2 md:p-3 transition-all duration-300 cursor-pointer border ${
+        isDarkMode 
+          ? 'bg-gray-800/40 border-gray-700/50 hover:bg-gray-800/60 hover:border-blue-500/50' 
+          : 'bg-white/80 border-gray-200/50 hover:bg-white hover:border-blue-500/50 hover:shadow-lg'
+      } hover:scale-[1.02] active:scale-[0.98]
+      ${locked ? 'opacity-75 cursor-not-allowed grayscale' : ''}
       `}
-      style={{
-        borderColor: isDarkMode ? '#374151' : colors.border,
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-      }}
-      onMouseEnter={(e) => {
-        if (!locked) {
-          e.currentTarget.style.borderColor = colors.borderHover;
-          e.currentTarget.style.boxShadow = `0 20px 25px -5px ${colors.borderHover}20, 0 10px 10px -5px ${colors.borderHover}10`;
-        }
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = isDarkMode ? '#374151' : colors.border;
-        e.currentTarget.style.boxShadow = '';
-      }}
     >
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start mb-1.5">
         <div 
-          className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center mb-3 md:mb-4 text-xl md:text-2xl transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300"
+          className="w-7 h-7 md:w-9 md:h-9 rounded-lg flex items-center justify-center text-lg md:text-xl transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300"
           style={{
             backgroundColor: isDarkMode ? colors.iconBgDark : colors.iconBg,
             color: isDarkMode ? colors.iconTextDark : colors.iconText,
@@ -152,14 +138,14 @@ const NavigationCard: React.FC<NavigationCardProps> = ({
         >
           {icon}
         </div>
-        {locked && <FaLock className="text-gray-400" />}
+        {locked && <FaLock className="text-gray-400 text-[10px] md:text-xs" />}
       </div>
       
-      <h3 className={`text-lg md:text-xl font-bold mb-1 md:mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r transition-all duration-300 ${isDarkMode ? 'text-white group-hover:from-white group-hover:to-gray-300' : 'text-gray-900 group-hover:from-gray-900 group-hover:to-gray-600'}`}>
+      <h3 className={`text-sm md:text-base font-bold mb-0.5 break-words ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
         {title}
       </h3>
       
-      <p className={`text-xs md:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+      <p className={`text-[10px] md:text-xs break-words ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
         {description}
       </p>
 

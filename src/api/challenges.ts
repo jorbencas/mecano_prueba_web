@@ -4,18 +4,46 @@ export const challengesAPI = {
   /**
    * Get today's daily challenges
    */
-  getDailyChallenges: async (token: string) => {
+  getDailyChallenges: async (token: string, signal?: AbortSignal) => {
     const response = await fetch(`${API_URL}/challenges/daily`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      signal,
     });
 
     const data = await response.json();
 
     if (!response.ok) {
       throw new Error(data.error || 'Failed to fetch daily challenges');
+    }
+
+    return data;
+  },
+
+  /**
+   * Get seasonal challenges
+   */
+  getSeasonalChallenges: async (token: string, signal?: AbortSignal) => {
+    // For now, we can reuse the daily endpoint or a specific one if available
+    // Assuming the backend supports filtering by type or a specific endpoint
+    // If not, we might need to mock this or filter client-side
+    // Let's assume a new endpoint for now
+    const response = await fetch(`${API_URL}/challenges/seasonal`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      signal,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // If endpoint doesn't exist, return empty for now to avoid breaking
+      console.warn('Seasonal challenges endpoint might not exist yet');
+      return { challenges: [] };
     }
 
     return data;
@@ -92,12 +120,13 @@ export const challengesAPI = {
   /**
    * Get challenge statistics
    */
-  getStats: async (token: string) => {
+  getStats: async (token: string, signal?: AbortSignal) => {
     const response = await fetch(`${API_URL}/challenges/stats`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      signal,
     });
 
     const data = await response.json();

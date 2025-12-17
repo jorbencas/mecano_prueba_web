@@ -246,10 +246,13 @@
         "notLoggedIn": "You must login to see challenges",
         "loading": "Loading challenges...",
         "todayTitle": "Today's Challenges",
+        "seasonalTitle": "Seasonal Challenges",
         "noChallenges": "No challenges available",
+        "noSeasonal": "No active seasonal challenges",
         "checkBack": "Come back tomorrow for new challenges",
         "completed": "Completed",
         "progress": "Progress",
+        "new": "NEW",
         "difficulty": {
             "easy": "Easy",
             "medium": "Medium",
@@ -266,6 +269,20 @@
             "subtitle": "Complete these challenges to improve your skills and earn points",
             "tip": "💡 Challenges refresh every day",
             "start": "Let's go!"
+        },
+        "offline": {
+            "speed": {
+                "title": "Lightning Speed",
+                "desc": "Type 50 words in 1 minute"
+            },
+            "accuracy": {
+                "title": "Surgical Precision",
+                "desc": "Complete a text with 100% accuracy"
+            },
+            "consistency": {
+                "title": "Typing Marathon",
+                "desc": "Maintain 40 WPM for 5 minutes"
+            }
         }
     },
     "login": {
@@ -293,5 +310,66 @@
         "loading": "Loading...",
         "error": "Login error",
         "googleError": "Error with Google"
+    },
+    "userProfile": {
+        "title": "User Profile",
+        "publicProfile": "View Public Profile",
+        "admin": "Administrator",
+        "student": "Student",
+        "level": "Level",
+        "xpToNext": "XP for level",
+        "totalXP": "Total XP",
+        "progress": "Progress",
+        "challengesToday": "Challenges Today",
+        "challengesTotal": "Total Challenges",
+        "upcomingTutoring": "Upcoming Tutoring",
+        "studentLabel": "Student",
+        "teacherLabel": "Teacher",
+        "scheduled": "Scheduled",
+        "tabs": {
+            "profile": "Profile",
+            "stats": "Statistics"
+        }
+    },
+    "progressDashboard": {
+        "title": "Progress Dashboard",
+        "loginRequired": "You must log in to view your statistics",
+        "loading": "Loading statistics...",
+        "tabs": {
+            "overview": "Overview",
+            "analytics": "Advanced Analytics",
+            "export": "Export Data"
+        },
+        "stats": {
+            "avgWpm": "Average WPM",
+            "maxWpm": "Best WPM",
+            "totalSessions": "Total Sessions",
+            "totalTime": "Total Time"
+        },
+        "charts": {
+            "wpmProgression": "WPM Progression (Last 30 days)",
+            "modeDistribution": "Mode Distribution",
+            "modePerformance": "Mode Performance",
+            "levelProgress": "Level Progress"
+        },
+        "labels": {
+            "sessions": "sessions",
+            "completedLevels": "Completed levels:",
+            "stars": "Stars:",
+            "bestWpm": "Best WPM:"
+        },
+        "recentSessions": {
+            "title": "Recent Sessions",
+            "date": "Date",
+            "mode": "Mode",
+            "level": "Level",
+            "wpm": "WPM",
+            "accuracy": "Accuracy",
+            "duration": "Duration"
+        }
+    },
+    "customLevels": {
+        "myLevels": "My Levels",
+        "create": "Create / Edit"
     }
 }

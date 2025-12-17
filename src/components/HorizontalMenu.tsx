@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { 
-  FaKeyboard, FaGamepad, FaPen, FaCog, FaChartLine, 
-  FaTrophy, FaUsers, FaUser, FaSignOutAlt, FaSignInAlt,
-  FaRunning, FaBullseye, FaSpa, FaSortNumericDown, FaCode, 
+import {
+  FaKeyboard, FaGamepad, FaPen, FaCog, FaChartLine,
+  FaTrophy, FaUsers, FaChalkboardTeacher, FaUser, FaSignOutAlt, FaSignInAlt,
+  FaRunning, FaBullseye, FaSpa, FaSortNumericDown, FaCode,
   FaMicrophone, FaHashtag, FaFlagCheckered, FaUserFriends,
-  FaChevronDown, FaChevronUp
+  FaChevronDown, FaChevronUp, FaGraduationCap, FaQuestionCircle
 } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
@@ -40,6 +40,14 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const classesItems = [
+    { title: t('menu.classes', 'Clases'), description: t('menu.classesDesc', 'Gestiona tus clases y alumnos'), icon: <FaChalkboardTeacher />, option: 'classes', color: 'from-indigo-500 to-purple-600', badge: 'New' },
+  ];
+
+  const communityItems = [
+    { title: t('menu.community', 'Comunidad'), description: t('menu.communityDesc', 'Foro y chat global'), icon: <FaUsers />, option: 'community', color: 'from-pink-500 to-rose-500' },
+  ];
+
   const practiceItems = [
     { title: 'Niveles Guiados', description: 'Aprende paso a paso', icon: <FaKeyboard />, option: 'practice', color: 'blue' },
     { title: 'Práctica Libre', description: 'Escribe a tu ritmo', icon: <FaKeyboard />, option: 'free-practice', color: 'green' },
@@ -64,12 +72,10 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
 
   const customItems = [
     { title: 'Textos Personalizados', description: 'Crea tus propios textos', icon: <FaPen />, option: 'create', color: 'blue' },
-    { title: 'Crear Nivel', description: 'Diseña niveles personalizados', icon: <FaPen />, option: 'create-level', color: 'indigo' },
-    { title: 'Mis Niveles', description: 'Gestiona tus niveles', icon: <FaTrophy />, option: 'my-levels', color: 'purple' },
+    { title: 'Niveles Personalizados', description: 'Gestiona y crea niveles', icon: <FaTrophy />, option: 'my-levels', color: 'purple' },
   ];
 
   const progressItems = [
-    { title: 'Estadísticas', description: 'Ve tu progreso detallado', icon: <FaChartLine />, option: 'statistics', color: 'blue' },
     { title: 'Logros', description: 'Desbloquea logros', icon: <FaTrophy />, option: 'achievements', color: 'yellow' },
     { title: 'Clasificación', description: 'Compite en el ranking', icon: <FaTrophy />, option: 'leaderboard', color: 'orange' },
     { title: 'Retos Diarios', description: 'Completa desafíos', icon: <FaTrophy />, option: 'challenges', color: 'green' },
@@ -85,11 +91,10 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
         }}
       >
         <div 
-          className="grid gap-2 md:gap-4"
+          className="grid gap-4 w-full"
           style={{
-            gridTemplateColumns: isMobile 
-              ? '1fr'
-              : `repeat(${Math.min(items.length, columns)}, minmax(250px, 1fr))`
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            width: '100%'
           }}
         >
           {items.map((item) => (
@@ -192,6 +197,19 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
               {activeDropdown === 'custom' && renderDropdown(customItems, 2)}
             </div>
 
+            {/* Classes - Only if authenticated */}
+            {isAuthenticated && (
+              <button 
+                onClick={() => onSelectOption('classes')}
+                className={`flex items-center gap-2 px-4 py-2 rounded transition-colors ${
+                  currentView === 'classes' || currentView === 'teacher' || currentView === 'student' ? 'bg-blue-500 text-white' : isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'
+                }`}
+              >
+                <FaGraduationCap />
+                <span>Clases</span>
+              </button>
+            )}
+
             {/* Progress */}
             <div className="relative">
               <button 
@@ -206,6 +224,17 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
               </button>
               {activeDropdown === 'progress' && renderDropdown(progressItems, 2)}
             </div>
+            
+            {/* Help */}
+            <button 
+              onClick={() => onSelectOption('help')}
+              className={`flex items-center gap-2 px-4 py-2 rounded transition-colors ${
+                currentView === 'help' ? 'bg-blue-500 text-white' : isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'
+              }`}
+            >
+              <FaQuestionCircle />
+              <span>Ayuda</span>
+            </button>
 
             {/* Settings or Profile */}
             {!isAuthenticated && (
@@ -252,6 +281,9 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
                     )}
                     <button onClick={() => { onSelectOption('settings'); setActiveDropdown(null); }} className={`block w-full text-left px-4 py-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                       <FaCog className="inline mr-2" /> Configuración
+                    </button>
+                    <button onClick={() => { onSelectOption('help'); setActiveDropdown(null); }} className={`block w-full text-left px-4 py-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                      <FaQuestionCircle className="inline mr-2" /> Ayuda
                     </button>
                     <div className={`border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                       <button onClick={() => { onSelectOption('logout'); setActiveDropdown(null); }} className="block w-full text-left px-4 py-3 text-red-500 hover:bg-red-50">
@@ -389,6 +421,15 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
                 )}
               </div>
 
+              {/* Classes */}
+              {isAuthenticated && (
+                <div>
+                  <button onClick={() => { onSelectOption('classes'); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                    <FaGraduationCap className="inline mr-2" /> Clases
+                  </button>
+                </div>
+              )}
+
               {/* Progress */}
               <div>
                 <button 
@@ -418,6 +459,13 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* Help */}
+              <div>
+                <button onClick={() => { onSelectOption('help'); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                  <FaQuestionCircle className="inline mr-2" /> Ayuda
+                </button>
               </div>
 
               {/* User Section */}

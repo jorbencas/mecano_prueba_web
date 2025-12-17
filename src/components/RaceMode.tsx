@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useMultiplayer } from '../context/MultiplayerContext';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { useActivityTracker } from '../hooks/useActivityTracker';
+import { useAuth } from '../context/AuthContext';
 import Keyboard from './Keyboard';
 import InstruccionesButton from './Instrucciones';
 import LiveChat from './LiveChat';
 import RoomLobby from './RoomLobby';
-import { FaTrophy, FaBolt, FaCheckCircle } from 'react-icons/fa';
+import { FaFlagCheckered, FaTrophy, FaUserFriends, FaClock, FaCheckCircle } from 'react-icons/fa';
 
 const RaceMode: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -38,7 +38,7 @@ const RaceMode: React.FC = () => {
       setStartTime(null);
       setFinished(false);
     }
-  }, [isRacing]);
+  }, [currentRoom, startTime]);
 
   if (!currentRoom) {
     return <RoomLobby mode="race" onJoinRoom={() => {}} />;

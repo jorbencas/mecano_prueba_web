@@ -246,10 +246,13 @@
         "notLoggedIn": "Debes iniciar sesión para ver los retos",
         "loading": "Cargando retos...",
         "todayTitle": "Retos de Hoy",
+        "seasonalTitle": "Retos de Temporada",
         "noChallenges": "No hay retos disponibles",
+        "noSeasonal": "No hay retos de temporada activos",
         "checkBack": "Vuelve mañana para nuevos desafíos",
         "completed": "Completado",
         "progress": "Progreso",
+        "new": "NUEVO",
         "difficulty": {
             "easy": "Fácil",
             "medium": "Medio",
@@ -266,6 +269,20 @@
             "subtitle": "Completa estos desafíos para mejorar tus habilidades y ganar puntos",
             "tip": "💡 Los retos se renuevan cada día",
             "start": "¡Vamos!"
+        },
+        "offline": {
+            "speed": {
+                "title": "Velocidad Relámpago",
+                "desc": "Escribe 50 palabras en 1 minuto"
+            },
+            "accuracy": {
+                "title": "Precisión Quirúrgica",
+                "desc": "Completa un texto con 100% de precisión"
+            },
+            "consistency": {
+                "title": "Maratón de Escritura",
+                "desc": "Mantén 40 PPM durante 5 minutos"
+            }
         }
     },
     "login": {
@@ -324,5 +341,66 @@
         "deleteLevel": "¿Seguro que quieres eliminar este nivel?",
         "updateUser": "¿Estás seguro de que deseas actualizar este usuario?",
         "deleteUser": "¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer."
+    },
+    "userProfile": {
+        "title": "Perfil de Usuario",
+        "publicProfile": "Ver Perfil Público",
+        "admin": "Administrador",
+        "student": "Estudiante",
+        "level": "Nivel",
+        "xpToNext": "XP para nivel",
+        "totalXP": "XP Total",
+        "progress": "Progreso",
+        "challengesToday": "Retos Hoy",
+        "challengesTotal": "Retos Totales",
+        "upcomingTutoring": "Próximas Tutorías",
+        "studentLabel": "Alumno",
+        "teacherLabel": "Profesor",
+        "scheduled": "Programada",
+        "tabs": {
+            "profile": "Perfil",
+            "stats": "Estadísticas"
+        }
+    },
+    "progressDashboard": {
+        "title": "Panel de Progreso",
+        "loginRequired": "Debes iniciar sesión para ver tus estadísticas",
+        "loading": "Cargando estadísticas...",
+        "tabs": {
+            "overview": "Resumen",
+            "analytics": "Analíticas Avanzadas",
+            "export": "Exportar Datos"
+        },
+        "stats": {
+            "avgWpm": "WPM Promedio",
+            "maxWpm": "Mejor WPM",
+            "totalSessions": "Sesiones Totales",
+            "totalTime": "Tiempo Total"
+        },
+        "charts": {
+            "wpmProgression": "Progresión de WPM (Últimos 30 días)",
+            "modeDistribution": "Distribución por Modo",
+            "modePerformance": "Rendimiento por Modo",
+            "levelProgress": "Progreso de Niveles"
+        },
+        "labels": {
+            "sessions": "sesiones",
+            "completedLevels": "Niveles completados:",
+            "stars": "Estrellas:",
+            "bestWpm": "Mejor Wpm:"
+        },
+        "recentSessions": {
+            "title": "Sesiones Recientes",
+            "date": "Fecha",
+            "mode": "Modo",
+            "level": "Nivel",
+            "wpm": "WPM",
+            "accuracy": "Precisión",
+            "duration": "Duración"
+        }
+    },
+    "customLevels": {
+        "myLevels": "Mis Niveles",
+        "create": "Crear / Editar"
     }
 }

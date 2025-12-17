@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { FaUsers, FaClock, FaTrophy, FaChartLine, FaFilter, FaSearch, FaEdit, FaTrash, FaTimes, FaUserShield, FaUserGraduate, FaStar, FaAward } from 'react-icons/fa';
+import { FaUsers, FaClock, FaTrophy, FaChartLine, FaFilter, FaSearch, FaEdit, FaTrash, FaTimes, FaUserShield, FaUserGraduate, FaStar, FaAward, FaQuestionCircle } from 'react-icons/fa';
 import ActivityChart from './ActivityChart';
 import Achievements from './Achievements';
 import { usersAPI } from '../api/users';
@@ -23,10 +23,23 @@ interface UserActivityData {
   role?: string;
 }
 
-const AdminDashboard: React.FC = () => {
+const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onNavigate }) => {
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
   const { t } = useDynamicTranslations();
+
+  const renderHelpIcon = (sectionId: string) => (
+    <button 
+      onClick={(e) => {
+        e.stopPropagation();
+        if (onNavigate) onNavigate('help');
+      }}
+      className="ml-2 text-blue-500 hover:text-blue-400 transition-colors"
+      title="Ver ayuda sobre esta sección"
+    >
+      <FaQuestionCircle size={14} />
+    </button>
+  );
   
   const [usersData, setUsersData] = useState<UserActivityData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -348,6 +361,7 @@ const AdminDashboard: React.FC = () => {
             <h2 className="text-2xl font-bold mb-6">
               <FaUserShield className="inline mr-3 text-purple-500" />
               {t('adminDashboard.userManagement', 'Gestión de Usuarios')}
+              {renderHelpIcon('admin-guide')}
             </h2>
             
             {usersLoading ? (
@@ -550,6 +564,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="flex items-center gap-3 mb-2">
                   <FaClock className="text-2xl text-green-500" />
                   <span className="text-sm uppercase tracking-wider opacity-70">Tiempo Total</span>
+                  {renderHelpIcon('xp-levels')}
                 </div>
                 <div className="text-3xl font-black">{formatTime(totalStats.totalTime)}</div>
               </div>

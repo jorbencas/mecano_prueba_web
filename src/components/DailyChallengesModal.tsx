@@ -16,51 +16,16 @@ interface Challenge {
   mode?: string;
 }
 
-const DailyChallengesModal: React.FC = () => {
+interface DailyChallengesModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  challenges: Challenge[];
+  onSelectChallenge?: (challenge: Challenge) => void;
+}
+
+const DailyChallengesModal: React.FC<DailyChallengesModalProps> = ({ isOpen, onClose, challenges, onSelectChallenge }) => {
   const { isDarkMode } = useTheme();
-  const { user } = useAuth();
   const { t } = useDynamicTranslations();
-  const [isOpen, setIsOpen] = useState(false);
-  const [challenges, setChallenges] = useState<Challenge[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      checkAndShowChallenges();
-    }
-  }, [user]);
-
-  const checkAndShowChallenges = async () => {
-    try {
-      // Check if user has already seen challenges today
-      const lastSeen = localStorage.getItem('challenges_last_seen');
-      const today = new Date().toDateString();
-
-      if (lastSeen === today) {
-        return; // Already seen today
-      }
-
-      setLoading(true);
-      const token = localStorage.getItem('auth_token');
-      if (!token) return;
-
-      const data = await challengesAPI.getDailyChallenges(token);
-      
-      if (data.challenges && data.challenges.length > 0) {
-        setChallenges(data.challenges);
-        setIsOpen(true);
-        localStorage.setItem('challenges_last_seen', today);
-      }
-    } catch (error) {
-      console.error('Error loading challenges:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-  };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -88,7 +53,7 @@ const DailyChallengesModal: React.FC = () => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-          onClick={handleClose}
+          onClick={onClose}
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -109,7 +74,7 @@ const DailyChallengesModal: React.FC = () => {
                   </h2>
                 </div>
                 <button
-                  onClick={handleClose}
+                  onClick={onClose}
                   className="text-white hover:text-gray-200 transition-colors"
                 >
                   <FaTimes className="text-2xl" />
@@ -128,8 +93,14 @@ const DailyChallengesModal: React.FC = () => {
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: index * 0.1 }}
-                  className={`p-4 rounded-lg border-l-4 ${getDifficultyColor(challenge.difficulty)} ${
-                    isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
+                  onClick={() => {
+                    if (onSelectChallenge) {
+                      onSelectChallenge(challenge);
+                      onClose();
+                    }
+                  }}
+                  className={`p-4 rounded-lg border-l-4 cursor-pointer hover:shadow-md transition-all transform hover:-translate-x-1 ${getDifficultyColor(challenge.difficulty)} ${
+                    isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100'
                   }`}
                 >
                   <div className="flex items-start justify-between mb-2">
@@ -156,10 +127,12 @@ const DailyChallengesModal: React.FC = () => {
                   {t('challenges.modal.tip', '💡 Los retos se renuevan cada día')}
                 </p>
                 <button
-                  onClick={handleClose}
-                  className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors"
+                          onClick={onClose}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+                    isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
+                  }`}
                 >
-                  {t('challenges.modal.start', '¡Vamos!')}
+                  {t('common.close', 'Cerrar')}
                 </button>
               </div>
             </div>

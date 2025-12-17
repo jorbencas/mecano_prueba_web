@@ -26,10 +26,11 @@ const Achievements: React.FC<AchievementsProps> = ({ userId, userEmail, readOnly
   const loadAchievements = async () => {
     setLoading(true);
     try {
+      // Small delay to ensure UI updates and prevent flickering for fast operations
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       if (userId && user?.role === 'admin') {
         // Admin viewing another user's achievements
-        // Note: Since achievements are in localStorage, we can't fetch them from server
-        // This is a placeholder - in production, achievements should be stored in DB
         const stats = loadStats();
         const checked = checkAchievements(stats);
         setAchievements(checked);
@@ -41,6 +42,7 @@ const Achievements: React.FC<AchievementsProps> = ({ userId, userEmail, readOnly
       }
     } catch (error) {
       console.error('Error loading achievements:', error);
+      setAchievements([]);
     } finally {
       setLoading(false);
     }

@@ -10,6 +10,7 @@ interface Level {
   text?: string;
   wpmGoal?: number;
   errorLimit?: number;
+  requiresLogin?: boolean;
 }
 
 interface LevelProgress {
@@ -52,12 +53,16 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
   }, [authUser, source]); // Depend on authUser
 
   const loadProgress = async () => {
-    if (!authUser) return; // Use authUser from context
+    if (!authUser) return;
     
+    let isMounted = true;
     try {
       setLoading(true);
       const token = localStorage.getItem('auth_token');
-      if (!token) return;
+      if (!token) {
+        if (isMounted) setLoading(false);
+        return;
+      }
 
       const modeMap: Record<string, string> = {
         'Levels': 'levels',
@@ -66,26 +71,38 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
         'NumbersMode': 'numbers',
         'SymbolsMode': 'symbols',
         'CodeMode': 'code',
-        'DictationMode': 'dictation'
+        'DictationMode': 'dictation',
+        'CreateText': 'levels' // Default to levels for CreateText for now
       };
 
       const mode = modeMap[source] || 'levels';
-      const data = await progressAPI.getByMode(token, authUser.id, mode); // Use authUser.id
-      setLevelProgress(data.progress || []);
+      const data = await progressAPI.getByMode(token, authUser.id, mode);
+      
+      if (isMounted) {
+        setLevelProgress(data.progress || []);
+      }
     } catch (error) {
       console.error('Error loading progress:', error);
     } finally {
-      setLoading(false);
+      if (isMounted) {
+        setLoading(false);
+      }
     }
+    
+    return () => {
+      isMounted = false;
+    };
   };
 
 
   const isLevelUnlocked = (levelIndex: number): boolean => {
     // First level always unlocked
     if (levelIndex === 0) return true;
-    
-    // If no user, only first 10 levels unlocked
-    if (!authUser) return levelIndex < 10; // Use authUser
+
+    // Check login requirement
+    if (levels[levelIndex].requiresLogin && !authUser) {
+      return false;
+    }
     
     // Check progress data
     const progress = levelProgress.find(p => p.level_number === levelIndex);

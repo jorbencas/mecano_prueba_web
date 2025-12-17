@@ -45,8 +45,10 @@ const SettingsConfiguration: React.FC = () => {
   ];
 
   useEffect(() => {
-    loadPreferences();
-  }, [user]);
+    if (user) {
+      loadPreferences();
+    }
+  }, [user, loadPreferences]);
 
   const loadPreferences = async () => {
     if (!user) return;

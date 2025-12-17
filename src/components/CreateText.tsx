@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TypingArea from './TypingArea';
 import Hands from './Hands';
-import ErrorModal from './ErrorModal';
+import BaseModal from './BaseModal';
 import Keyboard from './Keyboard';
 import Stats from './Stats';
 import MenuLevels from './MenuLevels';
@@ -190,7 +190,7 @@ const CreateText: React.FC = () => {
         />
 
         {showStatsModal && (
-          <ErrorModal isOpen={showStatsModal} onClose={() => setShowStatsModal(false)}>
+          <BaseModal isOpen={showStatsModal} onClose={() => setShowStatsModal(false)}>
             <Stats
               stats={getStatsData({
                 wpm,
@@ -210,7 +210,7 @@ const CreateText: React.FC = () => {
               onNextLevel={() => {}}
               sourceComponent="CreateText"
             />
-          </ErrorModal>
+          </BaseModal>
         )}
       </div>
     </div>

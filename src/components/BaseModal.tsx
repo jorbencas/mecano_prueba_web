@@ -2,13 +2,13 @@ import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { FaTimes } from 'react-icons/fa';
 
-interface ErrorModalProps {
+interface BaseModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
 }
 
-const ErrorModal: React.FC<ErrorModalProps> = ({ isOpen, onClose, children }) => {
+const BaseModal: React.FC<BaseModalProps> = ({ isOpen, onClose, children }) => {
   const { isDarkMode } = useTheme();
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
@@ -60,4 +60,4 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ isOpen, onClose, children }) =>
   );
 };
 
-export default ErrorModal;
+export default BaseModal;

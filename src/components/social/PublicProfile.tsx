@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { socialAPI } from '../../api/social';
@@ -7,22 +7,19 @@ import { FaTrophy, FaKeyboard, FaClock, FaUsers, FaUser } from 'react-icons/fa';
 
 const PublicProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { id: userId } = useParams<{ id: string }>();
   const { isDarkMode } = useTheme();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    loadProfile();
-  }, [id]);
-
-  const loadProfile = async () => {
-    if (!id) return;
+  const loadProfile = useCallback(async (currentUserId: string) => {
+    if (!currentUserId) return;
     
     try {
       setLoading(true);
       const token = localStorage.getItem('auth_token');
-      const data = await socialAPI.getProfile(id, token || undefined);
+      const data = await socialAPI.getProfile(currentUserId, token || undefined);
       setProfile(data);
     } catch (err) {
       console.error('Error loading profile:', err);
@@ -30,7 +27,13 @@ const PublicProfile: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (id) {
+      loadProfile(id);
+    }
+  }, [id, loadProfile]);
 
   if (loading) {
     return (

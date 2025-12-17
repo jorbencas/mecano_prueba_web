@@ -140,6 +140,50 @@
             "practice": "Sala de Pràctica",
             "friends": "Amics"
         },
+        "challenges": {
+            "title": "Reptes Diaris",
+            "notLoggedIn": "Has d'iniciar sessió per a veure els reptes",
+            "loading": "Carregant reptes...",
+            "todayTitle": "Reptes d'Avui",
+            "seasonalTitle": "Reptes de Temporada",
+            "noChallenges": "No hi ha reptes disponibles",
+            "noSeasonal": "No hi ha reptes de temporada actius",
+            "checkBack": "Torna demà per a nous reptes",
+            "completed": "Completat",
+            "progress": "Progrés",
+            "new": "NOU",
+            "difficulty": {
+                "easy": "Fàcil",
+                "medium": "Mig",
+                "hard": "Difícil"
+            },
+            "stats": {
+                "completed": "Completats",
+                "streak": "Ratxa",
+                "points": "Punts",
+                "today": "Hui"
+            },
+            "modal": {
+                "title": "🎯 Els Teus Reptes d'Avui!",
+                "subtitle": "Completa estos reptes per a millorar les teues habilitats i guanyar punts",
+                "tip": "💡 Els reptes es renoven cada dia",
+                "start": "Anem!"
+            },
+            "offline": {
+                "speed": {
+                    "title": "Velocitat Llampec",
+                    "desc": "Escriu 50 paraules en 1 minut"
+                },
+                "accuracy": {
+                    "title": "Precisió Quirúrgica",
+                    "desc": "Completa un text amb 100% de precisió"
+                },
+                "consistency": {
+                    "title": "Marató d'Escriptura",
+                    "desc": "Mantín 40 PPM durant 5 minuts"
+                }
+            }
+        },
         "progress": {
             "stats": "Estadístiques",
             "achievements": "Assoliments",
@@ -266,5 +310,66 @@
         "loading": "Carregant...",
         "error": "Error en iniciar sessió",
         "googleError": "Error amb Google"
+    },
+    "userProfile": {
+        "title": "Perfil d'Usuari",
+        "publicProfile": "Veure Perfil Públic",
+        "admin": "Administrador",
+        "student": "Estudiant",
+        "level": "Nivell",
+        "xpToNext": "XP per al nivell",
+        "totalXP": "XP Total",
+        "progress": "Progrés",
+        "challengesToday": "Reptes d'Avui",
+        "challengesTotal": "Reptes Totals",
+        "upcomingTutoring": "Properes Tutories",
+        "studentLabel": "Alumne",
+        "teacherLabel": "Professor",
+        "scheduled": "Programada",
+        "tabs": {
+            "profile": "Perfil",
+            "stats": "Estadístiques"
+        }
+    },
+    "progressDashboard": {
+        "title": "Panell de Progrés",
+        "loginRequired": "Has d'iniciar sessió per a veure les teues estadístiques",
+        "loading": "Carregant estadístiques...",
+        "tabs": {
+            "overview": "Resum",
+            "analytics": "Analítiques Avançades",
+            "export": "Exportar Dades"
+        },
+        "stats": {
+            "avgWpm": "PPM Mitjà",
+            "maxWpm": "Millor PPM",
+            "totalSessions": "Sessions Totals",
+            "totalTime": "Temps Total"
+        },
+        "charts": {
+            "wpmProgression": "Progressió de PPM (Últims 30 dies)",
+            "modeDistribution": "Distribució per Mode",
+            "modePerformance": "Rendiment per Mode",
+            "levelProgress": "Progrés de Nivells"
+        },
+        "labels": {
+            "sessions": "sessions",
+            "completedLevels": "Nivells completats:",
+            "stars": "Estrelles:",
+            "bestWpm": "Millor PPM:"
+        },
+        "recentSessions": {
+            "title": "Sessions Recents",
+            "date": "Data",
+            "mode": "Mode",
+            "level": "Nivell",
+            "wpm": "PPM",
+            "accuracy": "Precisió",
+            "duration": "Durada"
+        }
+    },
+    "customLevels": {
+        "myLevels": "Els Meus Nivells",
+        "create": "Crear / Editar"
     }
 }

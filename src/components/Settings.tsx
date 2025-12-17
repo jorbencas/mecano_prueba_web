@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaSun, FaMoon, FaUniversalAccess, FaFont, FaEye, FaPalette, FaRunning } from 'react-icons/fa';
-import { useTheme, ThemeVariant } from '../context/ThemeContext';
+import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { useAccessibility, FontSize, ColorblindMode } from '../context/AccessibilityContext';
@@ -12,7 +12,6 @@ interface SettingsProps {
 
 const Settings: React.FC<SettingsProps> = ({ onNavigate }) => {
   const { isDarkMode, themeVariant, setThemeVariant } = useTheme();
-  const { user } = useAuth();
   const { language, setLanguage } = useLanguage();
   const { t } = useDynamicTranslations();
   const {

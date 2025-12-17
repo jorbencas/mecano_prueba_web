@@ -13,9 +13,14 @@ interface LeaderboardEntry {
   total_games: number;
 }
 
+import { useFetchWithTimeout } from '../hooks/useFetchWithTimeout';
+
+// ... imports
+
 const Leaderboard: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
+  const fetchWithTimeout = useFetchWithTimeout();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,10 +31,14 @@ const Leaderboard: React.FC = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem('auth_token');
-        if (!token) return;
+        if (!token) {
+          setLoading(false);
+          return;
+        }
 
-        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:3001/api'}/stats/leaderboard?mode=${mode}&limit=10`, {
-          headers: { Authorization: `Bearer ${token}` }
+        const response = await fetchWithTimeout(`${process.env.REACT_APP_API_URL || 'http://localhost:3001/api'}/stats/leaderboard?mode=${mode}&limit=10`, {
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 5000
         });
 
         if (!response.ok) throw new Error('Failed to fetch leaderboard');
@@ -48,16 +57,22 @@ const Leaderboard: React.FC = () => {
         }));
 
         setEntries(mappedData);
-      } catch (err) {
-        console.error('Leaderboard error:', err);
-        setError('Error loading leaderboard');
+      } catch (err: any) {
+        if (err.name === 'AbortError') {
+          console.log('Leaderboard request aborted');
+          setError('Tiempo de espera agotado');
+        } else {
+          console.error('Leaderboard error:', err);
+          setError('Error loading leaderboard');
+        }
+        setEntries([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchLeaderboard();
-  }, [mode]);
+  }, [mode, fetchWithTimeout]);
 
   if (loading) {
     return (

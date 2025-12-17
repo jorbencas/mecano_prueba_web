@@ -21,11 +21,17 @@ passport.use(
         const photoURL = profile.photos[0]?.value;
 
         // Check if user exists
-        let users = await sql`
+        console.log('🔍 Google Auth: Checking if user exists...', { googleId, email });
+        // Check if user exists
+        console.log('🔍 Google Auth: Checking if user exists...', { googleId, email });
+        
+        const users = await sql`
           SELECT id, email, display_name, photo_url
           FROM users
           WHERE google_id = ${googleId}
         `;
+        
+        console.log('✅ Google Auth: User query successful', { found: users.length > 0 });
 
         let user;
 

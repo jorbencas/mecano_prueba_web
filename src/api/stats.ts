@@ -35,9 +35,10 @@ export const statsAPI = {
   /**
    * Get comprehensive user statistics
    */
-  get: async (token: string, userId: string) => {
+  get: async (token: string, userId: string, signal?: AbortSignal) => {
     const response = await fetch(`${API_URL}/stats/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
+      signal,
     });
 
     const data = await response.json();

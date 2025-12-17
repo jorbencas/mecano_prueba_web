@@ -58,5 +58,66 @@
         "text": "SELECT * FROM users WHERE age > 18 ORDER BY name;",
         "wpmGoal": 25,
         "errorLimit": 3
+    },
+    {
+        "name": "Java: Hello World",
+        "text": "public class Main { public static void main(String[] args) { System.out.println(\"Hello\"); } }",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "Java: Variables",
+        "text": "int myNum = 5; float myFloatNum = 5.99f; char myLetter = 'D'; boolean myBool = true;",
+        "wpmGoal": 25,
+        "errorLimit": 3,
+        "requiresLogin": true
+    },
+    {
+        "name": "C++: Include",
+        "text": "#include <iostream> using namespace std; int main() { cout << \"Hello World!\"; return 0; }",
+        "wpmGoal": 25,
+        "errorLimit": 3
+    },
+    {
+        "name": "C#: Console",
+        "text": "Console.WriteLine(\"Hello World\"); string name = Console.ReadLine();",
+        "wpmGoal": 25,
+        "errorLimit": 3,
+        "requiresLogin": true
+    },
+    {
+        "name": "TS: Interfaces",
+        "text": "interface User { id: number; name: string; } const user: User = { id: 1, name: \"John\" };",
+        "wpmGoal": 25,
+        "errorLimit": 3,
+        "requiresLogin": true
+    },
+    {
+        "name": "Go: Main",
+        "text": "package main import \"fmt\" func main() { fmt.Println(\"Hello World\") }",
+        "wpmGoal": 25,
+        "errorLimit": 3,
+        "requiresLogin": true
+    },
+    {
+        "name": "Rust: Fn",
+        "text": "fn main() { println!(\"Hello, world!\"); let x = 5; let y = 10; }",
+        "wpmGoal": 25,
+        "errorLimit": 3,
+        "requiresLogin": true
+    },
+    {
+        "name": "PHP: Echo",
+        "text": "<?php echo \"Hello World\"; $txt = \"PHP\"; echo \"I love $txt!\"; ?>",
+        "wpmGoal": 25,
+        "errorLimit": 3,
+        "requiresLogin": true
+    },
+    {
+        "name": "Ruby: Puts",
+        "text": "puts \"Hello World\" def say_hello(name) puts \"Hello #{name}\" end",
+        "wpmGoal": 25,
+        "errorLimit": 3,
+        "requiresLogin": true
     }
 ]

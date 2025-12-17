@@ -12,30 +12,48 @@ interface Friend {
   isOnline?: boolean;
 }
 
+import { useFetchWithTimeout } from '../hooks/useFetchWithTimeout';
+
+// ... imports
+
 const FriendsSystem: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
+  const fetchWithTimeout = useFetchWithTimeout();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [searchEmail, setSearchEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadFriends();
-  }, []);
+  }, [fetchWithTimeout]);
 
   const loadFriends = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem('auth_token');
-      if (!token) return;
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/multiplayer/friends`, {
+      const response = await fetchWithTimeout(`${process.env.REACT_APP_API_URL}/multiplayer/friends`, {
         headers: { Authorization: `Bearer ${token}` },
+        timeout: 5000
       });
 
-      const data = await response.json();
-      setFriends(data.friends || []);
-    } catch (error) {
-      console.error('Error loading friends:', error);
+      if (response.ok) {
+        const data = await response.json();
+        setFriends(data.friends || []);
+      }
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        console.log('Friends request aborted');
+      } else {
+        console.error('Error loading friends:', error);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 

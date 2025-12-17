@@ -16,9 +16,16 @@ interface CustomLevel {
 interface CustomLevelsViewerProps {
   onNavigate?: (view: string) => void;
   onPlayLevel?: (level: CustomLevel) => void;
+  onCreateNew?: () => void;
+  onEditLevel?: (level: CustomLevel) => void;
 }
 
-const CustomLevelsViewer: React.FC<CustomLevelsViewerProps> = ({ onNavigate, onPlayLevel }) => {
+const CustomLevelsViewer: React.FC<CustomLevelsViewerProps> = ({ 
+  onNavigate, 
+  onPlayLevel, 
+  onCreateNew, 
+  onEditLevel 
+}) => {
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
   const [levels, setLevels] = useState<CustomLevel[]>([]);
@@ -95,10 +102,14 @@ const CustomLevelsViewer: React.FC<CustomLevelsViewerProps> = ({ onNavigate, onP
   };
 
   const handleEdit = (level: CustomLevel) => {
-    // Store in a temporary location for the editor to load
-    localStorage.setItem('editingLevel', JSON.stringify(level));
-    if (onNavigate) {
-      onNavigate('create-level');
+    if (onEditLevel) {
+      onEditLevel(level);
+    } else {
+      // Fallback for standalone usage
+      localStorage.setItem('editingLevel', JSON.stringify(level));
+      if (onNavigate) {
+        onNavigate('create-level');
+      }
     }
   };
 
@@ -120,7 +131,7 @@ const CustomLevelsViewer: React.FC<CustomLevelsViewerProps> = ({ onNavigate, onP
               <FaFileImport /> Importar
             </button>
             <button
-              onClick={() => onNavigate && onNavigate('create-level')}
+              onClick={() => onCreateNew ? onCreateNew() : (onNavigate && onNavigate('create-level'))}
               className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded flex items-center gap-2 transition-colors"
             >
               <FaPlus /> Crear Nuevo
@@ -136,7 +147,7 @@ const CustomLevelsViewer: React.FC<CustomLevelsViewerProps> = ({ onNavigate, onP
               Crea tu primer nivel personalizado para practicar las teclas que quieras
             </p>
             <button
-              onClick={() => onNavigate && onNavigate('create-level')}
+              onClick={() => onCreateNew ? onCreateNew() : (onNavigate && onNavigate('create-level'))}
               className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold inline-flex items-center gap-2"
             >
               <FaPlus /> Crear Mi Primer Nivel

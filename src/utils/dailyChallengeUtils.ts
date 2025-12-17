@@ -128,34 +128,38 @@ const genericChallenges: Omit<DailyChallenge, 'id' | 'currentProgress' | 'date'>
   }
 ];
 
-// Obtener reto del día
-export const getTodayChallenge = (): DailyChallenge => {
+// Obtener retos del día (puede incluir temático y genérico)
+export const getTodayChallenges = (): DailyChallenge[] => {
   const today = new Date();
   const dateKey = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   const dateString = today.toISOString().split('T')[0];
   
-  // Verificar si hay un reto temático para hoy
+  const challenges: DailyChallenge[] = [];
+
+  // 1. Verificar si hay un reto temático para hoy
   if (themedChallenges[dateKey]) {
     const themed = themedChallenges[dateKey];
-    return {
+    challenges.push({
       ...themed,
-      id: `challenge-${dateString}`,
+      id: `challenge-themed-${dateString}`,
       currentProgress: 0,
       date: dateString
-    };
+    });
   }
   
-  // Si no hay tema, usar un reto genérico basado en el día del año
+  // 2. Siempre agregar un reto genérico basado en el día del año
   const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
   const genericIndex = dayOfYear % genericChallenges.length;
   const generic = genericChallenges[genericIndex];
   
-  return {
+  challenges.push({
     ...generic,
-    id: `challenge-${dateString}`,
+    id: `challenge-generic-${dateString}`,
     currentProgress: 0,
     date: dateString
-  };
+  });
+  
+  return challenges;
 };
 
 // Verificar si ya se mostró el reto hoy

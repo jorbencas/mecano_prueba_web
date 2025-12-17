@@ -14,6 +14,9 @@ export const FULL_KEYBOARD_LAYOUT = [
   // 🔹 Fila de símbolos extendidos y combinaciones
   ['¿', '?', '!', '@', '#', '$', '%', '&', '/', '(', ')', '=', '—'],
 
+  // 🔹 Fila de programación (NUEVA)
+  ['[', ']', '\\', '|', '*', '^', '"', ':', ';', '~'],
+
   // 🔹 Vocales acentuadas
   ['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú'],
 

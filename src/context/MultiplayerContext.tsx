@@ -64,8 +64,12 @@ export const MultiplayerProvider: React.FC<{ children: ReactNode }> = ({ childre
     const token = localStorage.getItem('auth_token');
     if (!token) return;
 
-    const newSocket = io(process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:3001', {
+    // Use configured WS URL or fallback to API URL base
+    const wsUrl = process.env.REACT_APP_WS_URL || process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:3001';
+    
+    const newSocket = io(wsUrl, {
       auth: { token },
+      transports: ['websocket', 'polling'], // Ensure compatibility
     });
 
     newSocket.on('connect', () => {
@@ -125,7 +129,7 @@ export const MultiplayerProvider: React.FC<{ children: ReactNode }> = ({ childre
     return () => {
       newSocket.disconnect();
     };
-  }, [user]);
+  }, [user, socket]);
 
   const joinRoom = (roomId: string, playerData?: any) => {
     if (socket) {
