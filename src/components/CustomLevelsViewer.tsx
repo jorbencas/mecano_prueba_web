@@ -119,121 +119,169 @@ const CustomLevelsViewer: React.FC<CustomLevelsViewerProps> = ({
   };
 
   return (
-    <div className={`min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
+    <div className="py-6 transition-colors duration-500">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">📚 Mis Niveles Personalizados</h1>
-          <div className="flex gap-2">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10 border-b border-blue-500/20 pb-6">
+          <div>
+            <h1 className={`text-3xl md:text-4xl font-black tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              {t('customLevels.myLevels', 'Mis Niveles')}
+            </h1>
+            <p className={`text-sm font-medium mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              {levels.length} {t('customLevels.totalLevels', 'niveles creados por ti')}
+            </p>
+          </div>
+          <div className="flex gap-3">
             <button
               onClick={handleImport}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded flex items-center gap-2 transition-colors"
+              className={`px-4 py-2 rounded-none border font-bold text-sm flex items-center gap-2 transition-all active:scale-95 ${
+                isDarkMode 
+                  ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' 
+                  : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 shadow-sm'
+              }`}
             >
-              <FaFileImport /> Importar
+              <FaFileImport className="text-green-500" /> {t('customLevels.import', 'Importar')}
             </button>
             <button
               onClick={() => onCreateNew ? onCreateNew() : (onNavigate && onNavigate('create-level'))}
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded flex items-center gap-2 transition-colors"
+              className="px-6 py-2 rounded-none bg-blue-600 hover:bg-blue-700 text-white font-black text-sm uppercase tracking-tight shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2 active:scale-95"
             >
-              <FaPlus /> Crear Nuevo
+              <FaPlus /> {t('customLevels.createNew', 'Nuevo Nivel')}
             </button>
           </div>
         </div>
 
         {levels.length === 0 ? (
-          <div className={`p-12 rounded-lg text-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <div className="text-6xl mb-4">📝</div>
-            <h2 className="text-2xl font-bold mb-2">No tienes niveles personalizados</h2>
-            <p className="mb-6 opacity-75">
-              Crea tu primer nivel personalizado para practicar las teclas que quieras
+          <div className={`p-20 rounded-none text-center border backdrop-blur-sm ${
+            isDarkMode ? 'bg-gray-900/40 border-gray-800/50' : 'bg-white/80 border-gray-200/50 shadow-sm'
+          }`}>
+            <div className="text-6xl mb-6 opacity-50">📚</div>
+            <h2 className="text-2xl font-black mb-2 uppercase tracking-tight">{t('customLevels.noLevels', 'No tienes niveles personalizados')}</h2>
+            <p className={`text-sm font-medium uppercase tracking-widest mb-8 ${isDarkMode ? 'text-gray-500' : 'text-slate-400'}`}>
+              {t('customLevels.noLevelsDesc', 'Crea tu primer nivel para practicar las teclas que quieras.')}
             </p>
             <button
               onClick={() => onCreateNew ? onCreateNew() : (onNavigate && onNavigate('create-level'))}
-              className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold inline-flex items-center gap-2"
+              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-none font-black uppercase tracking-tight inline-flex items-center gap-2 shadow-xl shadow-blue-500/20 transition-all active:scale-95"
             >
-              <FaPlus /> Crear Mi Primer Nivel
+              <FaPlus /> {t('customLevels.createFirst', 'Crear Mi Primer Nivel')}
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {levels.map(level => (
-              <div
-                key={level.id}
-                className={`p-6 rounded-lg border-2 transition-all hover:shadow-lg ${
-                  isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                }`}
-              >
-                <h3 className="text-xl font-bold mb-3 truncate">{level.name}</h3>
-                
-                <div className="space-y-2 mb-4 text-sm">
-                  <div>
-                    <strong>Teclas ({level.keys.length}):</strong>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {level.keys.slice(0, 10).map(key => (
-                        <span
-                          key={key}
-                          className={`px-2 py-1 rounded text-xs font-mono ${
-                            isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
-                          }`}
-                        >
-                          {key}
-                        </span>
-                      ))}
-                      {level.keys.length > 10 && (
-                        <span className="px-2 py-1 text-xs opacity-75">
-                          +{level.keys.length - 10} más
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-2 pt-2">
-                    <div>
-                      <strong>Velocidad:</strong>
-                      <div>{level.speed}ms</div>
-                    </div>
-                    <div>
-                      <strong>Objetivo:</strong>
-                      <div>{level.wpmGoal} WPM</div>
-                    </div>
-                    <div>
-                      <strong>Errores:</strong>
-                      <div>Max {level.errorLimit}</div>
-                    </div>
-                    <div>
-                      <strong>Creado:</strong>
-                      <div className="text-xs">{formatDate(level.createdDate)}</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => handlePlay(level)}
-                    className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded flex items-center justify-center gap-1 text-sm font-bold transition-colors"
-                  >
-                    <FaPlay className="text-xs" /> Jugar
-                  </button>
-                  <button
-                    onClick={() => handleEdit(level)}
-                    className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded flex items-center justify-center gap-1 text-sm font-bold transition-colors"
-                  >
-                    <FaEdit className="text-xs" /> Editar
-                  </button>
-                  <button
-                    onClick={() => handleExport(level)}
-                    className="px-3 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded flex items-center justify-center gap-1 text-sm font-bold transition-colors"
-                  >
-                    <FaFileExport className="text-xs" /> Exportar
-                  </button>
-                  <button
-                    onClick={() => handleDelete(level.id)}
-                    className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded flex items-center justify-center gap-1 text-sm font-bold transition-colors"
-                  >
-                    <FaTrash className="text-xs" /> Eliminar
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className={`overflow-hidden border backdrop-blur-sm ${
+            isDarkMode ? 'bg-gray-900/40 border-gray-700/50' : 'bg-white/80 border-gray-200/50 shadow-sm'
+          } rounded-none`}>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className={`border-b ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
+                    <th className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                      {t('customLevels.table.name', 'Nombre del Nivel')}
+                    </th>
+                    <th className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                      {t('customLevels.table.keys', 'Teclas')}
+                    </th>
+                    <th className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                      {t('customLevels.table.config', 'Configuración')}
+                    </th>
+                    <th className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                      {t('customLevels.table.date', 'Fecha')}
+                    </th>
+                    <th className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-right ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                      {t('customLevels.table.actions', 'Acciones')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className={`divide-y ${isDarkMode ? 'divide-gray-700/30' : 'divide-gray-100'}`}>
+                  {levels.map(level => (
+                    <tr 
+                      key={level.id}
+                      className={`group transition-colors ${isDarkMode ? 'hover:bg-white/5' : 'hover:bg-blue-50/30'}`}
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-2 h-8 ${isDarkMode ? 'bg-blue-500/30' : 'bg-blue-500/20'}`} />
+                          <span className={`font-black text-base uppercase tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                            {level.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-1 max-w-[200px]">
+                          {level.keys.slice(0, 6).map(key => (
+                            <span
+                              key={key}
+                              className={`px-1.5 py-0.5 rounded-none text-[10px] font-mono border ${
+                                isDarkMode 
+                                  ? 'bg-gray-800 border-gray-700 text-gray-400' 
+                                  : 'bg-gray-100 border-gray-200 text-gray-600'
+                              }`}
+                            >
+                              {key}
+                            </span>
+                          ))}
+                          {level.keys.length > 6 && (
+                            <span className="text-[10px] font-bold opacity-50 ml-1">
+                              +{level.keys.length - 6}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex gap-4 text-[11px] font-bold uppercase tracking-wider">
+                          <div className="flex flex-col">
+                            <span className="opacity-40 text-[9px]">{t('customLevels.table.speed', 'Vel')}</span>
+                            <span className={isDarkMode ? 'text-blue-400' : 'text-blue-600'}>{level.speed}ms</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="opacity-40 text-[9px]">{t('customLevels.table.goal', 'Obj')}</span>
+                            <span className={isDarkMode ? 'text-purple-400' : 'text-purple-600'}>{level.wpmGoal} WPM</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="opacity-40 text-[9px]">{t('customLevels.table.errors', 'Err')}</span>
+                            <span className={isDarkMode ? 'text-red-400' : 'text-red-600'}>{level.errorLimit}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-xs font-medium opacity-60">
+                        {formatDate(level.createdDate)}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => handlePlay(level)}
+                            title={t('customLevels.play', 'Jugar')}
+                            className="p-2 rounded-none bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-all"
+                          >
+                            <FaPlay size={12} />
+                          </button>
+                          <button
+                            onClick={() => handleEdit(level)}
+                            title={t('customLevels.edit', 'Editar')}
+                            className="p-2 rounded-none bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-all"
+                          >
+                            <FaEdit size={12} />
+                          </button>
+                          <button
+                            onClick={() => handleExport(level)}
+                            title={t('customLevels.export', 'Exportar')}
+                            className="p-2 rounded-none bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-white transition-all"
+                          >
+                            <FaFileExport size={12} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(level.id)}
+                            title={t('customLevels.delete', 'Eliminar')}
+                            className="p-2 rounded-none bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                          >
+                            <FaTrash size={12} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

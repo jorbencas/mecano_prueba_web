@@ -3,22 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { challengesAPI } from '../api/challenges';
-import { FaFire, FaTrophy, FaCheck, FaClock } from 'react-icons/fa';
+import { FaFire, FaTrophy, FaCheck, FaClock, FaCalendarAlt, FaStar } from 'react-icons/fa';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import challengeTexts from '../data/challengeTexts.json';
 
-interface Challenge {
-  id: string;
-  challenge_type: string;
-  title: string;
-  description: string;
-  target_value: number;
-  progress: number;
-  completed: boolean;
-  difficulty: 'easy' | 'medium' | 'hard';
-  mode?: string;
-  theme?: string;
-  date: string;
-}
+import { ChallengeItem, Challenge } from './ChallengeItem';
 
 interface ChallengeStats {
   total: number;
@@ -42,7 +31,13 @@ const SEASONAL_THEMES = [
   'autumn', 
   'spring',
   'stpatrick',
-  'thanksgiving'
+  'thanksgiving',
+  'threekings',
+  'carnival',
+  'earthday',
+  'starwars',
+  'backtoschool',
+  'blackfriday'
 ];
 
 const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
@@ -69,95 +64,6 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'easy': return 'border-green-500';
-      case 'medium': return 'border-yellow-500';
-      case 'hard': return 'border-red-500';
-      default: return 'border-gray-500';
-    }
-  };
-
-  const getDifficultyBgColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'easy': return 'bg-green-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'hard': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getDifficultyLabel = (difficulty: string) => {
-    switch (difficulty) {
-      case 'easy': return t('challenges.difficulty.easy', 'Fácil');
-      case 'medium': return t('challenges.difficulty.medium', 'Medio');
-      case 'hard': return t('challenges.difficulty.hard', 'Difícil');
-      default: return difficulty;
-    }
-  };
-
-  const getProgressPercentage = (challenge: Challenge) => {
-    if (!challenge.target_value) return 0;
-    return Math.min(100, Math.round((challenge.progress / challenge.target_value) * 100));
-  };
-
-  const renderChallengeCard = (challenge: Challenge) => (
-    <div
-      key={challenge.id}
-      onClick={() => handleChallengeClick(challenge)}
-      className={`p-4 rounded-lg border-l-4 shadow-sm hover:shadow-md transition-all cursor-pointer transform hover:-translate-y-1 ${
-        challenge.completed ? 'border-green-500 opacity-75' : getDifficultyColor(challenge.difficulty)
-      } ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
-    >
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex-grow min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-bold text-base truncate" title={challenge.title}>{challenge.title}</h3>
-            {challenge.completed && (
-              <FaCheck className="text-green-500 flex-shrink-0" size={12} />
-            )}
-          </div>
-          <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-2`} title={challenge.description}>
-            {challenge.description}
-          </p>
-        </div>
-        
-        <div className="flex items-center gap-2 ml-2 flex-shrink-0">
-          {!challenge.completed && (
-            <span className="px-2 py-0.5 rounded text-xs font-bold bg-blue-500 text-white animate-pulse">
-              {t('challenges.new', 'NUEVO')}
-            </span>
-          )}
-          <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
-            challenge.completed
-              ? 'bg-green-500 bg-opacity-20 text-green-500'
-              : `${getDifficultyBgColor(challenge.difficulty)} bg-opacity-20 text-white`
-          }`}>
-            {challenge.completed 
-              ? t('challenges.completed', 'Completado')
-              : getDifficultyLabel(challenge.difficulty)
-            }
-          </span>
-        </div>
-      </div>
-
-      {/* Progress Bar */}
-      {!challenge.completed && challenge.target_value && (
-        <div className="mt-2">
-          <div className="flex justify-between text-xs mb-1">
-            <span>{t('challenges.progress', 'Progreso')}</span>
-            <span>{getProgressPercentage(challenge)}%</span>
-          </div>
-          <div className={`w-full h-1.5 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
-            <div
-              className="h-full bg-blue-500 rounded-full transition-all duration-300"
-              style={{ width: `${getProgressPercentage(challenge)}%` }}
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  );
 
   const navigate = useNavigate();
 
@@ -172,8 +78,8 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
     {
       id: 'daily_1_' + new Date().toDateString(),
       challenge_type: 'speed',
-      title: t('challenges.offline.speed.title', 'Velocidad Relámpago'),
-      description: t('challenges.offline.speed.desc', 'Escribe 50 palabras en 1 minuto'),
+      title: t('challenges.offline.speed.title'),
+      description: t('challenges.offline.speed.desc'),
       target_value: 50,
       progress: 0,
       completed: false,
@@ -184,8 +90,8 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
     {
       id: 'daily_2_' + new Date().toDateString(),
       challenge_type: 'accuracy',
-      title: t('challenges.offline.accuracy.title', 'Precisión Quirúrgica'),
-      description: t('challenges.offline.accuracy.desc', 'Completa un texto con 100% de precisión'),
+      title: t('challenges.offline.accuracy.title'),
+      description: t('challenges.offline.accuracy.desc'),
       target_value: 100,
       progress: 0,
       completed: false,
@@ -196,8 +102,8 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
     {
       id: 'daily_3_' + new Date().toDateString(),
       challenge_type: 'consistency',
-      title: t('challenges.offline.consistency.title', 'Maratón de Escritura'),
-      description: t('challenges.offline.consistency.desc', 'Mantén 40 PPM durante 5 minutos'),
+      title: t('challenges.offline.consistency.title'),
+      description: t('challenges.offline.consistency.desc'),
       target_value: 300, // seconds
       progress: 0,
       completed: false,
@@ -210,25 +116,45 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
   const loadChallenges = async () => {
     setIsLoading(true);
     // 1. Try LocalStorage first for immediate render
-    const cachedDaily = localStorage.getItem('cached_daily_challenges');
-    const cachedSeasonal = localStorage.getItem('cached_seasonal_challenges');
+    const cachedHistory = localStorage.getItem('cached_challenge_history');
     const cachedDate = localStorage.getItem('cached_challenges_date');
     const today = new Date().toDateString();
 
     let hasCachedData = false;
 
-    if (cachedDaily && cachedDate === today) {
-      const parsedDaily = JSON.parse(cachedDaily);
-      if (parsedDaily.length > 0) {
-        setChallenges(parsedDaily);
+    if (cachedHistory && cachedDate === today) {
+      const parsedHistory = JSON.parse(cachedHistory);
+      if (parsedHistory.length > 0) {
+        processChallenges(parsedHistory);
         hasCachedData = true;
       }
-      if (cachedSeasonal) setSeasonalChallenges(JSON.parse(cachedSeasonal));
-      setIsLoading(false); // Show cached data immediately
+      setIsLoading(false);
     }
 
     // 2. Fetch from API in background to update
     await fetchChallengesFromAPI(hasCachedData);
+  };
+
+  const processChallenges = (allChallenges: Challenge[]) => {
+    // Sort by date and created_at (newest first)
+    const sorted = [...allChallenges].sort((a, b) => {
+      const dateA = new Date(a.date || 0).getTime();
+      const dateB = new Date(b.date || 0).getTime();
+      if (dateB !== dateA) return dateB - dateA;
+      return b.id.localeCompare(a.id); // Fallback to ID if dates are same
+    });
+
+    // Separate daily and seasonal
+    const daily = sorted.filter((c: Challenge) => 
+      !c.theme || !SEASONAL_THEMES.includes(c.theme)
+    );
+    
+    const seasonal = sorted.filter((c: Challenge) => 
+      c.theme && SEASONAL_THEMES.includes(c.theme)
+    );
+
+    setChallenges(daily);
+    setSeasonalChallenges(seasonal);
   };
 
   const fetchChallengesFromAPI = async (hasCachedData: boolean) => {
@@ -239,73 +165,29 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
       const token = localStorage.getItem('auth_token');
       if (!token) return;
 
-      console.log('Fetching challenges from API...');
-      const results = await Promise.allSettled([
-        challengesAPI.getDailyChallenges(token, controller.signal),
-        challengesAPI.getSeasonalChallenges(token, controller.signal)
-      ]);
-
+      console.log('Fetching challenge history from API...');
+      const response = await challengesAPI.getHistory(token, { limit: 100 }, controller.signal);
+      
       clearTimeout(timeoutId);
 
-      const dailyResult = results[0];
-      const seasonalResult = results[1];
-      const today = new Date().toDateString();
-
-      let newDaily: Challenge[] = [];
-      let newSeasonal: Challenge[] = [];
-
-      if (dailyResult.status === 'fulfilled' && dailyResult.value.challenges?.length > 0) {
-        const allChallenges = dailyResult.value.challenges;
+      if (response.challenges && response.challenges.length > 0) {
+        const allChallenges = response.challenges;
+        processChallenges(allChallenges);
         
-        // Filter seasonal vs daily
-        const seasonal = allChallenges.filter((c: Challenge) => 
-          c.theme && SEASONAL_THEMES.includes(c.theme)
-        );
-        
-        const daily = allChallenges.filter((c: Challenge) => 
-          !c.theme || !SEASONAL_THEMES.includes(c.theme)
-        );
-
-        newDaily = daily;
-        newSeasonal = seasonal; // Start with these, add from seasonal endpoint if any
-
-        localStorage.setItem('cached_daily_challenges', JSON.stringify(newDaily));
-        localStorage.setItem('cached_challenges_date', today);
-        setChallenges(newDaily);
-      } else {
-        console.warn('API Daily failed or empty, using fallback if needed');
-        // If no cached data and API failed, use offline
-        if (!hasCachedData) {
-          newDaily = generateOfflineChallenges();
-          localStorage.setItem('cached_daily_challenges', JSON.stringify(newDaily));
-          localStorage.setItem('cached_challenges_date', today);
-          setChallenges(newDaily);
-        }
+        localStorage.setItem('cached_challenge_history', JSON.stringify(allChallenges));
+        localStorage.setItem('cached_challenges_date', new Date().toDateString());
+      } else if (!hasCachedData) {
+        const offline = generateOfflineChallenges();
+        setChallenges(offline);
+        localStorage.setItem('cached_challenge_history', JSON.stringify(offline));
+        localStorage.setItem('cached_challenges_date', new Date().toDateString());
       }
-
-      if (seasonalResult.status === 'fulfilled' && seasonalResult.value.challenges?.length > 0) {
-        // Merge with existing seasonal from daily endpoint if any, avoiding duplicates
-        const explicitSeasonal = seasonalResult.value.challenges;
-        const existingIds = new Set(newSeasonal.map(c => c.id));
-        const uniqueExplicit = explicitSeasonal.filter((c: Challenge) => !existingIds.has(c.id));
-        
-        newSeasonal = [...newSeasonal, ...uniqueExplicit];
-        
-        localStorage.setItem('cached_seasonal_challenges', JSON.stringify(newSeasonal));
-        setSeasonalChallenges(newSeasonal);
-      } else if (newSeasonal.length > 0) {
-        // If we found seasonal in daily but seasonal endpoint failed/empty, still save what we found
-        localStorage.setItem('cached_seasonal_challenges', JSON.stringify(newSeasonal));
-        setSeasonalChallenges(newSeasonal);
-      }
-
     } catch (error: any) {
       console.error('Error in fetchChallengesFromAPI:', error);
-      // If critical error and no data, ensure we show something
       if (!hasCachedData) {
          const offline = generateOfflineChallenges();
          setChallenges(offline);
-         localStorage.setItem('cached_daily_challenges', JSON.stringify(offline));
+         localStorage.setItem('cached_challenge_history', JSON.stringify(offline));
          localStorage.setItem('cached_challenges_date', new Date().toDateString());
       }
     } finally {
@@ -314,154 +196,153 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
   };
 
   const handleChallengeClick = (challenge: Challenge) => {
-    if (challenge.completed) return;
-    
     // Save selected challenge to context or local storage to configure the game
     localStorage.setItem('active_challenge', JSON.stringify(challenge));
     
-    // Navigate to the appropriate mode
-    const targetMode = challenge.mode || 'practice';
-    
     if (onNavigate) {
-      // Map API modes/themes to App.tsx views
-      let view = targetMode;
-      
-      // Handle theme-based mapping (legacy or specific overrides)
-      if (challenge.theme) {
-        if (['speed', 'christmas', 'halloween'].includes(challenge.theme)) {
-          view = 'speed-mode';
-        } else if (['accuracy', 'valentine'].includes(challenge.theme)) {
-          view = 'precision-mode';
-        }
-      }
-
-      // Map standard modes
-      const modeMap: Record<string, string> = {
-        'speed-mode': 'speed-mode',
-        'precision-mode': 'precision-mode',
-        'zen-mode': 'zen-mode',
-        'practice': 'practice',
-        'accuracy': 'precision-mode', // fallback
-        'speed': 'speed-mode' // fallback
-      };
-      
-      onNavigate(modeMap[view] || view);
+      onNavigate('challenge-play');
     } else {
       // Fallback to router navigation
-      navigate(targetMode === 'practice' ? '/' : `/${targetMode}`);
+      navigate('/challenge-play');
     }
   };
 
   if (!user) {
     return (
-      <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
-        <p>{t('challenges.notLoggedIn', 'Debes iniciar sesión para ver los retos')}</p>
+      <div className={`p-6 rounded-none border-2 ${isDarkMode ? 'bg-gray-900 border-gray-800 text-white' : 'bg-white border-gray-200 text-black'}`}>
+        <p>{t('challenges.notLoggedIn')}</p>
       </div>
     );
   }
 
   if (isLoading) {
     return (
-      <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
-        <p>{t('challenges.loading', 'Cargando retos...')}</p>
+      <div className={`p-6 rounded-none border-2 ${isDarkMode ? 'bg-gray-900 border-gray-800 text-white' : 'bg-white border-gray-200 text-black'}`}>
+        <p>{t('challenges.loading')}</p>
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
+    <div className="py-6 transition-colors duration-500">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">
-          🎯 {t('challenges.title', 'Retos Diarios')}
-        </h1>
+        <header className="mb-12 border-b border-blue-500/20 pb-8">
+          <h1 className={`text-5xl md:text-6xl font-black mb-3 tracking-tight uppercase leading-none ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            {t('challenges.title')}
+          </h1>
+          <p className={`text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} font-medium tracking-wide`}>
+            {t('challenges.subtitle')}
+          </p>
+        </header>
 
-        {/* Stats Summary - Compact */}
+        {/* Information Bar - Functional Progress Tracking */}
+        <div className={`mb-10 p-6 rounded-none border backdrop-blur-md transition-all duration-300 ${
+          isDarkMode 
+            ? 'bg-blue-500/10 border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.05)]' 
+            : 'bg-white/80 border-blue-200/50 shadow-sm'
+        }`}>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className={`p-3.5 rounded-none border text-2xl ${
+                isDarkMode ? 'bg-blue-500/20 border-blue-500/30 text-blue-400' : 'bg-blue-600 text-white border-blue-700 shadow-sm'
+              }`}>
+                <FaCalendarAlt />
+              </div>
+              <div>
+                <h3 className={`text-lg font-black uppercase tracking-tight mb-0.5 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                  {t('challenges.infoBar.progressTitle')}
+                </h3>
+                <p className={`text-[10px] font-bold uppercase tracking-widest ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                  {challenges.filter(c => c.completed).length + seasonalChallenges.filter(c => c.completed).length} {t('challenges.infoBar.of')} {challenges.length + seasonalChallenges.length} {t('challenges.infoBar.completed')}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex-grow max-w-xs">
+              <div className="flex justify-between mb-1.5">
+                <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-gray-500' : 'text-slate-400'}`}>
+                  {t('challenges.infoBar.remaining')}: {(challenges.length + seasonalChallenges.length) - (challenges.filter(c => c.completed).length + seasonalChallenges.filter(c => c.completed).length)}
+                </span>
+                <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                  {Math.round(((challenges.filter(c => c.completed).length + seasonalChallenges.filter(c => c.completed).length) / (challenges.length + seasonalChallenges.length || 1)) * 100)}%
+                </span>
+              </div>
+              <div className={`w-full h-2.5 rounded-none border ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-gray-100 border-gray-200'} overflow-hidden`}>
+                <div 
+                  className="h-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-1000 ease-out"
+                  style={{ width: `${((challenges.filter(c => c.completed).length + seasonalChallenges.filter(c => c.completed).length) / (challenges.length + seasonalChallenges.length || 1)) * 100}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Summary - Refined Glassmorphism Cards */}
         {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-            <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
-              <div className="flex items-center gap-2">
-                <FaTrophy className="text-yellow-500 text-xl" />
-                <div>
-                  <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {t('challenges.stats.completed', 'Completados')}
-                  </p>
-                  <p className="text-lg font-bold leading-tight">{stats.completed}/{stats.total}</p>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-12">
+            {[
+              { icon: <FaTrophy />, label: t('challenges.stats.completed'), value: `${stats.completed}/${stats.total}`, color: 'text-yellow-500', bg: 'bg-yellow-500/5', border: 'border-yellow-500/10' },
+              { icon: <FaFire />, label: t('challenges.stats.streak'), value: `${stats.streak} d`, color: 'text-orange-500', bg: 'bg-orange-500/5', border: 'border-orange-500/10' },
+              { icon: <span>⭐</span>, label: t('challenges.stats.points'), value: stats.totalPoints, color: 'text-purple-500', bg: 'bg-purple-500/5', border: 'border-purple-500/10' },
+              { icon: <FaClock />, label: t('challenges.stats.today'), value: `${challenges.filter(c => c.completed).length}/${challenges.length}`, color: 'text-blue-500', bg: 'bg-blue-500/5', border: 'border-blue-500/10' }
+            ].map((stat, i) => (
+              <div key={i} className={`p-4 rounded-none border backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] ${
+                isDarkMode 
+                  ? `${stat.bg} ${stat.border}` 
+                  : 'bg-white/80 border-slate-200/50 shadow-sm'
+              }`}>
+                <div className="flex items-center gap-3">
+                  <div className={`${stat.color} text-xl`}>
+                    {stat.icon}
+                  </div>
+                  <div>
+                    <p className={`text-[8px] font-bold uppercase tracking-[0.2em] ${isDarkMode ? 'text-gray-500' : 'text-slate-400'}`}>
+                      {stat.label}
+                    </p>
+                    <p className="text-xl font-black leading-none tracking-tight">{stat.value}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
-              <div className="flex items-center gap-2">
-                <FaFire className="text-orange-500 text-xl" />
-                <div>
-                  <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {t('challenges.stats.streak', 'Racha')}
-                  </p>
-                  <p className="text-lg font-bold leading-tight">{stats.streak} días</p>
-                </div>
-              </div>
-            </div>
-
-            <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
-              <div className="flex items-center gap-2">
-                <span className="text-purple-500 text-xl">⭐</span>
-                <div>
-                  <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {t('challenges.stats.points', 'Puntos')}
-                  </p>
-                  <p className="text-lg font-bold leading-tight">{stats.totalPoints}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
-              <div className="flex items-center gap-2">
-                <FaClock className="text-blue-500 text-xl" />
-                <div>
-                  <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {t('challenges.stats.today', 'Hoy')}
-                  </p>
-                  <p className="text-lg font-bold leading-tight">
-                    {challenges.filter(c => c.completed).length}/{challenges.length}
-                  </p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Daily Challenges Section */}
-          <div>
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <span>📅</span> {t('challenges.todayTitle', 'Retos de Hoy')}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {challenges.length === 0 ? (
-                <div className={`col-span-full p-6 rounded-lg text-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-                  <p className="mb-1">🎉 {t('challenges.noChallenges', 'No hay retos disponibles')}</p>
+        <div className="space-y-20">
+          {/* All Challenges Section */}
+          <section>
+            <div className="flex items-center justify-between mb-8 border-b border-gray-200/30 dark:border-gray-700/30 pb-4">
+              <h2 className="text-3xl font-black tracking-tight uppercase">
+                {t('challenges.allTitle')}
+              </h2>
+              <div className={`px-4 py-1.5 rounded-none text-[10px] font-black tracking-[0.2em] uppercase border ${
+                isDarkMode ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' : 'bg-blue-600 text-white border-blue-700 shadow-sm'
+              }`}>
+                {challenges.length + seasonalChallenges.length} {t('challenges.available')}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              {[...challenges, ...seasonalChallenges].length === 0 ? (
+                <div className={`col-span-full p-20 rounded-none text-center border backdrop-blur-sm ${
+                  isDarkMode ? 'bg-gray-900/40 border-gray-800/50' : 'bg-white/80 border-gray-200/50 shadow-sm'
+                }`}>
+                  <div className="text-6xl mb-6 opacity-50">🏁</div>
+                  <h3 className="text-2xl font-black mb-2 uppercase tracking-tight">{t('challenges.noChallenges')}</h3>
+                  <p className={`text-sm font-medium uppercase tracking-widest ${isDarkMode ? 'text-gray-500' : 'text-slate-400'}`}>{t('challenges.noChallengesDesc')}</p>
                 </div>
               ) : (
-                challenges.map(renderChallengeCard)
+                [...challenges, ...seasonalChallenges].map(challenge => (
+                  <ChallengeItem
+                    key={challenge.id}
+                    challenge={challenge}
+                    onClick={handleChallengeClick}
+                    isDarkMode={isDarkMode}
+                    t={t}
+                  />
+                ))
               )}
             </div>
-          </div>
-
-          {/* Seasonal Challenges Section */}
-          <div>
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <span>🍂</span> {t('challenges.seasonalTitle', 'Retos de Temporada')}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {seasonalChallenges.length === 0 ? (
-                <div className={`col-span-full p-6 rounded-lg text-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-                  <p className="mb-1">🌟 {t('challenges.noSeasonal', 'No hay retos de temporada activos')}</p>
-                </div>
-              ) : (
-                seasonalChallenges.map(renderChallengeCard)
-              )}
-            </div>
-          </div>
+          </section>
         </div>
       </div>
     </div>

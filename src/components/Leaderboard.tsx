@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { activityAPI } from '../api/auth';
+import LoadingSpinner from './LoadingSpinner';
+import { useFetchWithTimeout } from '../hooks/useFetchWithTimeout';
 
 interface LeaderboardEntry {
   rank: number;
@@ -12,10 +13,6 @@ interface LeaderboardEntry {
   avg_accuracy: number;
   total_games: number;
 }
-
-import { useFetchWithTimeout } from '../hooks/useFetchWithTimeout';
-
-// ... imports
 
 const Leaderboard: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -60,10 +57,10 @@ const Leaderboard: React.FC = () => {
       } catch (err: any) {
         if (err.name === 'AbortError') {
           console.log('Leaderboard request aborted');
-          setError('Tiempo de espera agotado');
+          setError(t('leaderboard.error.timeout'));
         } else {
           console.error('Leaderboard error:', err);
-          setError('Error loading leaderboard');
+          setError(t('leaderboard.error.loading'));
         }
         setEntries([]);
       } finally {
@@ -77,7 +74,7 @@ const Leaderboard: React.FC = () => {
   if (loading) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <LoadingSpinner message={t('leaderboard.loading')} />
       </div>
     );
   }
@@ -85,7 +82,7 @@ const Leaderboard: React.FC = () => {
   return (
     <div className={`min-h-screen p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">{t('leaderboard.title', 'Clasificación Global')}</h1>
+        <h1 className="text-3xl font-bold mb-6">{t('leaderboard.title')}</h1>
 
         <div className="flex gap-4 mb-6 overflow-x-auto pb-2">
           {['all', 'time_15', 'time_30', 'time_60', 'words_10', 'words_25', 'words_50'].map((m) => (
@@ -100,7 +97,7 @@ const Leaderboard: React.FC = () => {
                   : 'bg-gray-200 hover:bg-gray-300'
               }`}
             >
-              {m === 'all' ? 'General' : m.replace('_', ' ')}
+              {m === 'all' ? t('leaderboard.modes.all') : m.replace('_', ' ')}
             </button>
           ))}
         </div>
@@ -116,17 +113,17 @@ const Leaderboard: React.FC = () => {
             <thead className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
               <tr>
                 <th className="p-4 text-left w-16">#</th>
-                <th className="p-4 text-left">{t('leaderboard.player', 'Jugador')}</th>
-                <th className="p-4 text-right">{t('leaderboard.wpm', 'Mejor WPM')}</th>
-                <th className="p-4 text-right">{t('leaderboard.accuracy', 'Precisión Media')}</th>
-                <th className="p-4 text-right">{t('leaderboard.games', 'Partidas')}</th>
+                <th className="p-4 text-left">{t('leaderboard.player')}</th>
+                <th className="p-4 text-right">{t('leaderboard.wpm')}</th>
+                <th className="p-4 text-right">{t('leaderboard.accuracy')}</th>
+                <th className="p-4 text-right">{t('leaderboard.games')}</th>
               </tr>
             </thead>
             <tbody>
               {entries.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center opacity-50">
-                    No hay datos disponibles para este modo
+                    {t('leaderboard.noData')}
                   </td>
                 </tr>
               ) : (

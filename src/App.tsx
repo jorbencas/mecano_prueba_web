@@ -29,7 +29,7 @@ import Achievements from './components/Achievements';
 import Leaderboard from './components/Leaderboard';
 import UserProfile from './components/UserProfile';
 import LoadingScreen from './components/LoadingScreen';
-import HelpCenter from './components/HelpCenter';
+import Footer from './components/Footer';
 
 // Additional Practice Modes
 import ZenMode from './components/ZenMode';
@@ -43,6 +43,7 @@ import AdminDashboard from './components/AdminDashboard';
 import TeacherDashboard from './components/tutoring/TeacherDashboard';
 import StudentClasses from './components/tutoring/StudentClasses';
 import ClassView from './components/tutoring/ClassView';
+import ChallengePlay from './components/ChallengePlay';
 
 // Multiplayer Components
 import FriendsSystem from './components/FriendsSystem';
@@ -125,10 +126,8 @@ const AppContent: React.FC<{ children?: React.ReactNode; showDefaultContent?: bo
     }
 
     if (view === 'logout') {
-      if (window.confirm(t('confirmations.logout'))) {
-        logout();
-        setCurrentView('practice');
-      }
+      logout();
+      setCurrentView('practice');
     } else if (view === 'settings') {
       setShowSettingsModal(true);
     } else {
@@ -174,29 +173,7 @@ const AppContent: React.FC<{ children?: React.ReactNode; showDefaultContent?: bo
     if (acceptedChallenge) {
       // Save active challenge
       localStorage.setItem('active_challenge', JSON.stringify(acceptedChallenge));
-
-      // Navigate based on mode or theme
-      if (acceptedChallenge.mode) {
-        // Handle API mode mapping
-        const modeMap: Record<string, string> = {
-          'speed-mode': 'speed-mode',
-          'precision-mode': 'precision-mode',
-          'zen-mode': 'zen-mode',
-          'practice': 'practice'
-        };
-        setCurrentView(modeMap[acceptedChallenge.mode] || 'practice');
-      } else if (acceptedChallenge.theme) {
-        // Handle legacy local theme mapping
-        if (['speed', 'christmas', 'halloween'].includes(acceptedChallenge.theme)) {
-          setCurrentView('speed-mode');
-        } else if (['accuracy', 'valentine'].includes(acceptedChallenge.theme)) {
-          setCurrentView('precision-mode');
-        } else {
-          setCurrentView('practice');
-        }
-      } else {
-        setCurrentView('practice');
-      }
+      setCurrentView('challenge-play');
     } else {
       setCurrentView('practice');
     }
@@ -287,6 +264,7 @@ const AppContent: React.FC<{ children?: React.ReactNode; showDefaultContent?: bo
         {currentView === 'symbols-mode' && <SymbolsMode />}
         {currentView === 'code-mode' && <CodeMode />}
         {currentView === 'dictation-mode' && <DictationMode />}
+        {currentView === 'challenge-play' && <ChallengePlay onBack={() => setCurrentView('challenges')} />}
         
         {/* Games Section */}
         {currentView === 'game' && <PlayGame />}
@@ -323,7 +301,6 @@ const AppContent: React.FC<{ children?: React.ReactNode; showDefaultContent?: bo
         {currentView === 'public-profile' && <PublicProfile />}
         {currentView === 'classes' && <ClassesRoute />}
         
-        {currentView === 'help' && <HelpCenter />}
         
 
         
@@ -381,6 +358,7 @@ const AppContent: React.FC<{ children?: React.ReactNode; showDefaultContent?: bo
         
         {children}
       </div>
+      <Footer />
     </div>
   );
 };

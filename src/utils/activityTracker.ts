@@ -15,6 +15,7 @@ export interface ActivityLog {
     errors?: number;
     completed?: boolean;
     selectedKeys?: string[];
+    challengeId?: string;
   };
 }
 

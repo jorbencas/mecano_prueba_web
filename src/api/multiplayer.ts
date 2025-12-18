@@ -24,8 +24,9 @@ export const multiplayerAPI = {
   /**
    * Get list of active public rooms
    */
-  getRooms: async (token: string): Promise<{ rooms: Room[] }> => {
+  getRooms: async (token: string, signal?: AbortSignal): Promise<{ rooms: Room[] }> => {
     const response = await fetch(`${API_URL}/multiplayer/rooms`, {
+      signal,
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',

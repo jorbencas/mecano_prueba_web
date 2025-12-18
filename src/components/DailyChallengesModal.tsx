@@ -1,20 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { challengesAPI } from '../api/challenges';
-import { FaFire, FaTimes } from 'react-icons/fa';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import { FaFire, FaTimes } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
-
-interface Challenge {
-  id: string;
-  challenge_type: string;
-  title: string;
-  description: string;
-  target_value: number;
-  difficulty: 'easy' | 'medium' | 'hard';
-  mode?: string;
-}
+import { ChallengeItem, Challenge } from './ChallengeItem';
 
 interface DailyChallengesModalProps {
   isOpen: boolean;
@@ -27,24 +18,6 @@ const DailyChallengesModal: React.FC<DailyChallengesModalProps> = ({ isOpen, onC
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'easy': return 'bg-green-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'hard': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getDifficultyLabel = (difficulty: string) => {
-    switch (difficulty) {
-      case 'easy': return t('challenges.difficulty.easy', 'Fácil');
-      case 'medium': return t('challenges.difficulty.medium', 'Medio');
-      case 'hard': return t('challenges.difficulty.hard', 'Difícil');
-      default: return difficulty;
-    }
-  };
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -52,89 +25,106 @@ const DailyChallengesModal: React.FC<DailyChallengesModalProps> = ({ isOpen, onC
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4"
           onClick={onClose}
         >
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
             onClick={(e) => e.stopPropagation()}
-            className={`max-w-2xl w-full max-h-[90vh] overflow-y-auto rounded-lg shadow-2xl ${
-              isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'
+            className={`max-w-md w-full overflow-hidden rounded-none border backdrop-blur-xl ${
+              isDarkMode 
+                ? 'bg-gray-900/90 border-gray-700/50 shadow-2xl' 
+                : 'bg-white/95 border-gray-200/50 shadow-xl'
             }`}
           >
             {/* Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-t-lg">
-              <div className="flex items-center justify-between">
+            <div className={`relative p-6 pb-4 border-b ${
+              isDarkMode ? 'border-gray-700/50 bg-gray-800/50' : 'border-gray-100 bg-gray-50/50'
+            }`}>
+              <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-3">
-                  <FaFire className="text-orange-400 text-3xl animate-pulse" />
-                  <h2 className="text-2xl font-bold text-white">
-                    {t('challenges.modal.title', '🎯 ¡Tus Retos de Hoy!')}
-                  </h2>
+                  <div className={`p-3 rounded-none border ${
+                    isDarkMode ? 'bg-orange-500/20 border-orange-500/30 text-orange-400' : 'bg-orange-500 text-white border-orange-600'
+                  }`}>
+                    <FaFire className="text-xl" />
+                  </div>
+                  <div>
+                    <h2 className={`text-xl font-black tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      {t('challenges.modal.title')}
+                    </h2>
+                    <p className={`text-[10px] font-bold uppercase tracking-widest ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                      {t('challenges.modal.subtitle')}
+                    </p>
+                  </div>
                 </div>
                 <button
                   onClick={onClose}
-                  className="text-white hover:text-gray-200 transition-colors"
+                  className={`p-1.5 rounded-none transition-all border ${
+                    isDarkMode 
+                      ? 'hover:bg-gray-700 border-gray-700 text-gray-400' 
+                      : 'hover:bg-gray-100 border-gray-200 text-gray-400'
+                  } hover:rotate-90`}
                 >
-                  <FaTimes className="text-2xl" />
+                  <FaTimes size={16} />
                 </button>
               </div>
-              <p className="text-white text-opacity-90 mt-2">
-                {t('challenges.modal.subtitle', 'Completa estos desafíos para mejorar tus habilidades y ganar puntos')}
-              </p>
             </div>
 
             {/* Challenges List */}
-            <div className="p-6 space-y-4">
+            <div className={`px-6 py-6 space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar ${
+              isDarkMode ? 'bg-gray-900/30' : 'bg-gray-50/30'
+            }`}>
               {challenges.map((challenge, index) => (
                 <motion.div
                   key={challenge.id}
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: index * 0.1 }}
-                  onClick={() => {
-                    if (onSelectChallenge) {
-                      onSelectChallenge(challenge);
-                      onClose();
-                    }
-                  }}
-                  className={`p-4 rounded-lg border-l-4 cursor-pointer hover:shadow-md transition-all transform hover:-translate-x-1 ${getDifficultyColor(challenge.difficulty)} ${
-                    isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100'
-                  }`}
+                  transition={{ delay: index * 0.05 }}
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-grow">
-                      <h3 className="font-bold text-lg">{challenge.title}</h3>
-                      <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                        {challenge.description}
-                      </p>
-                    </div>
-                    <span className={`px-3 py-1 rounded text-xs font-semibold ml-3 ${
-                      getDifficultyColor(challenge.difficulty)
-                    } bg-opacity-20 text-white`}>
-                      {getDifficultyLabel(challenge.difficulty)}
-                    </span>
-                  </div>
+                  <ChallengeItem
+                    challenge={challenge}
+                    onClick={(c) => {
+                      if (onSelectChallenge) {
+                        onSelectChallenge(c);
+                        onClose();
+                      }
+                    }}
+                    isDarkMode={isDarkMode}
+                    t={t}
+                    variant="list"
+                  />
                 </motion.div>
               ))}
             </div>
 
             {/* Footer */}
-            <div className={`p-6 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-              <div className="flex justify-between items-center">
-                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {t('challenges.modal.tip', '💡 Los retos se renuevan cada día')}
-                </p>
-                <button
-                          onClick={onClose}
-                  className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-                    isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
-                  }`}
-                >
-                  {t('common.close', 'Cerrar')}
-                </button>
-              </div>
+            <div className={`p-6 border-t ${
+              isDarkMode ? 'border-gray-700/50 bg-gray-800/50' : 'border-gray-100 bg-gray-50/50'
+            }`}>
+              <button
+                onClick={() => {
+                  if (onSelectChallenge && challenges.length > 0) {
+                    const firstIncomplete = challenges.find(c => !c.completed) || challenges[0];
+                    onSelectChallenge(firstIncomplete);
+                    onClose();
+                  } else {
+                    onClose();
+                  }
+                }}
+                className={`w-full py-4 rounded-none font-black text-lg uppercase tracking-tight transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg ${
+                  isDarkMode
+                    ? 'bg-blue-600 text-white hover:bg-blue-500'
+                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/20'
+                }`}
+              >
+                {t('challenges.modal.start')}
+              </button>
+              
+              <p className={`text-center mt-4 text-[9px] font-bold tracking-[0.2em] uppercase ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}>
+                {t('challenges.modal.tip')}
+              </p>
             </div>
           </motion.div>
         </motion.div>

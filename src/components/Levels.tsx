@@ -12,6 +12,7 @@ import { getStatsData } from '../utils/getStatsData';
 import levels from '../data/levels.json';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import extractKeysFromText from '../hooks/extractKeysFromText';
+import { FaQuestionCircle } from 'react-icons/fa';
 
 const Levels: React.FC = () => {
   const [level, setLevel] = useState(0);
@@ -181,9 +182,12 @@ const Levels: React.FC = () => {
         user={user}
       />
       <div className="w-full lg:w-3/4">
-        <h1 className={`text-4xl font-extrabold mb-8 tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-blue-400 via-purple-400 to-indigo-400' : 'from-blue-600 via-purple-600 to-indigo-600'}`}>
-          {t('levels.title')}
-        </h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className={`text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-blue-400 via-purple-400 to-indigo-400' : 'from-blue-600 via-purple-600 to-indigo-600'}`}>
+            {t('levels.title')}
+          </h1>
+
+        </div>
 
         <div className={`p-6 rounded-2xl shadow-xl border backdrop-blur-sm transition-all duration-300 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
           <TypingArea

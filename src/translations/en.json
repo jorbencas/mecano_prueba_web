@@ -115,36 +115,61 @@
             "games": "Games",
             "custom": "Custom",
             "progress": "Progress",
-            "multiplayer": "Multiplayer"
+            "multiplayer": "Multiplayer",
+            "classes": "Classes",
+            "community": "Community"
         },
+        "classes": "Classes",
+        "classesDesc": "Manage your classes and students",
+        "community": "Community",
+        "communityDesc": "Forum and global chat",
         "practice": {
             "guided": "Guided Levels",
+            "guidedDesc": "Learn step by step",
             "free": "Free Practice",
+            "freeDesc": "Type at your own pace",
             "speed": "Speed Mode",
+            "speedDesc": "Test your speed",
             "precision": "Precision Mode",
+            "precisionDesc": "Focus on accuracy",
             "zen": "Zen Mode",
+            "zenDesc": "Relax and type",
             "numbers": "Numbers Mode",
+            "numbersDesc": "Practice the numeric keypad",
             "symbols": "Symbols Mode",
+            "symbolsDesc": "Master the symbols",
             "code": "Code Mode",
-            "dictation": "Dictation Mode"
+            "codeDesc": "Practice syntax",
+            "dictation": "Dictation Mode",
+            "dictationDesc": "Listen and type"
         },
         "games": {
-            "falling": "Falling Letters"
+            "falling": "Falling Letters",
+            "fallingDesc": "Catch the letters before they fall"
         },
         "custom": {
             "texts": "Custom Texts",
-            "myLevels": "My Levels"
+            "textsDesc": "Create your own texts",
+            "myLevels": "My Levels",
+            "levels": "Custom Levels",
+            "levelsDesc": "Manage and create levels"
         },
         "multiplayer": {
             "race": "Competitive Race",
+            "raceDesc": "Compete in real time",
             "practice": "Practice Room",
-            "friends": "Friends"
+            "practiceDesc": "Practice in a group",
+            "friends": "Friends",
+            "friendsDesc": "Manage your friends list"
         },
         "progress": {
             "stats": "Statistics",
             "achievements": "Achievements",
+            "achievementsDesc": "Unlock achievements",
             "leaderboard": "Leaderboard",
-            "challenges": "Daily Challenges"
+            "leaderboardDesc": "Compete in the ranking",
+            "challenges": "Daily Challenges",
+            "challengesDesc": "Complete challenges"
         },
         "items": {
             "game": "Game",
@@ -237,20 +262,24 @@
         "noActivity": "No activity recorded",
         "date": "Date",
         "component": "Component",
-        "duration": "Duration",
-        "wpm": "WPM",
-        "accuracy": "Accuracy"
+        "duration": "Duration"
     },
     "challenges": {
         "title": "Daily Challenges",
-        "notLoggedIn": "You must login to see challenges",
+        "subtitle": "Push your limits and earn exclusive rewards every day.",
+        "notLoggedIn": "You must log in to see challenges",
         "loading": "Loading challenges...",
         "todayTitle": "Today's Challenges",
         "seasonalTitle": "Seasonal Challenges",
+        "allTitle": "All Challenges",
+        "available": "available",
         "noChallenges": "No challenges available",
-        "noSeasonal": "No active seasonal challenges",
+        "noChallengesDesc": "Come back tomorrow for new challenges.",
+        "noSeasonal": "No seasonal challenges active",
         "checkBack": "Come back tomorrow for new challenges",
-        "completed": "Completed",
+        "completed": "OK",
+        "daily": "DAILY",
+        "seasonal": "Seasonal",
         "progress": "Progress",
         "new": "NEW",
         "difficulty": {
@@ -265,7 +294,7 @@
             "today": "Today"
         },
         "modal": {
-            "title": "🎯 Your Challenges for Today!",
+            "title": "🎯 Your Challenges Today!",
             "subtitle": "Complete these challenges to improve your skills and earn points",
             "tip": "💡 Challenges refresh every day",
             "start": "Let's go!"
@@ -283,6 +312,12 @@
                 "title": "Typing Marathon",
                 "desc": "Maintain 40 WPM for 5 minutes"
             }
+        },
+        "infoBar": {
+            "progressTitle": "Your Progress Today",
+            "of": "of",
+            "completed": "challenges completed",
+            "remaining": "Remaining"
         }
     },
     "login": {
@@ -371,5 +406,48 @@
     "customLevels": {
         "myLevels": "My Levels",
         "create": "Create / Edit"
+    },
+    "common": {
+        "back": "Back",
+        "cancel": "Cancel",
+        "creating": "Creating...",
+        "loading": "Loading..."
+    },
+    "leaderboard": {
+        "title": "Global Leaderboard",
+        "loading": "Loading leaderboard...",
+        "player": "Player",
+        "wpm": "Best WPM",
+        "accuracy": "Average Accuracy",
+        "games": "Games",
+        "noData": "No data available for this mode",
+        "error": {
+            "timeout": "Request timed out",
+            "loading": "Error loading leaderboard"
+        },
+        "modes": {
+            "all": "General"
+        }
+    },
+    "multiplayer": {
+        "lobby": {
+            "raceTitle": "🏁 Race Rooms",
+            "practiceTitle": "🎮 Practice Rooms",
+            "createRoom": "Create New Room",
+            "loadingRooms": "Loading rooms...",
+            "noRooms": "No rooms available",
+            "beFirst": "Be the first to create a room",
+            "createdBy": "Created by:",
+            "players": "players",
+            "join": "Join"
+        },
+        "create": {
+            "title": "Create New Room",
+            "roomName": "Room Name",
+            "roomNamePlaceholder": "e.g. John's Room",
+            "maxPlayers": "Max Players",
+            "privateRoom": "Private Room (invite only)",
+            "submit": "Create Room"
+        }
     }
 }

@@ -5,6 +5,7 @@ import { useMultiplayer } from '../context/MultiplayerContext';
 import { multiplayerAPI, Room, CreateRoomData } from '../api/multiplayer';
 import { FaUsers, FaPlus, FaTimes, FaLock, FaGlobeAmericas } from 'react-icons/fa';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import LoadingSpinner from './LoadingSpinner';
 
 interface RoomLobbyProps {
   onJoinRoom: (roomId: string) => void;
@@ -23,15 +24,17 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
   const [isPrivate, setIsPrivate] = useState(false);
   const [creating, setCreating] = useState(false);
 
-  const fetchRooms = useCallback(async () => {
+  const fetchRooms = useCallback(async (signal?: AbortSignal) => {
     try {
       const token = localStorage.getItem('auth_token');
       if (!token) return;
 
-      const data = await multiplayerAPI.getRooms(token);
+      // Use the signal if provided to allow cancellation
+      const data = await multiplayerAPI.getRooms(token, signal);
       // Filter by mode
       setRooms(data.rooms.filter((room: Room) => room.mode === mode));
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'AbortError') return;
       console.error('Error fetching rooms:', error);
     } finally {
       setLoading(false);
@@ -39,9 +42,18 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
   }, [mode]);
 
   useEffect(() => {
-    fetchRooms();
-    const interval = setInterval(fetchRooms, 5000); // Refresh every 5 seconds
-    return () => clearInterval(interval);
+    const controller = new AbortController();
+    
+    fetchRooms(controller.signal);
+    
+    const interval = setInterval(() => {
+      fetchRooms(controller.signal);
+    }, 5000);
+
+    return () => {
+      controller.abort();
+      clearInterval(interval);
+    };
   }, [fetchRooms]);
 
   const handleCreateRoom = async () => {
@@ -90,25 +102,25 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">
-            {mode === 'race' ? '🏁 Salas de Carrera' : '🎮 Salas de Práctica'}
+            {mode === 'race' ? t('multiplayer.lobby.raceTitle') : t('multiplayer.lobby.practiceTitle')}
           </h1>
           <button
             onClick={() => setShowCreateModal(true)}
             className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold flex items-center gap-2 transition-colors"
           >
-            <FaPlus /> Crear Nueva Sala
+            <FaPlus /> {t('multiplayer.lobby.createRoom')}
           </button>
         </div>
 
         {/* Rooms List */}
         {loading ? (
-          <div className={`p-8 rounded-lg text-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <p>Cargando salas...</p>
+          <div className={`p-12 rounded-none border backdrop-blur-sm ${isDarkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/80 border-gray-200/50 shadow-sm'}`}>
+            <LoadingSpinner message={t('common.loadingRooms')} />
           </div>
         ) : filteredRooms.length === 0 ? (
           <div className={`p-8 rounded-lg text-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <p className="text-xl mb-4">No hay salas disponibles</p>
-            <p className="text-sm opacity-75">Sé el primero en crear una sala</p>
+            <p className="text-xl mb-4">{t('multiplayer.lobby.noRooms')}</p>
+            <p className="text-sm opacity-75">{t('multiplayer.lobby.beFirst')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -130,12 +142,12 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
 
                 <div className="space-y-2 mb-4">
                   <p className="text-sm opacity-75">
-                    <strong>Creado por:</strong> {room.creator_name || room.creator_email}
+                    <strong>{t('multiplayer.lobby.createdBy')}</strong> {room.creator_name || room.creator_email}
                   </p>
                   <div className="flex items-center gap-2">
                     <FaUsers />
                     <span className="text-sm">
-                      0/{room.max_players} jugadores
+                      0/{room.max_players} {t('multiplayer.lobby.players')}
                     </span>
                   </div>
                 </div>
@@ -144,7 +156,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
                   onClick={() => handleJoinRoom(room.id)}
                   className="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded font-bold transition-colors"
                 >
-                  Unirse
+                  {t('multiplayer.lobby.join')}
                 </button>
               </div>
             ))}
@@ -156,7 +168,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className={`max-w-md w-full rounded-lg p-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Crear Nueva Sala</h2>
+                <h2 className="text-2xl font-bold">{t('multiplayer.create.title')}</h2>
                 <button
                   onClick={() => setShowCreateModal(false)}
                   className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
@@ -167,7 +179,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
 
               <div className="space-y-4">
                 <div>
-                  <label className="block mb-2 font-semibold">Nombre de la Sala</label>
+                  <label className="block mb-2 font-semibold">{t('multiplayer.create.roomName')}</label>
                   <input
                     type="text"
                     value={roomName}
@@ -177,13 +189,13 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
                         ? 'bg-gray-700 border-gray-600 text-white'
                         : 'bg-white border-gray-300 text-black'
                     }`}
-                    placeholder="Ej: Sala de Juan"
+                    placeholder={t('multiplayer.create.roomNamePlaceholder')}
                     maxLength={50}
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-2 font-semibold">Máximo de Jugadores</label>
+                  <label className="block mb-2 font-semibold">{t('multiplayer.create.maxPlayers')}</label>
                   <input
                     type="number"
                     value={maxPlayers}
@@ -207,7 +219,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
                     className="w-5 h-5"
                   />
                   <label htmlFor="private-room" className="font-semibold cursor-pointer">
-                    Sala Privada (solo por invitación)
+                    {t('multiplayer.create.privateRoom')}
                   </label>
                 </div>
 
@@ -216,14 +228,14 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
                     onClick={() => setShowCreateModal(false)}
                     className="flex-1 px-4 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded font-bold transition-colors"
                   >
-                    Cancelar
+                    {t('common.cancel')}
                   </button>
                   <button
                     onClick={handleCreateRoom}
                     disabled={creating}
                     className="flex-1 px-4 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 disabled:cursor-not-allowed text-white rounded font-bold transition-colors"
                   >
-                    {creating ? 'Creando...' : 'Crear Sala'}
+                    {creating ? t('common.creating') : t('multiplayer.create.submit')}
                   </button>
                 </div>
               </div>

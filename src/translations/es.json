@@ -115,36 +115,61 @@
             "games": "Juegos",
             "custom": "Personalizado",
             "progress": "Progreso",
-            "multiplayer": "Multijugador"
+            "multiplayer": "Multijugador",
+            "classes": "Clases",
+            "community": "Comunidad"
         },
+        "classes": "Clases",
+        "classesDesc": "Gestiona tus clases y alumnos",
+        "community": "Comunidad",
+        "communityDesc": "Foro y chat global",
         "practice": {
             "guided": "Niveles Guiados",
+            "guidedDesc": "Aprende paso a paso",
             "free": "Práctica Libre",
+            "freeDesc": "Escribe a tu ritmo",
             "speed": "Modo Velocidad",
+            "speedDesc": "Pon a prueba tu rapidez",
             "precision": "Modo Precisión",
+            "precisionDesc": "Enfócate en la exactitud",
             "zen": "Modo Zen",
+            "zenDesc": "Relájate y escribe",
             "numbers": "Modo Números",
+            "numbersDesc": "Practica el teclado numérico",
             "symbols": "Modo Símbolos",
+            "symbolsDesc": "Domina los símbolos",
             "code": "Modo Código",
-            "dictation": "Modo Dictado"
+            "codeDesc": "Practica sintaxis",
+            "dictation": "Modo Dictado",
+            "dictationDesc": "Escucha y escribe"
         },
         "games": {
-            "falling": "Letras Cayendo"
+            "falling": "Letras Cayendo",
+            "fallingDesc": "Atrapa las letras antes de que caigan"
         },
         "custom": {
             "texts": "Textos Personalizados",
-            "myLevels": "Mis Niveles"
+            "textsDesc": "Crea tus propios textos",
+            "myLevels": "Mis Niveles",
+            "levels": "Niveles Personalizados",
+            "levelsDesc": "Gestiona y crea niveles"
         },
         "multiplayer": {
             "race": "Carrera Competitiva",
+            "raceDesc": "Compite en tiempo real",
             "practice": "Sala de Práctica",
-            "friends": "Amigos"
+            "practiceDesc": "Practica en grupo",
+            "friends": "Amigos",
+            "friendsDesc": "Gestiona tu lista de amigos"
         },
         "progress": {
             "stats": "Estadísticas",
             "achievements": "Logros",
+            "achievementsDesc": "Desbloquea logros",
             "leaderboard": "Clasificación",
-            "challenges": "Retos Diarios"
+            "leaderboardDesc": "Compite en el ranking",
+            "challenges": "Retos Diarios",
+            "challengesDesc": "Completa desafíos"
         },
         "items": {
             "game": "Juego",
@@ -243,14 +268,20 @@
     },
     "challenges": {
         "title": "Retos Diarios",
+        "subtitle": "Supera tus límites y gana recompensas exclusivas cada día.",
         "notLoggedIn": "Debes iniciar sesión para ver los retos",
         "loading": "Cargando retos...",
         "todayTitle": "Retos de Hoy",
         "seasonalTitle": "Retos de Temporada",
+        "allTitle": "Todos los Retos",
+        "available": "disponibles",
         "noChallenges": "No hay retos disponibles",
+        "noChallengesDesc": "Vuelve mañana para nuevos desafíos.",
         "noSeasonal": "No hay retos de temporada activos",
         "checkBack": "Vuelve mañana para nuevos desafíos",
-        "completed": "Completado",
+        "completed": "OK",
+        "daily": "DIARIO",
+        "seasonal": "Temporada",
         "progress": "Progreso",
         "new": "NUEVO",
         "difficulty": {
@@ -283,7 +314,55 @@
                 "title": "Maratón de Escritura",
                 "desc": "Mantén 40 PPM durante 5 minutos"
             }
+        },
+        "infoBar": {
+            "progressTitle": "Tu Progreso de Hoy",
+            "of": "de",
+            "completed": "retos completados",
+            "remaining": "Te faltan"
         }
+    },
+    "faq": {
+        "title": "Preguntas Frecuentes",
+        "sections": {
+            "getting-started": "Primeros Pasos",
+            "practice-modes": "Modos de Práctica",
+            "xp-levels": "XP y Niveles",
+            "social": "Social y Competición",
+            "tutoring": "Clases y Tutorías",
+            "admin-guide": "Guía de Administrador"
+        },
+        "questions": {
+            "start_practice": "¿Cómo empiezo a practicar?",
+            "register_needed": "¿Es necesario registrarse?",
+            "modes_diff": "¿Qué diferencia hay entre los modos?",
+            "custom_levels": "¿Cómo funcionan los niveles personalizados?",
+            "earn_xp": "¿Cómo gano XP?",
+            "levels_purpose": "¿Para qué sirven los niveles?",
+            "races_work": "¿Cómo funcionan las carreras?",
+            "add_friends": "¿Puedo agregar amigos?",
+            "create_class": "Soy profesor, ¿cómo creo una clase?",
+            "view_tasks": "¿Cómo veo mis tareas?",
+            "manage_users": "¿Cómo gestiono los usuarios?",
+            "detailed_tracking": "¿Qué es el Tracking Detallado?",
+            "audit_logs": "¿Cómo funcionan los logs de auditoría?"
+        },
+        "answers": {
+            "start_practice": "Te recomendamos comenzar con los \"Niveles Guiados\". Estos niveles están diseñados para enseñarte la posición correcta de los dedos y aumentar tu velocidad progresivamente.",
+            "register_needed": "No es obligatorio, pero registrarte te permite guardar tu progreso, ganar XP, subir de nivel y competir en la clasificación global.",
+            "modes_diff": "El modo Velocidad se enfoca en WPM, el modo Precisión en no cometer errores, y el modo Zen es para practicar sin presión de tiempo.",
+            "custom_levels": "Puedes crear tus propios textos o niveles en la sección \"Personalizado\". Esto es ideal para practicar vocabulario específico o fragmentos de código.",
+            "earn_xp": "Ganas XP completando niveles, retos diarios y simplemente practicando. Cuanto mejor sea tu precisión y velocidad, más XP recibirás.",
+            "levels_purpose": "Los niveles muestran tu veteranía en la plataforma. Algunos logros y características futuras podrían requerir un nivel mínimo.",
+            "races_work": "En el modo Multijugador, puedes unirte a una carrera en tiempo real. Todos los jugadores escriben el mismo texto y gana el que termine primero con mayor precisión.",
+            "add_friends": "Sí, puedes buscar usuarios en la clasificación y enviarles solicitudes de amistad para seguir su progreso.",
+            "create_class": "Si tienes el rol de profesor, verás una pestaña de \"Clases\" donde puedes crear grupos y generar códigos de invitación para tus alumnos.",
+            "view_tasks": "Si estás en una clase, tus tareas aparecerán en la sección de Clases. Al completarlas, tu profesor podrá ver tus resultados.",
+            "manage_users": "En el Panel de Admin, puedes ver la lista completa de usuarios, editar sus perfiles, cambiar sus roles (Hacer Admin/Quitar Admin) o eliminarlos si es necesario.",
+            "detailed_tracking": "Es una herramienta avanzada que registra cada acción importante en la plataforma. Te permite ver qué modos de práctica son los más populares y detectar posibles problemas de uso.",
+            "audit_logs": "Los logs de auditoría registran todas las acciones administrativas realizadas. Esto garantiza la transparencia y seguridad en la gestión de la plataforma."
+        },
+        "footer_tip": "¿No encuentras lo que buscas? ¡Pregunta en la comunidad o contacta con un administrador!"
     },
     "login": {
         "back": "Volver a la aplicación",
@@ -402,5 +481,48 @@
     "customLevels": {
         "myLevels": "Mis Niveles",
         "create": "Crear / Editar"
+    },
+    "common": {
+        "back": "Volver",
+        "cancel": "Cancelar",
+        "creating": "Creando...",
+        "loading": "Cargando..."
+    },
+    "leaderboard": {
+        "title": "Clasificación Global",
+        "loading": "Cargando clasificación...",
+        "player": "Jugador",
+        "wpm": "Mejor WPM",
+        "accuracy": "Precisión Media",
+        "games": "Partidas",
+        "noData": "No hay datos disponibles para este modo",
+        "error": {
+            "timeout": "Tiempo de espera agotado",
+            "loading": "Error al cargar la clasificación"
+        },
+        "modes": {
+            "all": "General"
+        }
+    },
+    "multiplayer": {
+        "lobby": {
+            "raceTitle": "🏁 Salas de Carrera",
+            "practiceTitle": "🎮 Salas de Práctica",
+            "createRoom": "Crear Nueva Sala",
+            "loadingRooms": "Cargando salas...",
+            "noRooms": "No hay salas disponibles",
+            "beFirst": "Sé el primero en crear una sala",
+            "createdBy": "Creado por:",
+            "players": "jugadores",
+            "join": "Unirse"
+        },
+        "create": {
+            "title": "Crear Nueva Sala",
+            "roomName": "Nombre de la Sala",
+            "roomNamePlaceholder": "Ej: Sala de Juan",
+            "maxPlayers": "Máximo de Jugadores",
+            "privateRoom": "Sala Privada (solo por invitación)",
+            "submit": "Crear Sala"
+        }
     }
 }

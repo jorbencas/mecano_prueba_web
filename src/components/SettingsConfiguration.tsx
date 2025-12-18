@@ -44,13 +44,7 @@ const SettingsConfiguration: React.FC = () => {
     { id: 'code', name: 'Modo Código' },
   ];
 
-  useEffect(() => {
-    if (user) {
-      loadPreferences();
-    }
-  }, [user, loadPreferences]);
-
-  const loadPreferences = async () => {
+  const loadPreferences = React.useCallback(async () => {
     if (!user) return;
     
     try {
@@ -70,7 +64,13 @@ const SettingsConfiguration: React.FC = () => {
     } catch (error) {
       console.error('Error loading preferences:', error);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      loadPreferences();
+    }
+  }, [user, loadPreferences]);
 
   const savePreferences = async () => {
     if (!user) return;

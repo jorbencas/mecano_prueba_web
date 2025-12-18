@@ -116,21 +116,28 @@ const NavigationCard: React.FC<NavigationCardProps> = ({
   const { isDarkMode } = useTheme();
   const colors = colorMap[color] || colorMap.blue;
 
-
   return (
     <div 
-      onClick={locked ? undefined : onClick}
-      className={`group relative overflow-hidden rounded-xl p-2 md:p-3 transition-all duration-300 cursor-pointer border ${
+      onClick={onClick}
+      className={`group relative overflow-hidden rounded-none aspect-square p-4 transition-all duration-300 cursor-pointer border backdrop-blur-md flex flex-col items-center justify-center text-center ${
         isDarkMode 
           ? 'bg-gray-800/40 border-gray-700/50 hover:bg-gray-800/60 hover:border-blue-500/50' 
-          : 'bg-white/80 border-gray-200/50 hover:bg-white hover:border-blue-500/50 hover:shadow-lg'
+          : 'bg-white/80 border-gray-200/50 hover:bg-white hover:border-blue-500/50 hover:shadow-md'
       } hover:scale-[1.02] active:scale-[0.98]
-      ${locked ? 'opacity-75 cursor-not-allowed grayscale' : ''}
+      ${locked ? 'opacity-50 grayscale pointer-events-none' : ''}
       `}
     >
-      <div className="flex justify-between items-start mb-1.5">
+      {/* Subtle Gradient Overlay on Hover */}
+      <div 
+        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 bg-gradient-to-br pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(135deg, ${colors.bgDecorative}, transparent)`,
+        }}
+      />
+
+      <div className="relative z-10 flex flex-col items-center gap-3 w-full">
         <div 
-          className="w-7 h-7 md:w-9 md:h-9 rounded-lg flex items-center justify-center text-lg md:text-xl transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300"
+          className="w-12 h-12 shrink-0 rounded-none flex items-center justify-center text-2xl transform group-hover:scale-110 transition-transform duration-300 mb-1"
           style={{
             backgroundColor: isDarkMode ? colors.iconBgDark : colors.iconBg,
             color: isDarkMode ? colors.iconTextDark : colors.iconText,
@@ -138,30 +145,28 @@ const NavigationCard: React.FC<NavigationCardProps> = ({
         >
           {icon}
         </div>
-        {locked && <FaLock className="text-gray-400 text-[10px] md:text-xs" />}
-      </div>
-      
-      <h3 className={`text-sm md:text-base font-bold mb-0.5 break-words ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-        {title}
-      </h3>
-      
-      <p className={`text-[10px] md:text-xs break-words ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-        {description}
-      </p>
+        
+        <div className="w-full px-1">
+          <h3 className={`text-[13px] font-black tracking-tight leading-tight mb-1 uppercase ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            {title}
+          </h3>
+          <p className={`text-[9px] font-bold uppercase tracking-widest leading-tight line-clamp-2 opacity-60 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            {description}
+          </p>
+        </div>
 
-      {/* Decorative background element */}
+        {locked && (
+          <div className="absolute top-3 right-3">
+            <FaLock className="text-gray-400 text-[10px]" />
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Accent Line */}
       <div 
-        className="absolute -bottom-4 -right-4 w-20 h-20 md:w-24 md:h-24 rounded-full opacity-5 group-hover:opacity-10 transition-opacity duration-300"
+        className="absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-500 ease-out"
         style={{
-          backgroundColor: isDarkMode ? '#ffffff' : colors.bgDecorative,
-        }}
-      />
-      
-      {/* Hover glow effect */}
-      <div 
-        className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-        style={{
-          background: `radial-gradient(circle at 50% 50%, ${colors.borderHover}10, transparent 70%)`,
+          backgroundColor: colors.bgDecorative,
         }}
       />
     </div>

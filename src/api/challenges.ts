@@ -52,7 +52,7 @@ export const challengesAPI = {
   /**
    * Get challenge history
    */
-  getHistory: async (token: string, filters?: { limit?: number; offset?: number; completed?: boolean }) => {
+  getHistory: async (token: string, filters?: { limit?: number; offset?: number; completed?: boolean }, signal?: AbortSignal) => {
     const params = new URLSearchParams();
     if (filters?.limit) params.append('limit', filters.limit.toString());
     if (filters?.offset) params.append('offset', filters.offset.toString());
@@ -63,6 +63,7 @@ export const challengesAPI = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      signal,
     });
 
     const data = await response.json();

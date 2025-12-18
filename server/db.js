@@ -238,9 +238,19 @@ async function initializeSchema() {
         completed BOOLEAN DEFAULT FALSE,
         completed_at TIMESTAMP,
         progress INTEGER DEFAULT 0,
+        theme VARCHAR(50),
+        text TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+
+    // Migration to add theme and text columns if they don't exist
+    try {
+      await sql`ALTER TABLE daily_challenges ADD COLUMN IF NOT EXISTS theme VARCHAR(50)`;
+      await sql`ALTER TABLE daily_challenges ADD COLUMN IF NOT EXISTS text TEXT`;
+    } catch (error) {
+      console.log('Columns might already exist or error adding them:', error.message);
+    }
 
     await sql`CREATE INDEX IF NOT EXISTS idx_daily_challenges_user_date ON daily_challenges(user_id, date)`;
     await sql`CREATE INDEX IF NOT EXISTS idx_daily_challenges_completed ON daily_challenges(user_id, completed)`;

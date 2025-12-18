@@ -4,6 +4,54 @@ const { sql } = require('../db');
 
 const router = express.Router();
 
+const CHALLENGE_TEXTS = {
+  christmas: [
+    'En Navidad, los copos de nieve caen suavemente sobre el teclado mientras Santa Claus prepara su trineo para repartir alegría por todo el mundo.',
+    'Los renos de Santa corren veloces por el cielo estrellado, guiados por la nariz roja de Rudolph, llevando regalos a todos los niños.',
+    'El árbol de Navidad brilla con luces de colores y adornos brillantes, rodeado de paquetes envueltos con amor y esperanza.'
+  ],
+  halloween: [
+    'En la noche de Halloween, las calabazas iluminadas sonríen misteriosamente mientras los fantasmas recorren las calles pidiendo truco o trato.',
+    'Un gato negro cruza el camino bajo la luna llena, mientras las brujas vuelan en sus escobas hacia el castillo encantado del bosque.',
+    'Las telarañas cubren los rincones de la mansión abandonada, donde los esqueletos bailan al ritmo de una música escalofriante.'
+  ],
+  newyear: [
+    'El reloj marca la medianoche y los fuegos artificiales iluminan el cielo para dar la bienvenida a un nuevo año lleno de propósitos y sueños.',
+    'Brindamos con alegría por los momentos compartidos y por las nuevas oportunidades que nos esperan en este camino que hoy comienza.',
+    'Doce uvas, doce deseos y un corazón lleno de esperanza para afrontar los retos de los próximos trescientos sesenta y cinco días.'
+  ],
+  valentine: [
+    'El amor es como una melodía que suena en el corazón, un sentimiento puro que nos une y nos hace ver la belleza en cada pequeño detalle.',
+    'Escribir una carta de amor es plasmar el alma en papel, dejando que las palabras fluyan con la sinceridad de un sentimiento verdadero.',
+    'Dos corazones que laten al mismo ritmo, compartiendo risas, sueños y el camino de la vida con la complicidad de los que se aman.'
+  ],
+  starwars: [
+    'Hace mucho tiempo, en una galaxia muy, muy lejana, los caballeros Jedi luchaban por mantener la paz y la justicia usando el poder de la Fuerza.',
+    'Que la Fuerza te acompañe en este desafío de mecanografía, donde tus dedos deben ser tan rápidos como un caza estelar Ala-X en pleno combate.',
+    'El lado oscuro es tentador, pero la disciplina y la práctica constante te llevarán a convertirte en un verdadero maestro del teclado galáctico.'
+  ],
+  earthday: [
+    'Cuidar nuestro planeta es una responsabilidad compartida, protegiendo los bosques, los océanos y toda la biodiversidad que hace única a la Tierra.',
+    'Cada pequeño gesto cuenta para preservar el medio ambiente, desde reciclar hasta reducir nuestro consumo de energía y recursos naturales.',
+    'La naturaleza nos regala paisajes increíbles y aire puro; es nuestro deber asegurar que las futuras generaciones también puedan disfrutarlos.'
+  ],
+  summer: [
+    'El sol brilla con fuerza sobre la arena dorada mientras las olas del mar refrescan la orilla en estos largos y luminosos días de verano.',
+    'Disfrutar de un helado bajo la sombra de una palmera es el plan perfecto para combatir el calor estival y relajarse con el sonido del océano.',
+    'Las noches de verano son mágicas, llenas de estrellas y brisas suaves que nos invitan a soñar despiertos bajo el cielo despejado.'
+  ],
+  backtoschool: [
+    'El olor a libros nuevos y lápices afilados marca el inicio de un curso lleno de aprendizaje, nuevos amigos y emocionantes descubrimientos.',
+    'Preparar la mochila con ilusión es el primer paso para afrontar los retos académicos con energía y curiosidad por todo lo que está por venir.',
+    'El reencuentro con los compañeros en el patio del colegio llena el aire de risas y anécdotas compartidas durante las vacaciones de verano.'
+  ],
+  default: [
+    'La práctica constante es la clave para dominar cualquier habilidad, especialmente la mecanografía, que requiere paciencia y dedicación diaria.',
+    'Tus dedos se deslizan sobre las teclas con la fluidez de un pianista, convirtiendo tus pensamientos en palabras con rapidez y precisión.',
+    'Cada error es una oportunidad de aprendizaje, un paso más hacia la perfección en el arte de escribir sin mirar el teclado.'
+  ]
+};
+
 /**
  * Get current seasonal theme based on date
  */
@@ -271,6 +319,8 @@ const generateDailyChallenges = async (userId) => {
         description: `${season.emoji} Completa cualquier práctica alcanzando al menos ${targetWPM} palabras por minuto`,
         target_value: targetWPM,
         difficulty: stats.avg_wpm < 40 ? 'easy' : 'medium',
+        theme: season.name,
+        text: (CHALLENGE_TEXTS[season.name] || CHALLENGE_TEXTS.default)[randomIndex()],
         date: new Date().toISOString().split('T')[0]
       });
     }
@@ -285,6 +335,8 @@ const generateDailyChallenges = async (userId) => {
         description: `${season.emoji} Completa un nivel o práctica con al menos 95% de precisión`,
         target_value: 95,
         difficulty: stats.avg_accuracy < 90 ? 'hard' : 'medium',
+        theme: season.name,
+        text: (CHALLENGE_TEXTS[season.name] || CHALLENGE_TEXTS.default)[randomIndex()],
         date: new Date().toISOString().split('T')[0]
       });
     }
@@ -298,6 +350,8 @@ const generateDailyChallenges = async (userId) => {
       description: `${season.emoji} Dedica al menos 15 minutos a practicar mecanografía hoy`,
       target_value: 15 * 60, // in seconds
       difficulty: 'easy',
+      theme: season.name,
+      text: (CHALLENGE_TEXTS[season.name] || CHALLENGE_TEXTS.default)[randomIndex()],
       date: new Date().toISOString().split('T')[0]
     });
 
@@ -327,6 +381,8 @@ const generateDailyChallenges = async (userId) => {
         mode: weakestMode.mode,
         target_value: 10 * 60,
         difficulty: 'medium',
+        theme: season.name,
+        text: (CHALLENGE_TEXTS[season.name] || CHALLENGE_TEXTS.default)[randomIndex()],
         date: new Date().toISOString().split('T')[0]
       });
     }
@@ -344,6 +400,8 @@ const generateDailyChallenges = async (userId) => {
         mode: randomMode,
         target_value: 5 * 60,
         difficulty: 'easy',
+        theme: season.name,
+        text: (CHALLENGE_TEXTS[season.name] || CHALLENGE_TEXTS.default)[randomIndex()],
         date: new Date().toISOString().split('T')[0]
       });
     }
@@ -386,6 +444,8 @@ router.get('/daily', authenticate, async (req, res) => {
             target_value, 
             mode, 
             difficulty, 
+            theme,
+            text,
             date
           )
           VALUES (
@@ -396,6 +456,8 @@ router.get('/daily', authenticate, async (req, res) => {
             ${challenge.target_value}, 
             ${challenge.mode || null}, 
             ${challenge.difficulty}, 
+            ${challenge.theme || null},
+            ${challenge.text || null},
             ${challenge.date}
           )
         `;
@@ -414,6 +476,31 @@ router.get('/daily', authenticate, async (req, res) => {
   } catch (error) {
     console.error('Error fetching daily challenges:', error);
     res.status(500).json({ error: 'Failed to fetch daily challenges' });
+  }
+});
+
+/**
+ * GET /api/challenges/seasonal
+ * Get seasonal challenges for the authenticated user
+ */
+router.get('/seasonal', authenticate, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    // Get challenges that have a theme that is not 'default'
+    const challenges = await sql`
+      SELECT * FROM daily_challenges
+      WHERE user_id = ${userId}
+      AND theme IS NOT NULL
+      AND theme != 'default'
+      ORDER BY created_at DESC
+      LIMIT 10
+    `;
+
+    res.json({ challenges });
+  } catch (error) {
+    console.error('Error fetching seasonal challenges:', error);
+    res.status(500).json({ error: 'Failed to fetch seasonal challenges' });
   }
 });
 

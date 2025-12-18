@@ -11,7 +11,7 @@ interface StatsProps {
   errorList: { expected: string; actual: string }[];
   onRepeatLevel: () => void;
   onNextLevel: () => void;
-  sourceComponent: 'Levels' | 'PlayGame' | 'CreateText' | 'PrecisionMode' | 'FreePractice' | 'SpeedMode' | 'NeonMode' | 'ZenMode' | 'NumbersMode' | 'SymbolsMode' | 'CodeMode' | 'DictationMode';
+  sourceComponent: 'Levels' | 'PlayGame' | 'CreateText' | 'PrecisionMode' | 'FreePractice' | 'SpeedMode' | 'NeonMode' | 'ZenMode' | 'NumbersMode' | 'SymbolsMode' | 'CodeMode' | 'DictationMode' | 'Challenge';
   onClose?: () => void;
 }
 
