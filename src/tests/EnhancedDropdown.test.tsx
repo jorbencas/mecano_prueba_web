@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import EnhancedDropdown from '../components/EnhancedDropdown';
-import { ThemeProvider } from '../context/ThemeContext';
+import { ThemeProvider } from '@hooks/useTheme';
 
 const mockOptions = [
   { value: 1, label: 'Option 1' },

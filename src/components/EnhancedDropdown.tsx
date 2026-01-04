@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronDown, FaSearch, FaStar } from 'react-icons/fa';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '@hooks/useTheme';
 
 interface DropdownOption {
   value: string | number;

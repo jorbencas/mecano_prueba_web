@@ -78,6 +78,50 @@ export const authAPI = {
       throw new Error(data.error || 'Logout failed');
     }
   },
+
+  /**
+   * Update user profile
+   */
+  updateProfile: async (token: string, profile: { displayName?: string; photoURL?: string; language?: string }) => {
+    const response = await fetch(`${API_URL}/auth/profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(profile),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to update profile');
+    }
+
+    return data;
+  },
+
+  /**
+   * Change user password
+   */
+  changePassword: async (token: string, oldPassword: string, newPassword: string) => {
+    const response = await fetch(`${API_URL}/auth/change-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ oldPassword, newPassword }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to change password');
+    }
+
+    return data;
+  },
 };
 
 export const activityAPI = {

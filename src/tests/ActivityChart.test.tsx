@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ActivityChart from '../components/ActivityChart';
-import { ThemeProvider } from '../context/ThemeContext';
+import { ThemeProvider } from '@hooks/useTheme';
 
 const mockData = [
   { component: 'FreePractice', count: 50, time: 3000 },

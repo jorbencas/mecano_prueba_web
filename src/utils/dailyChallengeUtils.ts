@@ -1,6 +1,6 @@
 // Utilidades para el sistema de retos diarios
-import { awardXP, XP_REWARDS } from './userLevelSystem';
-import { completeChallenge, trackChallengeProgress } from './challengeTracker';
+import { awardXP, XP_REWARDS } from '@/utils/userLevelSystem';
+import { completeChallenge, trackChallengeProgress } from '@/utils/challengeTracker';
 
 export interface DailyChallenge {
   id: string;

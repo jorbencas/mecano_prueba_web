@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { FaUsers, FaClock, FaTrophy, FaChartLine, FaFilter, FaSearch, FaEdit, FaTrash, FaTimes, FaUserShield, FaUserGraduate, FaStar, FaAward, FaQuestionCircle } from 'react-icons/fa';
+import { useTheme } from '@hooks/useTheme';
+import { useAuth } from '@/context/AuthContext';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
+import { UserRole } from '@/types/enums';
+import { FaUsers, FaClock, FaTrophy, FaChartLine, FaFilter, FaSearch, FaEdit, FaTrash, FaTimes, FaUserShield, FaUserGraduate, FaStar, FaAward, FaQuestionCircle, FaCog } from 'react-icons/fa';
 import ActivityChart from './ActivityChart';
 import Achievements from './Achievements';
-import { usersAPI } from '../api/users';
-import { getAllUsersLevels, getXPProgress } from '../utils/userLevelSystem';
-import { getAllUsersChallenges, getGlobalChallengeStats } from '../utils/challengeTracker';
+import { usersAPI } from '@/api/users';
+import { settingsAPI } from '@/api/settings';
+import { getAllUsersLevels, getXPProgress } from '@/utils/userLevelSystem';
+import { getAllUsersChallenges, getGlobalChallengeStats } from '@/utils/challengeTracker';
+import { useError } from '@hooks/useErrorHandler';
+import UnifiedSpinner from './UnifiedSpinner';
 
 interface UserActivityData {
   userId: string;
@@ -25,10 +29,11 @@ interface UserActivityData {
 
 const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onNavigate }) => {
   const { isDarkMode } = useTheme();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { t } = useDynamicTranslations();
+  const { toggleErrorHandling, errorHandlingEnabled } = useError();
 
-  const renderHelpIcon = (sectionId: string) => (
+  const renderHelpIcon = () => (
     <button 
       onClick={(e) => {
         e.stopPropagation();
@@ -45,7 +50,7 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'time' | 'activities' | 'wpm' | 'accuracy'>('time');
-  const [activeTab, setActiveTab] = useState<'users' | 'activity' | 'achievements' | 'challenges' | 'tracking' | 'history'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'activity' | 'achievements' | 'challenges' | 'tracking' | 'history' | 'settings'>('users');
   const [selectedUser, setSelectedUser] = useState<{ userId: string; email: string } | null>(null);
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({
     start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -56,10 +61,15 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
   const [users, setUsers] = useState<any[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [editingUser, setEditingUser] = useState<any | null>(null);
-  const [editForm, setEditForm] = useState({ email: '', display_name: '', role: 'student' as 'admin' | 'student' });
+  const [editForm, setEditForm] = useState({ email: '', display_name: '', role: UserRole.STUDENT as UserRole });
+
+  // Settings state
+  const [settings, setSettings] = useState<Record<string, any>>({});
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
 
   useEffect(() => {
-    if (user?.role !== 'admin') {
+    if (!isAdmin) {
       return;
     }
     fetchAllUsersActivity();
@@ -118,7 +128,7 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
     { totalTime: 0, totalActivities: 0, avgWPM: 0, avgAccuracy: 0 }
   );
 
-  const updateUserRole = async (userId: string, newRole: 'admin' | 'student') => {
+  const updateUserRole = async (userId: string, newRole: UserRole) => {
     try {
       const response = await fetch(`/api/users/${userId}/role`, {
         method: 'PATCH',
@@ -177,7 +187,7 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
     if (editForm.role !== editingUser.role) changes.push(`Rol: ${editingUser.role} → ${editForm.role}`);
 
     if (changes.length === 0) {
-      alert(t('alerts.noChanges', 'No hay cambios'));
+      alert(t('alerts.noChanges'));
       return;
     }
 
@@ -195,9 +205,9 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
       
       setUsers(users.map(u => u.id === editingUser.id ? { ...u, ...editForm } : u));
       setEditingUser(null);
-      alert(t('alerts.userUpdated', 'Usuario actualizado'));
+      alert(t('alerts.userUpdated'));
     } catch (err: any) {
-      alert(t('alerts.userUpdateError', 'Error al actualizar usuario'));
+      alert(t('alerts.userUpdateError'));
     }
   };
 
@@ -215,19 +225,50 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
 
       await usersAPI.deleteUser(token, userId);
       setUsers(users.filter(u => u.id !== userId));
-      alert(t('alerts.userDeleted', 'Usuario eliminado'));
+      alert(t('alerts.userDeleted'));
     } catch (err: any) {
-      alert(t('alerts.userDeleteError', 'Error al eliminar usuario'));
+      alert(t('alerts.userDeleteError'));
     }
   };
 
   useEffect(() => {
-    if (user?.role === 'admin' && activeTab === 'users') {
+    if (isAdmin && activeTab === 'users') {
       loadUsers();
+    }
+    if (isAdmin && activeTab === 'settings') {
+      loadSettings();
     }
   }, [user, activeTab]);
 
-  if (user?.role !== 'admin') {
+  const loadSettings = async () => {
+    try {
+      setSettingsLoading(true);
+      const data = await settingsAPI.getAll();
+      setSettings(data);
+    } catch (err) {
+      console.error('Error loading settings:', err);
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
+
+  const handleUpdateSettings = async (updates: Record<string, any>) => {
+    try {
+      setIsSavingSettings(true);
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error('No token found');
+      
+      await settingsAPI.update(token, updates);
+      setSettings(prev => ({ ...prev, ...updates }));
+      alert(t('alerts.settingsUpdated'));
+    } catch (err: any) {
+      alert(err.message || 'Error al actualizar configuración');
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
+
+  if (!isAdmin) {
     return (
       <div className={`min-h-screen p-8 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
         <div className="max-w-4xl mx-auto text-center">
@@ -351,6 +392,22 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
             <FaFilter className="inline mr-2" />
             {t('adminDashboard.tabs.history', 'Historial de Auditoría')}
           </button>
+          <button
+            onClick={() => setActiveTab('settings')}
+            aria-label={t('adminDashboard.tabs.settings', 'Configuración Global')}
+            className={`px-8 py-3 rounded-xl font-bold transition-all ${
+              activeTab === 'settings'
+                ? isDarkMode
+                  ? 'bg-gradient-to-r from-gray-600 to-gray-800 text-white shadow-lg shadow-gray-500/30'
+                  : 'bg-gradient-to-r from-gray-500 to-gray-700 text-white shadow-lg shadow-gray-500/30'
+                : isDarkMode
+                ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                : 'bg-white text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <FaCog className="inline mr-2" />
+            {t('adminDashboard.tabs.settings', 'Configuración Global')}
+          </button>
         </div>
 
         {/* Users Tab */}
@@ -361,12 +418,12 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
             <h2 className="text-2xl font-bold mb-6">
               <FaUserShield className="inline mr-3 text-purple-500" />
               {t('adminDashboard.userManagement', 'Gestión de Usuarios')}
-              {renderHelpIcon('admin-guide')}
+              {renderHelpIcon()}
             </h2>
             
             {usersLoading ? (
-              <div className="p-12 text-center">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+              <div className="p-12 text-center flex flex-col items-center justify-center">
+                <UnifiedSpinner size="lg" />
                 <p className="mt-4">Cargando usuarios...</p>
               </div>
             ) : (
@@ -394,7 +451,7 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
                       >
                         <td className="p-4">
                           <div className="flex items-center gap-2">
-                            {userItem.role === 'admin' ? (
+                            {userItem.role === UserRole.ADMIN ? (
                               <FaUserShield className="text-blue-500" />
                             ) : (
                               <FaUserGraduate className="text-green-500" />
@@ -405,11 +462,11 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
                         <td className="p-4">{userItem.email}</td>
                         <td className="p-4">
                           <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                            userItem.role === 'admin'
+                            userItem.role === UserRole.ADMIN
                               ? 'bg-blue-500 bg-opacity-20 text-blue-500'
                               : 'bg-green-500 bg-opacity-20 text-green-500'
                           }`}>
-                            {userItem.role === 'admin' ? 'Administrador' : 'Estudiante'}
+                            {userItem.role === UserRole.ADMIN ? 'Administrador' : 'Estudiante'}
                           </span>
                         </td>
                         <td className="p-4 text-sm">
@@ -504,15 +561,15 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
                   <label className="block text-sm font-bold mb-2">Rol</label>
                   <select
                     value={editForm.role}
-                    onChange={(e) => setEditForm({ ...editForm, role: e.target.value as 'admin' | 'student' })}
+                    onChange={(e) => setEditForm({ ...editForm, role: e.target.value as UserRole })}
                     className={`w-full px-4 py-2 rounded-lg border ${
                       isDarkMode
                         ? 'bg-gray-800 border-gray-700 text-white'
                         : 'bg-white border-gray-300 text-black'
                     }`}
                   >
-                    <option value="student">Estudiante</option>
-                    <option value="admin">Administrador</option>
+                    <option value={UserRole.STUDENT}>Estudiante</option>
+                    <option value={UserRole.ADMIN}>Administrador</option>
                   </select>
                 </div>
                 
@@ -564,7 +621,7 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
                 <div className="flex items-center gap-3 mb-2">
                   <FaClock className="text-2xl text-green-500" />
                   <span className="text-sm uppercase tracking-wider opacity-70">Tiempo Total</span>
-                  {renderHelpIcon('xp-levels')}
+                  {renderHelpIcon()}
                 </div>
                 <div className="text-3xl font-black">{formatTime(totalStats.totalTime)}</div>
               </div>
@@ -723,8 +780,8 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
           isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'
         }`}>
           {loading ? (
-            <div className="p-12 text-center">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+            <div className="p-12 text-center flex flex-col items-center justify-center">
+              <UnifiedSpinner size="lg" />
               <p className="mt-4">Cargando datos de actividad...</p>
             </div>
           ) : (
@@ -750,7 +807,7 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 rounded text-xs font-bold ${
-                          userData.role === 'admin' 
+                          userData.role === UserRole.ADMIN 
                             ? 'bg-purple-500/20 text-purple-400' 
                             : 'bg-blue-500/20 text-blue-400'
                         }`}>
@@ -777,15 +834,15 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
                           <button
                             onClick={() => updateUserRole(
                               userData.userId, 
-                              userData.role === 'admin' ? 'student' : 'admin'
+                              userData.role === UserRole.ADMIN ? UserRole.STUDENT : UserRole.ADMIN
                             )}
                             className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
-                              userData.role === 'admin'
+                              userData.role === UserRole.ADMIN
                                 ? 'bg-red-500 hover:bg-red-600 text-white'
                                 : 'bg-purple-500 hover:bg-purple-600 text-white'
                             }`}
                           >
-                            {userData.role === 'admin' ? 'Quitar Admin' : 'Hacer Admin'}
+                            {userData.role === UserRole.ADMIN ? 'Quitar Admin' : 'Hacer Admin'}
                           </button>
                         )}
                       </td>
@@ -833,7 +890,7 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
                         </div>
                       </td>
                       <td className="p-4">
-                        {user.role === 'admin' ? (
+                        {isAdmin ? (
                           <span className="px-3 py-1 rounded-full bg-purple-500 text-white text-xs font-bold">
                             Admin
                           </span>
@@ -1022,6 +1079,86 @@ const AdminDashboard: React.FC<{ onNavigate?: (view: string) => void }> = ({ onN
               Incluye: Cambios de roles, ediciones de usuarios, y eliminaciones<br/>
               <span className="text-sm">(Sistema de auditoría en desarrollo)</span>
             </p>
+          </div>
+        )}
+
+        {/* Settings Tab */}
+        {activeTab === 'settings' && (
+          <div className={`p-6 rounded-xl border backdrop-blur-md shadow-lg ${
+            isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'
+          }`}>
+            <h2 className="text-2xl font-bold mb-6">
+              <FaCog className="inline mr-3 text-gray-500" />
+              {t('adminDashboard.globalSettings', 'Configuración Global del Sistema')}
+            </h2>
+            
+            {settingsLoading ? (
+              <div className="p-12 text-center">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-500"></div>
+                <p className="mt-4">Cargando configuración...</p>
+              </div>
+            ) : (
+              <div className="max-w-2xl space-y-8">
+                {/* Session Duration Setting */}
+                <div className={`p-6 rounded-xl border ${isDarkMode ? 'bg-gray-900/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold">Duración de la Sesión</h3>
+                      <p className="text-sm opacity-70">Define cuánto tiempo puede estar un usuario sin cerrar sesión antes de que expire.</p>
+                    </div>
+                    <FaClock className="text-2xl text-blue-500" />
+                  </div>
+                  
+                  <div className="flex items-center gap-4">
+                    <select
+                      value={settings.session_duration?.days || 7}
+                      onChange={(e) => handleUpdateSettings({ session_duration: { days: parseInt(e.target.value) } })}
+                      disabled={isSavingSettings}
+                      className={`px-4 py-2 rounded-lg border ${
+                        isDarkMode
+                          ? 'bg-gray-800 border-gray-700 text-white'
+                          : 'bg-white border-gray-300 text-black'
+                      }`}
+                    >
+                      <option value={1}>1 Día</option>
+                      <option value={7}>1 Semana</option>
+                      <option value={30}>1 Mes</option>
+                      <option value={90}>3 Meses</option>
+                      <option value={365}>1 Año</option>
+                    </select>
+                    
+                    {isSavingSettings && (
+                      <UnifiedSpinner size="sm" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Error Handling Toggle */}
+                <div className={`p-6 rounded-xl border ${isDarkMode ? 'bg-gray-900/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold">{t('admin.settings.errorHandling')}</h3>
+                      <p className="text-sm opacity-70">{t('admin.settings.errorHandlingDesc')}</p>
+                    </div>
+                    <div 
+                      onClick={() => toggleErrorHandling()}
+                      className={`w-14 h-8 flex items-center rounded-full p-1 cursor-pointer transition-colors ${
+                        errorHandlingEnabled ? 'bg-green-500' : 'bg-gray-400'
+                      }`}
+                    >
+                      <div className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform ${
+                        errorHandlingEnabled ? 'translate-x-6' : ''
+                      }`} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Other settings can be added here */}
+                <div className="opacity-50 italic text-sm">
+                  Más configuraciones globales se añadirán en futuras actualizaciones.
+                </div>
+              </div>
+            )}
           </div>
         )}
 

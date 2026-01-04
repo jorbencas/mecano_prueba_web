@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { useMultiplayer } from '../context/MultiplayerContext';
-import { multiplayerAPI, Room, CreateRoomData } from '../api/multiplayer';
+import { useTheme } from '@hooks/useTheme';
+import { useMultiplayer } from '@/context/MultiplayerContext';
+import { multiplayerAPI, Room, CreateRoomData } from '@/api/multiplayer';
 import { FaUsers, FaPlus, FaTimes, FaLock, FaGlobeAmericas } from 'react-icons/fa';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import LoadingSpinner from './LoadingSpinner';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
+import UnifiedSpinner from './UnifiedSpinner';
 
 interface RoomLobbyProps {
   onJoinRoom: (roomId: string) => void;
@@ -14,7 +14,7 @@ interface RoomLobbyProps {
 
 const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) => {
   const { isDarkMode } = useTheme();
-  const { socket } = useMultiplayer();
+  const { /* socket */ } = useMultiplayer();
   const { t } = useDynamicTranslations();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,6 +23,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
   const [maxPlayers, setMaxPlayers] = useState(4);
   const [isPrivate, setIsPrivate] = useState(false);
   const [creating, setCreating] = useState(false);
+  const { handleError } = useErrorHandler();
 
   const fetchRooms = useCallback(async (signal?: AbortSignal) => {
     try {
@@ -35,7 +36,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
       setRooms(data.rooms.filter((room: Room) => room.mode === mode));
     } catch (error: any) {
       if (error.name === 'AbortError') return;
-      console.error('Error fetching rooms:', error);
+      handleError(error, () => fetchRooms());
     } finally {
       setLoading(false);
     }
@@ -58,7 +59,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
 
   const handleCreateRoom = async () => {
     if (!roomName.trim()) {
-      alert(t('alerts.roomNameRequired'));
+      handleError(t('alerts.roomNameRequired'));
       return;
     }
 
@@ -84,8 +85,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
       setMaxPlayers(4);
       setIsPrivate(false);
     } catch (error) {
-      console.error('Error creating room:', error);
-      alert(t('alerts.roomCreateError'));
+      handleError(error);
     } finally {
       setCreating(false);
     }
@@ -115,7 +115,7 @@ const RoomLobby: React.FC<RoomLobbyProps> = ({ onJoinRoom, mode = 'practice' }) 
         {/* Rooms List */}
         {loading ? (
           <div className={`p-12 rounded-none border backdrop-blur-sm ${isDarkMode ? 'bg-gray-800/40 border-gray-700/50' : 'bg-white/80 border-gray-200/50 shadow-sm'}`}>
-            <LoadingSpinner message={t('common.loadingRooms')} />
+            <UnifiedSpinner />
           </div>
         ) : filteredRooms.length === 0 ? (
           <div className={`p-8 rounded-lg text-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { challengesAPI } from '../api/challenges';
-import { FaFire, FaTrophy, FaCheck, FaClock, FaCalendarAlt, FaStar } from 'react-icons/fa';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import challengeTexts from '../data/challengeTexts.json';
+import { useTheme } from '@hooks/useTheme';
+import { useAuth } from '@/context/AuthContext';
+import { challengesAPI } from '@/api/challenges';
+import { FaFire, FaTrophy, FaClock, FaCalendarAlt } from 'react-icons/fa';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
+import UnifiedSpinner from '@/components/UnifiedSpinner';
+import ViewToggle from '@/components/ViewToggle';
 
-import { ChallengeItem, Challenge } from './ChallengeItem';
+import { ChallengeItem, Challenge } from '@/components/ChallengeItem';
 
 interface ChallengeStats {
   total: number;
@@ -44,14 +46,20 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
   const { t } = useDynamicTranslations();
+  const { handleError } = useErrorHandler();
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [stats, setStats] = useState<ChallengeStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [seasonalChallenges, setSeasonalChallenges] = useState<Challenge[]>([]);
+  const [view, setView] = useState<'grid' | 'list'>(() => {
+    return (localStorage.getItem('challenges_view_preference') as 'grid' | 'list') || 'grid';
+  });
 
 
-
-
+  const handleViewChange = (newView: 'grid' | 'list') => {
+    setView(newView);
+    localStorage.setItem('challenges_view_preference', newView);
+  };
 
   const fetchStats = async () => {
     try {
@@ -60,7 +68,7 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
       const data = await challengesAPI.getStats(token);
       setStats(data);
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      handleError(error);
     }
   };
 
@@ -183,7 +191,7 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
         localStorage.setItem('cached_challenges_date', new Date().toDateString());
       }
     } catch (error: any) {
-      console.error('Error in fetchChallengesFromAPI:', error);
+      handleError(error, () => loadChallenges());
       if (!hasCachedData) {
          const offline = generateOfflineChallenges();
          setChallenges(offline);
@@ -217,8 +225,11 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
 
   if (isLoading) {
     return (
-      <div className={`p-6 rounded-none border-2 ${isDarkMode ? 'bg-gray-900 border-gray-800 text-white' : 'bg-white border-gray-200 text-black'}`}>
-        <p>{t('challenges.loading')}</p>
+      <div className="flex flex-col items-center justify-center p-20">
+        <UnifiedSpinner size="lg" />
+        <p className={`mt-4 text-sm font-black uppercase tracking-widest ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+          {t('challenges.loading')}
+        </p>
       </div>
     );
   }
@@ -226,14 +237,17 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
   return (
     <div className="py-6 transition-colors duration-500">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-12 border-b border-blue-500/20 pb-8">
-          <h1 className={`text-5xl md:text-6xl font-black mb-3 tracking-tight uppercase leading-none ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-            {t('challenges.title')}
-          </h1>
-          <p className={`text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} font-medium tracking-wide`}>
-            {t('challenges.subtitle')}
-          </p>
-        </header>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 border-b border-blue-500/20 pb-8">
+          <div>
+            <h1 className={`text-5xl md:text-6xl font-black mb-3 tracking-tight uppercase leading-none ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              {t('challenges.title')}
+            </h1>
+            <p className={`text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} font-medium tracking-wide`}>
+              {t('challenges.subtitle')}
+            </p>
+          </div>
+          <ViewToggle view={view} onViewChange={handleViewChange} />
+        </div>
 
         {/* Information Bar - Functional Progress Tracking */}
         <div className={`mb-10 p-6 rounded-none border backdrop-blur-md transition-all duration-300 ${
@@ -321,7 +335,7 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className={view === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10' : 'space-y-4'}>
               {[...challenges, ...seasonalChallenges].length === 0 ? (
                 <div className={`col-span-full p-20 rounded-none text-center border backdrop-blur-sm ${
                   isDarkMode ? 'bg-gray-900/40 border-gray-800/50' : 'bg-white/80 border-gray-200/50 shadow-sm'
@@ -338,6 +352,7 @@ const DailyChallenges: React.FC<DailyChallengesProps> = ({ onNavigate }) => {
                     onClick={handleChallengeClick}
                     isDarkMode={isDarkMode}
                     t={t}
+                    variant={view}
                   />
                 ))
               )}

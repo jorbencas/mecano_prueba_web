@@ -2,9 +2,9 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import MenuLevels from '../components/MenuLevels';
-import { ThemeProvider } from '../context/ThemeContext';
+import { ThemeProvider } from '@hooks/useTheme';
 import { AuthProvider } from '../context/AuthContext';
-import { LanguageProvider } from '../context/LanguageContext';
+import { GameSource } from '../types/enums';
 
 const mockLevels = [
   { name: 'Level 1', text: 'test text 1' },
@@ -23,7 +23,7 @@ const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 // Mock useDynamicTranslations
 jest.mock('../hooks/useDynamicTranslations', () => ({
   useDynamicTranslations: () => ({
-    t: (key: string, defaultVal: string) => defaultVal,
+    t: (_key: string, defaultVal: string) => defaultVal,
     language: 'es',
     changeLanguage: jest.fn(),
   }),
@@ -36,7 +36,7 @@ describe('MenuLevels Component', () => {
     render(
       <Wrapper>
         <MenuLevels
-          source="Levels"
+          source={GameSource.LEVELS}
           onLevelChange={mockOnLevelChange}
           currentLevel={0}
           levels={mockLevels}
@@ -55,7 +55,7 @@ describe('MenuLevels Component', () => {
     render(
       <Wrapper>
         <MenuLevels
-          source="Levels"
+          source={GameSource.LEVELS}
           onLevelChange={mockOnLevelChange}
           currentLevel={0}
           levels={mockLevels}
@@ -77,7 +77,7 @@ describe('MenuLevels Component', () => {
     render(
       <Wrapper>
         <MenuLevels
-          source="Levels"
+          source={GameSource.LEVELS}
           onLevelChange={mockOnLevelChange}
           currentLevel={0}
           levels={lockedLevels}
@@ -93,21 +93,50 @@ describe('MenuLevels Component', () => {
     expect(items[10]).toHaveClass('opacity-50');
   });
 
-  it('highlights current level', () => {
+  it('filters levels by search query', () => {
     const mockOnLevelChange = jest.fn();
-    
     render(
       <Wrapper>
         <MenuLevels
-          source="Levels"
+          source={GameSource.LEVELS}
           onLevelChange={mockOnLevelChange}
-          currentLevel={1}
+          currentLevel={0}
           levels={mockLevels}
         />
       </Wrapper>
     );
 
-    const level2 = screen.getByText('Level 2').closest('li');
-    expect(level2).toHaveClass('bg-blue-500');
+    const searchInput = screen.getByPlaceholderText(/Buscar nivel/i);
+    fireEvent.change(searchInput, { target: { value: 'Level 2' } });
+
+    expect(screen.getByText('Level 2')).toBeInTheDocument();
+    expect(screen.queryByText('Level 1')).not.toBeInTheDocument();
+  });
+
+  it('renders correctly for different game sources', () => {
+    const mockOnLevelChange = jest.fn();
+    const { rerender } = render(
+      <Wrapper>
+        <MenuLevels
+          source={GameSource.FREE_PRACTICE}
+          onLevelChange={mockOnLevelChange}
+          currentLevel={0}
+          levels={mockLevels}
+        />
+      </Wrapper>
+    );
+    expect(screen.getByText(/Seleccionar Texto/i)).toBeInTheDocument();
+
+    rerender(
+      <Wrapper>
+        <MenuLevels
+          source={GameSource.LEVELS}
+          onLevelChange={mockOnLevelChange}
+          currentLevel={0}
+          levels={mockLevels}
+        />
+      </Wrapper>
+    );
+    expect(screen.getByText(/Seleccionar Nivel/i)).toBeInTheDocument();
   });
 });

@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import UserProfile from '../components/UserProfile';
-import { ThemeProvider } from '../context/ThemeContext';
+import { ThemeProvider } from '@hooks/useTheme';
 import { AuthProvider } from '../context/AuthContext';
-import { LanguageProvider } from '../context/LanguageContext';
+import { LanguageProvider } from '@hooks/useLanguage';
 import * as activityTracker from '../utils/activityTracker';
 
 // Mock the activity tracker
@@ -46,6 +46,7 @@ describe('UserProfile Component', () => {
   });
 
   test('displays user statistics when authenticated', () => {
+    const mockUser = { id: 'test-user', name: 'Test User', email: 'test@example.com' };
     mockGetActivityStats.mockReturnValue({
       totalTime: 3600, // 1 hour
       totalActivities: 10,
@@ -60,11 +61,19 @@ describe('UserProfile Component', () => {
     });
     mockGetRecentActivities.mockReturnValue([]);
 
-    // Note: This test would need a mocked authenticated user
-    // For now, it's a placeholder showing the structure
+    // We need to mock useAuth to return the user
+    jest.spyOn(require('../context/AuthContext'), 'useAuth').mockReturnValue({ user: mockUser });
+
+    renderWithProviders(<UserProfile />);
+    
+    expect(screen.getByText(/Test User/i)).toBeInTheDocument();
+    expect(screen.getByText(/55/)).toBeInTheDocument(); // WPM
+    expect(screen.getByText(/92%/)).toBeInTheDocument(); // Accuracy
+    expect(screen.getByText(/1h 0m 0s/i)).toBeInTheDocument(); // Total time
   });
 
-  test('displays recent activity table', () => {
+  test('displays recent activity table with data', () => {
+    const mockUser = { id: 'test-user', name: 'Test User' };
     const mockActivities = [
       {
         id: '1',
@@ -75,32 +84,29 @@ describe('UserProfile Component', () => {
         duration: 120,
         metadata: { wpm: 50, accuracy: 95 },
       },
-      {
-        id: '2',
-        userId: 'test-user',
-        timestamp: new Date('2024-01-01T11:00:00'),
-        activityType: 'level' as const,
-        component: 'Levels',
-        duration: 180,
-        metadata: { wpm: 60, accuracy: 90 },
-      },
     ];
 
     mockGetActivityStats.mockReturnValue({
-      totalTime: 300,
-      totalActivities: 2,
+      totalTime: 120,
+      totalActivities: 1,
       byComponent: {},
       byActivityType: {},
-      averageWPM: 55,
-      averageAccuracy: 93,
-      totalCompleted: 2,
+      averageWPM: 50,
+      averageAccuracy: 95,
+      totalCompleted: 1,
     });
     mockGetRecentActivities.mockReturnValue(mockActivities);
+    jest.spyOn(require('../context/AuthContext'), 'useAuth').mockReturnValue({ user: mockUser });
 
-    // Note: This test would need a mocked authenticated user
+    renderWithProviders(<UserProfile />);
+    
+    expect(screen.getByText(/Práctica Libre/i)).toBeInTheDocument();
+    expect(screen.getByText(/50 WPM/i)).toBeInTheDocument();
+    expect(screen.getByText(/95%/)).toBeInTheDocument();
   });
 
   test('shows no activity message when no logs exist', () => {
+    const mockUser = { id: 'test-user', name: 'Test User' };
     mockGetActivityStats.mockReturnValue({
       totalTime: 0,
       totalActivities: 0,
@@ -111,31 +117,10 @@ describe('UserProfile Component', () => {
       totalCompleted: 0,
     });
     mockGetRecentActivities.mockReturnValue([]);
+    jest.spyOn(require('../context/AuthContext'), 'useAuth').mockReturnValue({ user: mockUser });
 
-    // Would show "No hay actividad registrada" when authenticated
-  });
-
-  test('formats duration correctly', () => {
-    // Test that formatDuration utility works
-    // 3661 seconds = 1h 1m 1s
-    // This would be tested indirectly through the component render
-  });
-
-  test('displays time by component with progress bars', () => {
-    mockGetActivityStats.mockReturnValue({
-      totalTime: 3600,
-      totalActivities: 10,
-      byComponent: {
-        FreePractice: { count: 5, time: 2400 },
-        Levels: { count: 5, time: 1200 },
-      },
-      byActivityType: {},
-      averageWPM: 55,
-      averageAccuracy: 92,
-      totalCompleted: 8,
-    });
-    mockGetRecentActivities.mockReturnValue([]);
-
-    // Would show progress bars for each component
+    renderWithProviders(<UserProfile />);
+    
+    expect(screen.getByText(/No hay actividad registrada/i)).toBeInTheDocument();
   });
 });

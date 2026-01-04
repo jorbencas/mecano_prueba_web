@@ -2,9 +2,10 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AdminDashboard from '../components/AdminDashboard';
-import { ThemeProvider } from '../context/ThemeContext';
+import { ThemeProvider } from '@hooks/useTheme';
 import { AuthProvider } from '../context/AuthContext';
-import { LanguageProvider } from '../context/LanguageContext';
+import { LanguageProvider } from '@hooks/useLanguage';
+import { UserRole } from '../types/enums';
 
 const renderWithProviders = (component: React.ReactElement) => {
   return render(
@@ -48,7 +49,7 @@ describe('AdminDashboard', () => {
       {
         userId: '1',
         email: 'user1@test.com',
-        role: 'student',
+        role: UserRole.STUDENT,
         totalTime: 3600,
         totalActivities: 10,
         averageWPM: 50,
@@ -76,7 +77,7 @@ describe('AdminDashboard', () => {
       {
         userId: '1',
         email: 'alice@test.com',
-        role: 'student',
+        role: UserRole.STUDENT,
         totalTime: 3600,
         totalActivities: 10,
         averageWPM: 50,
@@ -88,7 +89,7 @@ describe('AdminDashboard', () => {
       {
         userId: '2',
         email: 'bob@test.com',
-        role: 'admin',
+        role: UserRole.ADMIN,
         totalTime: 7200,
         totalActivities: 20,
         averageWPM: 60,
@@ -115,5 +116,31 @@ describe('AdminDashboard', () => {
 
     expect(screen.getByText('alice@test.com')).toBeInTheDocument();
     expect(screen.queryByText('bob@test.com')).not.toBeInTheDocument();
+  });
+
+  it('allows admin to toggle global settings', async () => {
+    const mockUser = { id: 'admin-id', role: UserRole.ADMIN };
+    jest.spyOn(require('../context/AuthContext'), 'useAuth').mockReturnValue({ user: mockUser });
+    
+    renderWithProviders(<AdminDashboard />);
+    
+    await waitFor(() => {
+      const errorToggle = screen.getByLabelText(/Control de Errores Global/i);
+      fireEvent.click(errorToggle);
+      expect(errorToggle).toBeChecked();
+    });
+  });
+
+  it('allows admin to change session duration', async () => {
+    const mockUser = { id: 'admin-id', role: UserRole.ADMIN };
+    jest.spyOn(require('../context/AuthContext'), 'useAuth').mockReturnValue({ user: mockUser });
+    
+    renderWithProviders(<AdminDashboard />);
+    
+    await waitFor(() => {
+      const durationInput = screen.getByLabelText(/Duración de sesión/i);
+      fireEvent.change(durationInput, { target: { value: '1440' } });
+      expect(durationInput).toHaveValue(1440);
+    });
   });
 });

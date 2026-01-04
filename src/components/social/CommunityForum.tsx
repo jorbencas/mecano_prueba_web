@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTheme } from '../../context/ThemeContext';
-import { useAuth } from '../../context/AuthContext';
-import { socialAPI } from '../../api/social';
-import { FaPlus, FaComment, FaHeart, FaRegHeart, FaComments, FaPen } from 'react-icons/fa';
+import { useTheme } from '@hooks/useTheme';
+import { useAuth } from '@/context/AuthContext';
+import { socialAPI } from '@/api/social';
+import { FaHeart, FaRegHeart, FaComments, FaPen } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
 
 interface Post {
   id: string;
@@ -22,6 +23,7 @@ interface Post {
 const CommunityForum: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
+  const { t } = useDynamicTranslations();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('all');
@@ -57,7 +59,7 @@ const CommunityForum: React.FC = () => {
       loadPosts();
     } catch (error) {
       console.error('Error creating post:', error);
-      alert('Error al crear la publicación');
+      alert(t('alerts.postCreateError'));
     }
   };
 
@@ -90,14 +92,14 @@ const CommunityForum: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <FaComments /> Foro Comunitario
+            <FaComments /> {t('forum.title')}
           </h1>
           {user && (
             <button
               onClick={() => setShowCreateModal(true)}
               className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded flex items-center gap-2"
             >
-              <FaPen /> Nueva Publicación
+              <FaPen /> {t('forum.newPost')}
             </button>
           )}
         </div>
@@ -114,14 +116,14 @@ const CommunityForum: React.FC = () => {
                   : isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-100'
               }`}
             >
-              {cat === 'all' ? 'Todos' : cat}
+              {t(`forum.categories.${cat}`)}
             </button>
           ))}
         </div>
 
         {/* Posts List */}
         {loading ? (
-          <div className="text-center py-8">Cargando publicaciones...</div>
+          <div className="text-center py-8">{t('forum.loading')}</div>
         ) : (
           <div className="space-y-4">
             {posts.map(post => (
@@ -141,7 +143,7 @@ const CommunityForum: React.FC = () => {
                       <div>
                         <h3 className="text-xl font-bold mb-1">{post.title}</h3>
                         <div className="text-sm opacity-75 mb-2">
-                          Por <Link to={`/profile/${post.user_id}`} className="hover:underline">{post.display_name}</Link> • {new Date(post.created_at).toLocaleDateString()}
+                          {t('forum.postBy')} <Link to={`/profile/${post.user_id}`} className="hover:underline">{post.display_name}</Link> • {new Date(post.created_at).toLocaleDateString()}
                         </div>
                       </div>
                       <span className={`px-2 py-1 rounded text-xs uppercase font-bold ${
@@ -156,6 +158,7 @@ const CommunityForum: React.FC = () => {
                     <div className="flex items-center gap-6 text-sm opacity-75">
                       <button
                         onClick={() => handleLike(post.id)}
+                        title={post.is_liked ? 'Quitar me gusta' : 'Me gusta'}
                         className={`flex items-center gap-2 hover:text-red-500 transition-colors ${
                           post.is_liked ? 'text-red-500' : ''
                         }`}
@@ -164,9 +167,9 @@ const CommunityForum: React.FC = () => {
                         <span>{post.likes}</span>
                       </button>
                       
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2" title={t('forum.comments')}>
                         <FaComments />
-                        <span>{post.comment_count} comentarios</span>
+                        <span>{post.comment_count} {t('forum.comments')}</span>
                       </div>
                     </div>
                   </div>
@@ -180,11 +183,11 @@ const CommunityForum: React.FC = () => {
         {showCreateModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className={`w-full max-w-lg p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-              <h2 className="text-2xl font-bold mb-4">Crear Publicación</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('forum.createModal.title')}</h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block mb-1 font-semibold">Título</label>
+                  <label className="block mb-1 font-semibold">{t('forum.createModal.titleLabel')}</label>
                   <input
                     type="text"
                     value={newPost.title}
@@ -192,12 +195,12 @@ const CommunityForum: React.FC = () => {
                     className={`w-full p-2 rounded border ${
                       isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
                     }`}
-                    placeholder="Escribe un título interesante..."
+                    placeholder={t('forum.createModal.titlePlaceholder')}
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-semibold">Categoría</label>
+                  <label className="block mb-1 font-semibold">{t('forum.createModal.categoryLabel')}</label>
                   <select
                     value={newPost.category}
                     onChange={(e) => setNewPost({...newPost, category: e.target.value})}
@@ -205,15 +208,14 @@ const CommunityForum: React.FC = () => {
                       isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
                     }`}
                   >
-                    <option value="general">General</option>
-                    <option value="tips">Consejos y Trucos</option>
-                    <option value="questions">Preguntas</option>
-                    <option value="showcase">Logros</option>
+                    {['general', 'tips', 'questions', 'showcase'].map(cat => (
+                      <option key={cat} value={cat}>{t(`forum.categories.${cat}`)}</option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-semibold">Contenido</label>
+                  <label className="block mb-1 font-semibold">{t('forum.createModal.contentLabel')}</label>
                   <textarea
                     value={newPost.content}
                     onChange={(e) => setNewPost({...newPost, content: e.target.value})}
@@ -221,23 +223,25 @@ const CommunityForum: React.FC = () => {
                     className={`w-full p-2 rounded border ${
                       isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
                     }`}
-                    placeholder="Comparte tus pensamientos..."
+                    placeholder={t('forum.createModal.contentPlaceholder')}
                   />
                 </div>
 
                 <div className="flex gap-2 justify-end mt-6">
                   <button
                     onClick={() => setShowCreateModal(false)}
-                    className="px-4 py-2 rounded hover:bg-gray-200 text-gray-800"
+                    className={`px-4 py-2 rounded transition-colors ${
+                      isDarkMode ? 'hover:bg-gray-700 text-white' : 'hover:bg-gray-200 text-gray-800'
+                    }`}
                   >
-                    Cancelar
+                    {t('common.cancel')}
                   </button>
                   <button
                     onClick={handleCreatePost}
                     disabled={!newPost.title || !newPost.content}
                     className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded disabled:opacity-50"
                   >
-                    Publicar
+                    {t('forum.createModal.publish')}
                   </button>
                 </div>
               </div>

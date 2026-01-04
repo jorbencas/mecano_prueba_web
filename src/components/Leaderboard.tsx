@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import LoadingSpinner from './LoadingSpinner';
-import { useFetchWithTimeout } from '../hooks/useFetchWithTimeout';
+import { useTheme } from '@hooks/useTheme';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
+import UnifiedSpinner from './UnifiedSpinner';
+import { useFetchWithTimeout } from '@/hooks/useFetchWithTimeout';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 
 interface LeaderboardEntry {
   rank: number;
@@ -20,7 +21,7 @@ const Leaderboard: React.FC = () => {
   const fetchWithTimeout = useFetchWithTimeout();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { handleError } = useErrorHandler();
   const [mode, setMode] = useState<string>('all');
 
   useEffect(() => {
@@ -55,13 +56,7 @@ const Leaderboard: React.FC = () => {
 
         setEntries(mappedData);
       } catch (err: any) {
-        if (err.name === 'AbortError') {
-          console.log('Leaderboard request aborted');
-          setError(t('leaderboard.error.timeout'));
-        } else {
-          console.error('Leaderboard error:', err);
-          setError(t('leaderboard.error.loading'));
-        }
+        handleError(err);
         setEntries([]);
       } finally {
         setLoading(false);
@@ -74,7 +69,7 @@ const Leaderboard: React.FC = () => {
   if (loading) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
-        <LoadingSpinner message={t('leaderboard.loading')} />
+    <UnifiedSpinner />
       </div>
     );
   }
@@ -85,7 +80,7 @@ const Leaderboard: React.FC = () => {
         <h1 className="text-3xl font-bold mb-6">{t('leaderboard.title')}</h1>
 
         <div className="flex gap-4 mb-6 overflow-x-auto pb-2">
-          {['all', 'time_15', 'time_30', 'time_60', 'words_10', 'words_25', 'words_50'].map((m) => (
+          {['all', 'xp', 'time_15', 'time_30', 'time_60', 'words_10', 'words_25', 'words_50'].map((m) => (
             <button
               key={m}
               onClick={() => setMode(m)}
@@ -97,16 +92,10 @@ const Leaderboard: React.FC = () => {
                   : 'bg-gray-200 hover:bg-gray-300'
               }`}
             >
-              {m === 'all' ? t('leaderboard.modes.all') : m.replace('_', ' ')}
+              {t(`leaderboard.modes.${m}`)}
             </button>
           ))}
         </div>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
 
         <div className={`rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
           <table className="w-full">

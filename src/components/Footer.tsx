@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { FaChevronDown, FaChevronUp, FaLightbulb, FaGithub, FaTwitter, FaDiscord } from 'react-icons/fa';
-import { useTheme } from '../context/ThemeContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import { FaChevronDown, FaLightbulb, FaGithub } from 'react-icons/fa';
+import { useTheme } from '@hooks/useTheme';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Footer: React.FC = () => {
@@ -48,7 +48,7 @@ const Footer: React.FC = () => {
               <span className="p-2 rounded-lg bg-blue-500/10 text-blue-500">
                 <FaLightbulb size={20} />
               </span>
-              {t('faq.title', 'Preguntas Frecuentes')}
+              {t('faq.title')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {faqItems.map((item) => (

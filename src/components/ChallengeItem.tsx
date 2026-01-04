@@ -22,6 +22,8 @@ interface ChallengeItemProps {
   isDarkMode: boolean;
   t: (key: string, defaultValue?: string) => string;
   variant?: 'grid' | 'list';
+  selected?: boolean;
+  selectable?: boolean;
 }
 
 const SEASONAL_THEMES = ['christmas', 'halloween', 'newyear', 'valentine', 'starwars', 'earthday', 'summer', 'backtoschool'];
@@ -31,7 +33,9 @@ export const ChallengeItem: React.FC<ChallengeItemProps> = ({
   onClick, 
   isDarkMode, 
   t,
-  variant = 'grid'
+  variant = 'grid',
+  selected = false,
+  selectable = false
 }) => {
   const isSeasonal = challenge.theme && SEASONAL_THEMES.includes(challenge.theme);
   
@@ -59,6 +63,10 @@ export const ChallengeItem: React.FC<ChallengeItemProps> = ({
   return (
     <div
       onClick={() => onClick(challenge)}
+      aria-label={`${t('common.play', 'Jugar')} ${challenge.title}`}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Enter' && onClick(challenge)}
       className={`group relative rounded-none border transition-all duration-300 cursor-pointer overflow-hidden backdrop-blur-sm ${
         isList ? 'p-3' : 'p-5 h-full flex flex-col'
       } ${
@@ -66,11 +74,23 @@ export const ChallengeItem: React.FC<ChallengeItemProps> = ({
           ? 'opacity-50 grayscale pointer-events-none' 
           : 'hover:scale-[1.02] hover:shadow-lg'
       } ${
-        isDarkMode 
-          ? 'bg-gray-800/40 border-gray-700/50 hover:bg-gray-800/60 hover:border-blue-500/50' 
-          : 'bg-white/80 border-gray-200/50 hover:bg-white hover:border-blue-500/50'
+        selected 
+          ? 'ring-2 ring-blue-500 border-blue-500' 
+          : isDarkMode 
+            ? 'bg-gray-800/40 border-gray-700/50 hover:bg-gray-800/60 hover:border-blue-500/50' 
+            : 'bg-white/80 border-gray-200/50 hover:bg-white hover:border-blue-500/50'
       }`}
     >
+      {/* Selection Indicator */}
+      {selectable && (
+        <div className={`absolute top-2 right-2 w-5 h-5 rounded-none border flex items-center justify-center transition-colors ${
+          selected 
+            ? 'bg-blue-500 border-blue-500 text-white' 
+            : isDarkMode ? 'border-gray-600' : 'border-gray-300'
+        }`}>
+          {selected && <FaCheck size={10} />}
+        </div>
+      )}
       {/* Subtle Accent Bar */}
       <div className={`absolute top-0 left-0 w-1 h-full ${
         isSeasonal ? 'bg-purple-500' : 'bg-blue-500'

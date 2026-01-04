@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import { useTheme } from '@hooks/useTheme';
+import { useAuth } from '@context/AuthContext';
+import { useDynamicTranslations } from '@hooks/useDynamicTranslations';
 import { FaGoogle, FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
 import BenefitsList from './BenefitsList';
 
@@ -11,7 +11,7 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onBack }) => {
   const { isDarkMode } = useTheme();
-  const { login, register, loginWithGoogle, error: authError } = useAuth();
+  const { login, register, loginWithGoogle } = useAuth();
   const { t } = useDynamicTranslations();
   
   const [email, setEmail] = useState('');
@@ -20,6 +20,14 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Check for expired session query param
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('expired') === 'true') {
+      setError(t('login.error.sessionExpired', 'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.'));
+    }
+  }, [t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +43,16 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
       // Success - AuthContext will update user state
       if (onBack) onBack();
     } catch (err: any) {
-      setError(err.message || 'Authentication failed');
+      const message = err.message || '';
+      if (message.includes('Invalid credentials') || message.includes('401')) {
+        setError(t('login.error.invalidCredentials', 'Email o contraseña incorrectos'));
+      } else if (message.includes('User already exists') || message.includes('409')) {
+        setError(t('login.error.userExists', 'El usuario ya existe'));
+      } else if (message.includes('NetworkError') || message.includes('fetch')) {
+        setError(t('login.error.network', 'Error de conexión. Verifica tu internet.'));
+      } else {
+        setError(err.message || t('login.error.generic', 'Error de autenticación'));
+      }
     } finally {
       setLoading(false);
     }
@@ -65,7 +82,7 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
           <div className="w-full">
             <h1 className="text-5xl md:text-6xl font-extrabold mb-8 tracking-tight">
               <span className={`bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-blue-400 via-purple-400 to-indigo-400' : 'from-blue-600 via-purple-600 to-indigo-600'}`}>
-                {t('login.welcome', 'Bienvenido a Mecano')}
+                {t('login.welcome')}
               </span>
             </h1>
             
@@ -110,7 +127,7 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
                     : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                {t('login.loginTab', 'Iniciar Sesión')}
+                {t('login.loginTab')}
               </button>
               <button
                 onClick={() => {
@@ -123,7 +140,7 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
                     : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                {t('login.registerTab', 'Registrarse')}
+                {t('login.registerTab')}
               </button>
             </div>
 
@@ -138,7 +155,7 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
               {isRegister && (
                 <div className="group">
                   <label className={`block mb-2 text-sm font-bold ml-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    {t('login.displayName', 'Nombre')}
+                    {t('login.displayName')}
                   </label>
                   <div className="relative transition-all duration-200 group-focus-within:transform group-focus-within:scale-[1.02]">
                     <div className={`absolute left-4 top-3.5 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
@@ -153,7 +170,7 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
                           ? 'bg-gray-900/50 border-gray-700 text-white focus:border-blue-500 focus:bg-gray-900' 
                           : 'bg-gray-50 border-gray-200 text-gray-900 focus:border-blue-500 focus:bg-white focus:shadow-lg focus:shadow-blue-500/10'
                       }`}
-                      placeholder={t('login.displayNamePlaceholder', 'Tu nombre')}
+                      placeholder={t('login.displayNamePlaceholder')}
                       required={isRegister}
                     />
                   </div>
@@ -162,7 +179,7 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
 
               <div className="group">
                 <label className={`block mb-2 text-sm font-bold ml-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                  {t('login.email', 'Email')}
+                  {t('login.email')}
                 </label>
                 <div className="relative transition-all duration-200 group-focus-within:transform group-focus-within:scale-[1.02]">
                   <div className={`absolute left-4 top-3.5 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
@@ -185,7 +202,7 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
 
               <div className="group">
                 <label className={`block mb-2 text-sm font-bold ml-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                  {t('login.password', 'Contraseña')}
+                  {t('login.password')}
                 </label>
                 <div className="relative transition-all duration-200 group-focus-within:transform group-focus-within:scale-[1.02]">
                   <div className={`absolute left-4 top-3.5 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
@@ -206,7 +223,7 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
                   />
                 </div>
                 <p className={`text-xs mt-2 ml-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                  {t('login.passwordHint', 'Mínimo 6 caracteres')}
+                  {t('login.passwordHint')}
                 </p>
               </div>
 
@@ -225,10 +242,10 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    {t('login.loading', 'Procesando...')}
+                    {t('login.loading')}
                   </span>
                 ) : (
-                  isRegister ? t('login.registerButton', 'Crear Cuenta') : t('login.loginButton', 'Entrar')
+                  isRegister ? t('login.registerButton') : t('login.loginButton')
                 )}
               </button>
             </form>
@@ -240,7 +257,7 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className={`px-4 font-medium ${isDarkMode ? 'bg-gray-800 text-gray-500' : 'bg-white text-gray-400'}`}>
-                    {t('login.or', 'o continúa con')}
+                    {t('login.or')}
                   </span>
                 </div>
               </div>
@@ -255,7 +272,7 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 <FaGoogle className={isDarkMode ? 'text-white' : 'text-red-500'} />
-                {t('login.googleButton', 'Google')}
+                {t('login.googleButton')}
               </button>
             </div>
 
@@ -268,7 +285,7 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
                     isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-800'
                   }`}
                 >
-                  <span>←</span> {t('login.back', 'Volver a la aplicación')}
+                  <span>←</span> {t('login.back')}
                 </button>
               </div>
             )}

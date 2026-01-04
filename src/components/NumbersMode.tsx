@@ -1,133 +1,44 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { useActivityTracker } from '../hooks/useActivityTracker';
-import TypingArea from './TypingArea';
-import Keyboard from './Keyboard';
-import InstruccionesButton from './Instrucciones';
-import Stats from './Stats';
-import { SavedStat } from '../utils/saveStats';
-import { FaHashtag, FaPlay, FaStop } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { useDynamicTranslations } from '@hooks/useDynamicTranslations';
+import { GameSource } from '@/types/enums';
+import { FaHashtag } from 'react-icons/fa';
 import MenuLevels from './MenuLevels';
-import numbersLevels from '../data/numbersLevels.json';
-import { getStatsData } from '../utils/getStatsData';
+import numbersLevels from '@data/numbersLevels.json';
+import { useTypingGame } from '@hooks/useTypingGame';
+import GameModeLayout from './GameModeLayout';
 
 const NumbersMode: React.FC = () => {
-  const { isDarkMode } = useTheme();
-  const { user } = useAuth();
   const { t } = useDynamicTranslations();
-  const { startTracking, stopTracking } = useActivityTracker('NumbersMode', 'practice');
-
   const [level, setLevel] = useState(0);
   const [text, setText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [errors, setErrors] = useState(0);
-  const [errorList, setErrorList] = useState<{ expected: string; actual: string }[]>([]);
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [isActive, setIsActive] = useState(false);
-  const [showStats, setShowStats] = useState(false);
-  const [stats, setStats] = useState<SavedStat | null>(null);
-  const [totalKeystrokes, setTotalKeystrokes] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(60);
 
   useEffect(() => {
-    // Repeat text to ensure it's long enough for 60 seconds
     const baseText = numbersLevels[level].text;
-    setText(baseText.repeat(5)); 
-    setCurrentIndex(0);
-    setErrors(0);
-    setErrorList([]);
-    setTotalKeystrokes(0);
-    setIsActive(false);
-    setStartTime(null);
-    setTimeLeft(60);
+    setText(baseText.repeat(5));
   }, [level]);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            handleStop();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isActive, timeLeft]);
-
-  const handleStart = () => {
-    setIsActive(true);
-    setStartTime(Date.now());
-    setCurrentIndex(0);
-    setErrors(0);
-    setErrorList([]);
-    setTotalKeystrokes(0);
-    setShowStats(false);
-    setTimeLeft(60);
-    startTracking();
-  };
-
-  const handleStop = useCallback(() => {
-    if (!startTime && isActive) return; // Allow stop if active even if startTime is null (shouldn't happen)
-
-    const endTime = Date.now();
-    const elapsedTime = (endTime - (startTime || Date.now())) / 1000;
-    const wordsTyped = currentIndex / 5;
-    const wpm = Math.round((wordsTyped / (elapsedTime || 1)) * 60);
-    const accuracy = totalKeystrokes > 0 ? Math.round(((totalKeystrokes - errors) / totalKeystrokes) * 100) : 100;
-
-    const currentLevelData = numbersLevels[level];
-
-    const finalStats: SavedStat = {
-      wpm,
-      accuracy,
-      level: level + 1,
-      errors,
-      elapsedTime,
-      levelCompleted: true,
-      wpmGoal: currentLevelData.wpmGoal || 0,
-      errorLimit: currentLevelData.errorLimit || 999,
-    };
-
-    setStats(finalStats);
-    setShowStats(true);
-    setIsActive(false);
-    stopTracking();
-  }, [startTime, currentIndex, errors, totalKeystrokes, stopTracking, level, isActive]);
-
-  const handleKeyPress = (key: string) => {
-    if (!isActive || currentIndex >= text.length) return;
-
-    const expectedChar = text[currentIndex];
-    setTotalKeystrokes(prev => prev + 1);
-
-    if (key === expectedChar) {
-      setCurrentIndex(prev => prev + 1);
-      
-      if (currentIndex + 1 >= text.length) {
-        handleStop();
-      }
-    } else {
-      setErrors(prev => prev + 1);
-      setErrorList(prev => [...prev, { expected: expectedChar, actual: key }].slice(-10));
-    }
-  };
-
-  const handleRepeat = () => {
-    setShowStats(false);
-    setCurrentIndex(0);
-    setErrors(0);
-    setErrorList([]);
-    setStartTime(null);
-    setIsActive(false);
-    setTotalKeystrokes(0);
-    setTimeLeft(60);
-  };
+  const {
+    currentIndex,
+    errors,
+    errorList,
+    isActive,
+    elapsedTime,
+    timeLeft,
+    showStats,
+    handleStart,
+    handleStop,
+    handleKeyPress,
+    handleRepeat,
+    setShowStats,
+  } = useTypingGame({
+    modeName: 'NumbersMode',
+    modeType: 'practice',
+    text,
+    timeLimit: 60,
+    level: level + 1,
+    wpmGoal: numbersLevels[level].wpmGoal,
+    errorLimit: numbersLevels[level].errorLimit,
+  });
 
   const handleNext = () => {
     if (level < numbersLevels.length - 1) {
@@ -136,141 +47,49 @@ const NumbersMode: React.FC = () => {
     }
   };
 
-  const currentChar = isActive && currentIndex < text.length ? text[currentIndex] : '';
-  const currentWpm = startTime ? Math.round((currentIndex / 5) / ((60 - timeLeft) / 60 || 1)) : 0;
-  const currentAccuracy = totalKeystrokes > 0 ? Math.round(((totalKeystrokes - errors) / totalKeystrokes) * 100) : 100;
+  const currentWpm = elapsedTime > 0 ? Math.round((currentIndex / 5) / (elapsedTime / 60)) : 0;
+  const currentAccuracy = (currentIndex + errors) > 0 ? Math.round((currentIndex / (currentIndex + errors)) * 100) : 100;
 
   return (
-    <div className="container mx-auto p-4 flex">
-      <MenuLevels
-        source="NumbersMode"
-        onLevelChange={setLevel}
-        currentLevel={level}
-        levels={numbersLevels}
-        user={user}
-      />
-
-      <div className="w-full lg:w-3/4 pl-0 lg:pl-8">
-        <div className="text-center mb-8">
-          <h1 className={`text-4xl font-extrabold mb-3 flex items-center justify-center gap-4 tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-emerald-400 via-green-400 to-teal-400' : 'from-emerald-600 via-green-600 to-teal-600'}`}>
-            <FaHashtag className={isDarkMode ? 'text-emerald-400' : 'text-emerald-600'} />
-            {t('numbersMode.title', 'Modo Números')}
-          </h1>
-          <p className={`text-lg font-medium ${isDarkMode ? 'text-emerald-200/70' : 'text-emerald-800/60'}`}>
-            {t('numbersMode.subtitle', 'Practica tu velocidad numérica')}
-          </p>
-        </div>
-
-        <div className={`mb-8 p-6 rounded-2xl border backdrop-blur-sm shadow-xl transition-all duration-300 ${isDarkMode ? 'bg-gray-800/60 border-emerald-900/30' : 'bg-white/80 border-emerald-100'}`}>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-              {numbersLevels[level].name}
-            </h2>
-            <div className={`text-5xl font-black tracking-tighter ${timeLeft <= 10 ? 'text-red-500 animate-pulse' : isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>
-              {timeLeft}s
-            </div>
-          </div>
-          
-          <div className={`flex flex-col sm:flex-row justify-between items-center p-4 rounded-xl ${isDarkMode ? 'bg-gray-900/50' : 'bg-emerald-50/50'} text-lg`}>
-            <div className="flex flex-col items-center">
-              <span className={`text-sm uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>WPM</span>
-              <span className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{currentWpm}</span>
-            </div>
-            <div className="w-px h-8 bg-gray-300/20 hidden sm:block"></div>
-            <div className="flex flex-col items-center">
-              <span className={`text-sm uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('stats.labels.errors', 'Errores')}</span>
-              <span className="text-2xl font-bold text-red-500">{errors}</span>
-            </div>
-            <div className="w-px h-8 bg-gray-300/20 hidden sm:block"></div>
-            <div className="flex flex-col items-center">
-              <span className={`text-sm uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('stats.labels.accuracy', 'Precisión')}</span>
-              <span className="text-2xl font-bold text-blue-500">{currentAccuracy}%</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center gap-6 mb-8">
-          {!isActive ? (
-            <button
-              onClick={handleStart}
-              className={`px-10 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg shadow-emerald-500/30 transition-all hover:scale-105 hover:shadow-emerald-500/40 active:scale-95 ${
-                isDarkMode 
-                  ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white' 
-                  : 'bg-gradient-to-r from-emerald-500 to-green-500 text-white'
-              }`}
-            >
-              <FaPlay />
-              {t('numbersMode.start', 'Comenzar')}
-            </button>
-          ) : (
-            <button
-              onClick={handleStop}
-              className={`px-10 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg shadow-red-500/30 transition-all hover:scale-105 hover:shadow-red-500/40 active:scale-95 ${
-                isDarkMode 
-                  ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white' 
-                  : 'bg-gradient-to-r from-red-500 to-rose-500 text-white'
-              }`}
-            >
-              <FaStop />
-              {t('numbersMode.stop', 'Detener')}
-            </button>
-          )}
-        </div>
-
-        {isActive && (
-          <>
-            <div className={`p-6 rounded-2xl border backdrop-blur-sm shadow-lg mb-8 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
-              <div className="mb-8">
-                <TypingArea
-                  text={text}
-                  currentIndex={currentIndex}
-                  onKeyPress={handleKeyPress}
-                />
-              </div>
-
-              <div className="mb-4">
-                <Keyboard activeKey={currentChar} levelKeys={[]} />
-              </div>
-            </div>
-          </>
-        )}
-
-        {!isActive && !showStats && (
-          <>
-            <div className={`text-center p-10 rounded-2xl border backdrop-blur-sm mb-6 ${isDarkMode ? 'bg-gray-800/40 border-gray-700/50 text-gray-400' : 'bg-white/60 border-white/60 text-gray-500'}`}>
-              <p className="italic text-xl font-mono">{text}</p>
-            </div>
-            <InstruccionesButton
-              instructions={t('numbersMode.instructions', 'Practica el teclado numérico y números de la fila superior. Perfecto para mejorar velocidad en entrada de datos numéricos.')}
-              source="NumbersMode"
-            />
-          </>
-        )}
-
-        {showStats && stats && (
-          <Stats
-            stats={getStatsData({
-              wpm: stats.wpm,
-              accuracy: stats.accuracy,
-              level: level + 1,
-              errors: stats.errors,
-              elapsedTime: stats.elapsedTime,
-              levelCompleted: true,
-              levelData: { 
-                wpmGoal: numbersLevels[level].wpmGoal || 0, 
-                errorLimit: numbersLevels[level].errorLimit || 999 
-              },
-              text: text
-            })}
-            errorList={errorList}
-            onRepeatLevel={handleRepeat}
-            onNextLevel={handleNext}
-            sourceComponent="NumbersMode"
-            onClose={() => setShowStats(false)}
-          />
-        )}
-      </div>
-    </div>
+    <GameModeLayout
+      title={t('numbersMode.title')}
+      subtitle={t('numbersMode.subtitle')}
+      icon={<FaHashtag className="text-green-400" />}
+      gradientClasses="from-green-400 via-emerald-400 to-teal-400"
+      accentColorClass="text-green-400"
+      bgAccentClass="bg-green-50/50"
+      isActive={isActive}
+      showStats={showStats}
+      currentIndex={currentIndex}
+      text={text}
+      elapsedTime={elapsedTime}
+      timeLeft={timeLeft}
+      wpm={currentWpm}
+      accuracy={currentAccuracy}
+      errors={errors}
+      errorList={errorList}
+      onStart={handleStart}
+      onStop={handleStop}
+      onKeyPress={handleKeyPress}
+      onRepeat={handleRepeat}
+      onNext={handleNext}
+      onCloseStats={() => setShowStats(false)}
+      source={GameSource.NUMBERS_MODE}
+      sourceComponent="NumbersMode"
+      instructions={t('numbersMode.instructions')}
+      level={level + 1}
+      levelName={numbersLevels[level].name}
+      wpmGoal={numbersLevels[level].wpmGoal}
+      errorLimit={numbersLevels[level].errorLimit}
+      sidebar={
+        <MenuLevels
+          source={GameSource.NUMBERS_MODE}
+          onLevelChange={setLevel}
+          currentLevel={level}
+          levels={numbersLevels}
+        />
+      }
+    />
   );
 };
 

@@ -1,0 +1,75 @@
+/* src/styles/designTokens.css */
+
+/* Color palette */
+:root {
+  --color-primary: #3b82f6; /* blue-500 */
+  --color-primary-dark: #2563eb; /* blue-600 */
+  --color-success: #10b981; /* green-500 */
+  --color-error: #ef4444; /* red-500 */
+  --color-warning: #f59e0b; /* amber-500 */
+  --color-background: #f9fafb; /* gray-50 */
+  --color-surface: #ffffff; /* white */
+  --color-surface-dark: #1f2937; /* gray-800 */
+  --color-text: #111827; /* gray-900 */
+  --color-text-muted: #6b7280; /* gray-500 */
+}
+
+/* Spacing */
+:root {
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;   /* 4px */
+  --spacing-2: 0.5rem;    /* 8px */
+  --spacing-3: 0.75rem;   /* 12px */
+  --spacing-4: 1rem;      /* 16px */
+  --spacing-5: 1.25rem;   /* 20px */
+  --spacing-6: 1.5rem;    /* 24px */
+  --spacing-8: 2rem;      /* 32px */
+  --spacing-10: 2.5rem;   /* 40px */
+  --spacing-12: 3rem;     /* 48px */
+  --spacing-16: 4rem;     /* 64px */
+}
+
+/* Border radius */
+:root {
+  --radius-sm: 0.125rem;   /* 2px */
+  --radius-md: 0.25rem;    /* 4px */
+  --radius-lg: 0.5rem;     /* 8px */
+  --radius-full: 9999px;
+}
+
+/* Shadows */
+:root {
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.15);
+}
+
+/* Transitions */
+:root {
+  --transition-fast: 150ms ease-in-out;
+  --transition-medium: 300ms ease-in-out;
+  --transition-slow: 500ms ease-in-out;
+}
+
+/* Utility classes */
+.bg-primary { background-color: var(--color-primary); }
+.bg-primary-dark { background-color: var(--color-primary-dark); }
+.text-primary { color: var(--color-primary); }
+.text-muted { color: var(--color-text-muted); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.transition-fast { transition: all var(--transition-fast); }
+.transition-medium { transition: all var(--transition-medium); }
+.transition-slow { transition: all var(--transition-slow); }
+
+/* Dark mode support – use data-theme="dark" on html or body */
+[data-theme="dark"] {
+  --color-background: #111827; /* gray-900 */
+  --color-surface: #1f2937;   /* gray-800 */
+  --color-text: #f9fafb;      /* gray-50 */
+  --color-text-muted: #d1d5db; /* gray-300 */
+}

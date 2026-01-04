@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { statsAPI } from '../api/stats';
+import { useTheme } from '@hooks/useTheme';
+import { useAuth } from '@context/AuthContext';
+import { statsAPI } from '@api/stats';
 import { FaDownload, FaFileExport, FaFileCsv, FaFileCode } from 'react-icons/fa';
 
 const DataExport: React.FC = () => {

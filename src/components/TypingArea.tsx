@@ -1,20 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-
-interface TypingAreaProps {
-  text: string;
-  currentIndex: number; 
-  onKeyPress?: (key: string) => void;
-  wpm?: number;
-  accuracy?: number;
-  errors?: { [key: number]: { expected: string; actual: string } } | number;
-  source?: string;
-  standalone?: boolean; // If true, only show text without stats
-  maxHeight?: string; // Optional max height for scrollable text
-  completedClass?: string; // Custom class for completed text
-  activeClass?: string; // Custom class for the current character
-}
+import { useTheme } from '@hooks/useTheme';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
+import { GameSource } from '@/types/enums';
+import { TypingAreaProps } from '@/types/interfaces';
 
 const TypingArea: React.FC<TypingAreaProps> = ({ 
   text, 
@@ -26,8 +14,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   source,
   standalone = false,
   maxHeight,
-  completedClass = 'text-green-500',
-  activeClass = 'font-bold text-blue-500'
 }) => {
   const textAreaRef = useRef<HTMLParagraphElement>(null);
   const { isDarkMode } = useTheme();
@@ -44,7 +30,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
   }, [onKeyPress]);
 
   useEffect(() => {
-    if (source === 'CreateText' && textAreaRef.current) {
+    if (source === GameSource.CREATE_TEXT && textAreaRef.current) {
       textAreaRef.current.style.height = 'auto';
       textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
     }
@@ -54,7 +40,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({
 
   return (
     <div className={`p-4 rounded-lg ${isDarkMode ? 'text-white' : 'text-black'}`}>
-      <div className={`mb-4 ${maxHeight ? maxHeight : source === 'CreateText' ? 'max-h-60 overflow-y-auto' : ''}`}>
+      <div className={`mb-4 ${maxHeight ? maxHeight : source === GameSource.CREATE_TEXT ? 'max-h-60 overflow-y-auto' : ''}`}>
         <p
           ref={textAreaRef}
           className={`text-lg font-mono ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} sm:text-xl lg:text-2xl border-2 border-gray-300 rounded-lg p-4 mb-4 

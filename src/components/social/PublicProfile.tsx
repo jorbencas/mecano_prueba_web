@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { useTheme } from '../../context/ThemeContext';
-import { socialAPI } from '../../api/social';
+import { useTheme } from '@hooks/useTheme';
+import { socialAPI } from '@api/social';
 import FollowButton from './FollowButton';
 import { FaTrophy, FaKeyboard, FaClock, FaUsers, FaUser } from 'react-icons/fa';
 
 const PublicProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { id: userId } = useParams<{ id: string }>();
   const { isDarkMode } = useTheme();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);

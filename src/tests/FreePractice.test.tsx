@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import FreePractice from '../components/FreePractice';
-import { ThemeProvider } from '../context/ThemeContext';
+import { ThemeProvider } from '@hooks/useTheme';
 import { AuthProvider } from '../context/AuthContext';
-import { LanguageProvider } from '../context/LanguageContext';
+import { LanguageProvider } from '@hooks/useLanguage';
 
 // Mock the activity tracker
 jest.mock('../hooks/useActivityTracker', () => ({
@@ -44,29 +44,31 @@ describe('FreePractice Component', () => {
     });
   });
 
-  test('blocks key selector during active practice', () => {
+  test('blocks key selector during active practice', async () => {
     renderWithProviders(<FreePractice />);
     
     // Initially, keys should be clickable
     const keyButton = screen.getByText('a');
     expect(keyButton).not.toBeDisabled();
     
-    // Simulate starting practice by firing a keydown event
-    fireEvent.keyDown(window, { key: 'a' });
+    // Start practice by clicking the button
+    const startButton = screen.getByText(/Comenzar/i);
+    fireEvent.click(startButton);
     
     // After practice starts, keys should be disabled
-    waitFor(() => {
+    await waitFor(() => {
       expect(keyButton).toBeDisabled();
     });
   });
 
-  test('shows warning message when keys are locked', () => {
+  test('shows warning message when keys are locked', async () => {
     renderWithProviders(<FreePractice />);
     
     // Start practice
-    fireEvent.keyDown(window, { key: 'a' });
+    const startButton = screen.getByText(/Comenzar/i);
+    fireEvent.click(startButton);
     
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByText(/Teclas bloqueadas durante la práctica/i)).toBeInTheDocument();
     });
   });
@@ -76,46 +78,101 @@ describe('FreePractice Component', () => {
     expect(screen.getByText(/Límite: 100 caracteres/i)).toBeInTheDocument();
   });
 
-  test('shows reset button', () => {
+  test('shows stop button when active', async () => {
     renderWithProviders(<FreePractice />);
-    expect(screen.getByText(/Reiniciar/i)).toBeInTheDocument();
+    const startButton = screen.getByText(/Comenzar/i);
+    fireEvent.click(startButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Detener/i)).toBeInTheDocument();
+    });
   });
 
-  test('reset button resets practice session', () => {
+  test('stop button resets practice session', async () => {
     renderWithProviders(<FreePractice />);
     
     // Start practice
-    fireEvent.keyDown(window, { key: 'a' });
+    const startButton = screen.getByText(/Comenzar/i);
+    fireEvent.click(startButton);
     
-    // Click reset
-    const resetButton = screen.getByText(/Reiniciar/i);
-    fireEvent.click(resetButton);
+    // Click stop (Detener)
+    await waitFor(() => {
+      const stopButton = screen.getByText(/Detener/i);
+      fireEvent.click(stopButton);
+    });
     
     // Keys should be enabled again
-    waitFor(() => {
+    await waitFor(() => {
       const keyButton = screen.getByText('a');
       expect(keyButton).not.toBeDisabled();
     });
   });
 
+  test('toggles keys in the selector', async () => {
+    renderWithProviders(<FreePractice />);
+    
+    const keyA = screen.getByText('a');
+    const keyB = screen.getByText('b');
+    
+    // Initially 'a' is selected (blue-500), 'b' is not (bg-gray-200)
+    expect(keyA).toHaveClass('bg-blue-500');
+    expect(keyB).toHaveClass('bg-gray-200');
+    
+    // Toggle 'b' on
+    fireEvent.click(keyB);
+    expect(keyB).toHaveClass('bg-blue-500');
+    
+    // Toggle 'a' off
+    fireEvent.click(keyA);
+    expect(keyA).toHaveClass('bg-gray-200');
+  });
+
+  test('generates more text when reaching the end', async () => {
+    renderWithProviders(<FreePractice />);
+    
+    // Get initial text
+    const typingArea = screen.getByRole('paragraph');
+    const initialText = typingArea.textContent || '';
+    
+    // Start practice
+    const startButton = screen.getByText(/Comenzar/i);
+    fireEvent.click(startButton);
+    
+    // Type all characters of the initial text
+    for (const char of initialText) {
+      fireEvent.keyDown(window, { key: char });
+    }
+    
+    // Check if text has expanded
+    await waitFor(() => {
+      const newText = typingArea.textContent || '';
+      expect(newText.length).toBeGreaterThan(initialText.length);
+    });
+  });
+
   test('displays stats (WPM, accuracy, errors)', () => {
     renderWithProviders(<FreePractice />);
-    expect(screen.getByText(/WPM/i)).toBeInTheDocument();
-    expect(screen.getByText(/Precisión/i)).toBeInTheDocument();
-    expect(screen.getByText(/Errores/i)).toBeInTheDocument();
+    // Use getAllByText because "WPM", "Precisión", "Errores" might appear in different contexts (labels, stats)
+    expect(screen.getAllByText(/WPM/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Precisión/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Errores/i).length).toBeGreaterThan(0);
   });
 
   test('updates stats when typing', async () => {
     renderWithProviders(<FreePractice />);
+    
+    // Start practice
+    const startButton = screen.getByText(/Comenzar/i);
+    fireEvent.click(startButton);
     
     // Type some keys
     fireEvent.keyDown(window, { key: 'a' });
     fireEvent.keyDown(window, { key: 's' });
     
     await waitFor(() => {
-      // WPM should be calculated
-      const wpmElement = screen.getByText(/WPM/i).parentElement;
-      expect(wpmElement).toBeInTheDocument();
+      // WPM should be calculated and displayed in the stats section
+      const wpmElements = screen.getAllByText(/WPM/i);
+      expect(wpmElements.length).toBeGreaterThan(0);
     });
   });
 });

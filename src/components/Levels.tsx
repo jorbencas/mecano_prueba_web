@@ -1,245 +1,113 @@
-import React, { useState, useEffect } from 'react';
-import Keyboard from './Keyboard';
-import TypingArea from './TypingArea';
-import Stats from './Stats';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDynamicTranslations } from '@hooks/useDynamicTranslations';
+import { GameSource } from '@/types/enums';
+import { FaKeyboard } from 'react-icons/fa';
+import MenuLevels from './MenuLevels';
+import levels from '@data/levels.json';
+import { useTypingGame } from '@hooks/useTypingGame';
+import GameModeLayout from './GameModeLayout';
 import Hands from './Hands';
-import MenuLevels from "./MenuLevels";
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import InstruccionesButton from './Instrucciones';
-import { useActivityTracker } from '../hooks/useActivityTracker';
-import { getStatsData } from '../utils/getStatsData';
-import levels from '../data/levels.json';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import extractKeysFromText from '../hooks/extractKeysFromText';
-import { FaQuestionCircle } from 'react-icons/fa';
+import extractKeysFromText from '@hooks/extractKeysFromText';
 
 const Levels: React.FC = () => {
+  const { t } = useDynamicTranslations();
   const [level, setLevel] = useState(0);
   const [text, setText] = useState('');
-  const [nextKey, setNextKey] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [wpm, setWpm] = useState(0);
-  const [accuracy, setAccuracy] = useState(100);
-  const [errors, setErrors] = useState<{ [key: number]: { expected: string; actual: string } }>({});
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [totalKeystrokes, setTotalKeystrokes] = useState(0);
-  const [levelCompleted, setLevelCompleted] = useState(false);
-  const [totalWords, setTotalWords] = useState(0);
-  const [elapsedTime, setElapsedTime] = useState<number>(0);
-  const [showStatsModal, setShowStatsModal] = useState(false);
-  const [completedLevels, setCompletedLevels] = useState<number[]>([]);
-  const [errorList, setErrorList] = useState<{ expected: string; actual: string }[]>([]);
-  const { isDarkMode } = useTheme();
-  const { user } = useAuth();
-  const { t } = useDynamicTranslations();
-  const { startTracking, stopTracking } = useActivityTracker('Levels', 'level');
 
-  // Generar texto al cambiar de nivel
-  useEffect(() => {
-    generateText();
-  }, [level]);
-
-  const generateText = () => {
-    let newText = generateRandomText(extractKeysFromText(levels[level].text), 50);
-    setText(newText);
-    setNextKey(newText[0].toLowerCase());
-    setCurrentIndex(0);
-    setTotalWords(newText.split(' ').length);
-    setStartTime(null);
-    setWpm(0);
-    setAccuracy(100);
-    setErrors({});
-    setTotalKeystrokes(0);
-    setLevelCompleted(false);
-    setElapsedTime(0);
-    setErrorList([]);
-  };
-
-  const generateRandomText = (keys: string[], length: number): string => {
+  const generateRandomText = useCallback((keys: string[], length: number): string => {
     return Array.from({ length }, () => keys[Math.floor(Math.random() * keys.length)]).join('');
-  };
+  }, []);
 
-  const finishLevel = () => {
-    if (startTime !== null) {
-      const elapsedMinutes = (Date.now() - startTime) / (1000 * 60);
-      const wordsTyped = currentIndex / totalWords;
-      const currentWpm = Math.round(wordsTyped / elapsedMinutes);
-      const timeTaken = Math.round((Date.now() - startTime) / 1000);
-      setElapsedTime(timeTaken);
-      const completed = currentWpm >= levels[level].wpmGoal && accuracy >= 95;
-      setLevelCompleted(completed);
-
-      if (completed && !completedLevels.includes(level)) {
-        setCompletedLevels(prev => [...prev, level]);
-      }
-      
-      // Stop tracking with metadata
-      stopTracking({
-        level,
-        wpm: currentWpm,
-        accuracy,
-        errors: Object.keys(errors).length,
-        completed,
-      });
-    }
-    setShowStatsModal(true);
-  };
-
-  const handleKeyPress = (key: string) => {
-    if (!text) return;
-
-    // Start tracking when first key is pressed
-    if (currentIndex === 0 && startTime === null) {
-      setStartTime(Date.now());
-      startTracking();
-    }
-    
-    setTotalKeystrokes(prev => prev + 1);
-
-    const expectedKey = text[currentIndex].toLowerCase();
-
-    if (key.toLowerCase() === expectedKey) {
-      const newIndex = currentIndex + 1;
-      setCurrentIndex(newIndex);
-
-      if (newIndex < text.length) {
-        setNextKey(text[newIndex].toLowerCase());
-      } else {
-        setNextKey('');
-        finishLevel();
-      }
-      updateWPM();
-    } else {
-      setErrors(prev => {
-        const newErrors = {
-          ...prev,
-          [currentIndex]: { expected: expectedKey, actual: key },
-        };
-
-        if (Object.keys(newErrors).length >= levels[level].errorLimit) {
-          finishLevel();
-        }
-
-        return newErrors;
-      });
-
-      setErrorList(prev => [{ expected: expectedKey, actual: key }, ...prev]);
-    }
-    updateAccuracy();
-  };
+  const generateText = useCallback(() => {
+    const keys = extractKeysFromText(levels[level].text);
+    const newText = generateRandomText(keys, 50);
+    setText(newText);
+  }, [level, generateRandomText]);
 
   useEffect(() => {
-    if (startTime !== null && !levelCompleted) {
-      const timer = setInterval(() => {
-        const timePassed = Math.floor((Date.now() - startTime) / 1000);
-        setElapsedTime(timePassed);
-        if (timePassed >= 120) finishLevel();
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [startTime, levelCompleted]);
-
-  const updateWPM = () => {
-    if (startTime) {
-      const elapsedMinutes = (Date.now() - startTime) / (1000 * 60);
-      const wordsTyped = currentIndex / totalWords;
-      const currentWpm = Math.round(wordsTyped / elapsedMinutes);
-      setWpm(currentWpm);
-    }
-  };
-
-  const updateAccuracy = () => {
-    const errorCount = Object.keys(errors).length;
-    setAccuracy(
-      totalKeystrokes > 0
-        ? Math.round(((totalKeystrokes - errorCount) / totalKeystrokes) * 100)
-        : 100
-    );
-  };
-
-  const repeatLevel = () => {
     generateText();
-    setShowStatsModal(false);
-  };
+  }, [generateText]);
 
-  const nextLevel = () => {
-    if (level < levels.length && levelCompleted) {
-      setLevel(level + 1);
-      setShowStatsModal(false);
-    } else {
-      console.log(t('levels.errors.cannotAdvance'));
+  const {
+    currentIndex,
+    errors,
+    errorList,
+    isActive,
+    elapsedTime,
+    showStats,
+    handleStart,
+    handleStop,
+    handleKeyPress,
+    handleRepeat,
+    setShowStats,
+  } = useTypingGame({
+    modeName: 'Levels',
+    modeType: 'level',
+    text,
+    level: level + 1,
+    wpmGoal: levels[level].wpmGoal,
+    errorLimit: levels[level].errorLimit,
+  });
+
+  const handleNext = () => {
+    if (level < levels.length - 1) {
+      setLevel(prev => prev + 1);
+      handleRepeat();
     }
   };
+
+  const onLevelChange = (newLevel: number) => {
+    setLevel(newLevel);
+    handleRepeat();
+  };
+
+  const currentWpm = elapsedTime > 0 ? Math.round((currentIndex / 5) / (elapsedTime / 60)) : 0;
+  const currentAccuracy = (currentIndex + errors) > 0 ? Math.round((currentIndex / (currentIndex + errors)) * 100) : 100;
 
   return (
-    <div className="container mx-auto p-4 flex">
-      <MenuLevels
-        source="Levels"
-        onLevelChange={(newLevel) => setLevel(newLevel)}
-        currentLevel={level}
-        levels={levels}
-        user={user}
-      />
-      <div className="w-full lg:w-3/4">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className={`text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-blue-400 via-purple-400 to-indigo-400' : 'from-blue-600 via-purple-600 to-indigo-600'}`}>
-            {t('levels.title')}
-          </h1>
-
+    <GameModeLayout
+      title={t('levels.title')}
+      icon={<FaKeyboard className="text-blue-500" />}
+      gradientClasses="from-blue-500 via-indigo-500 to-violet-500"
+      accentColorClass="text-blue-500"
+      bgAccentClass="bg-blue-50/50"
+      isActive={isActive}
+      showStats={showStats}
+      currentIndex={currentIndex}
+      text={text}
+      elapsedTime={elapsedTime}
+      wpm={currentWpm}
+      accuracy={currentAccuracy}
+      errors={errors}
+      errorList={errorList}
+      onStart={handleStart}
+      onStop={handleStop}
+      onKeyPress={handleKeyPress}
+      onRepeat={handleRepeat}
+      onNext={handleNext}
+      onCloseStats={() => setShowStats(false)}
+      source={GameSource.LEVELS}
+      sourceComponent="Levels"
+      instructions={t('levels.instructions')}
+      level={level + 1}
+      wpmGoal={levels[level].wpmGoal}
+      errorLimit={levels[level].errorLimit}
+      levelKeys={extractKeysFromText(levels[level].text)}
+      sidebar={
+        <MenuLevels
+          source={GameSource.LEVELS}
+          onLevelChange={onLevelChange}
+          currentLevel={level}
+          levels={levels}
+        />
+      }
+    >
+      {isActive && (
+        <div className="mt-8">
+          <Hands nextKey={text[currentIndex]} />
         </div>
-
-        <div className={`p-6 rounded-2xl shadow-xl border backdrop-blur-sm transition-all duration-300 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
-          <TypingArea
-            text={text}
-            currentIndex={currentIndex}
-            onKeyPress={handleKeyPress}
-            wpm={wpm}
-            accuracy={accuracy}
-            errors={errors}
-            source="Levels"
-          />
-
-          <div className="mt-8">
-            <Keyboard activeKey={nextKey} levelKeys={extractKeysFromText(levels[level].text)} />
-          </div>
-          
-          <div className="mt-8">
-            <Hands nextKey={nextKey} />
-          </div>
-
-          <div className="mt-8">
-            <InstruccionesButton
-              instructions={t('levels.instructions')}
-              source="Levels"
-            />
-          </div>
-        </div>
-
-        {showStatsModal && (
-          <Stats
-            stats={getStatsData({
-              wpm,
-              accuracy,
-              level,
-              errors: Object.keys(errors).length,
-              elapsedTime,
-              levelCompleted,
-              levelData: {
-                wpmGoal: levels[level].wpmGoal,
-                errorLimit: levels[level].errorLimit,
-              },
-              text,
-            })}
-            errorList={errorList}
-            onRepeatLevel={repeatLevel}
-            onNextLevel={nextLevel}
-            sourceComponent="Levels"
-            onClose={() => setShowStatsModal(false)}
-          />
-        )}
-      </div>
-    </div>
+      )}
+    </GameModeLayout>
   );
 };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '@hooks/useTheme';
 import { FaLock } from 'react-icons/fa';
 
 interface NavigationCardProps {
@@ -119,7 +119,7 @@ const NavigationCard: React.FC<NavigationCardProps> = ({
   return (
     <div 
       onClick={onClick}
-      className={`group relative overflow-hidden rounded-none aspect-square p-4 transition-all duration-300 cursor-pointer border backdrop-blur-md flex flex-col items-center justify-center text-center ${
+      className={`group relative overflow-hidden rounded-xl aspect-square p-3 transition-all duration-300 cursor-pointer border backdrop-blur-md flex flex-col items-center justify-center text-center ${
         isDarkMode 
           ? 'bg-gray-800/40 border-gray-700/50 hover:bg-gray-800/60 hover:border-blue-500/50' 
           : 'bg-white/80 border-gray-200/50 hover:bg-white hover:border-blue-500/50 hover:shadow-md'
@@ -137,7 +137,7 @@ const NavigationCard: React.FC<NavigationCardProps> = ({
 
       <div className="relative z-10 flex flex-col items-center gap-3 w-full">
         <div 
-          className="w-12 h-12 shrink-0 rounded-none flex items-center justify-center text-2xl transform group-hover:scale-110 transition-transform duration-300 mb-1"
+          className="w-10 h-10 shrink-0 rounded-lg flex items-center justify-center text-xl transform group-hover:scale-110 transition-transform duration-300 mb-1"
           style={{
             backgroundColor: isDarkMode ? colors.iconBgDark : colors.iconBg,
             color: isDarkMode ? colors.iconTextDark : colors.iconText,
@@ -147,10 +147,10 @@ const NavigationCard: React.FC<NavigationCardProps> = ({
         </div>
         
         <div className="w-full px-1">
-          <h3 className={`text-[13px] font-black tracking-tight leading-tight mb-1 uppercase ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+          <h3 className={`text-xs font-black tracking-tight leading-tight mb-1 uppercase ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             {title}
           </h3>
-          <p className={`text-[9px] font-bold uppercase tracking-widest leading-tight line-clamp-2 opacity-60 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          <p className={`text-[8px] font-bold uppercase tracking-widest leading-tight line-clamp-2 opacity-60 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
             {description}
           </p>
         </div>

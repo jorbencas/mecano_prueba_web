@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { motion } from 'framer-motion';
 import { Plus, Users, BookOpen, Copy, Check, Calendar } from 'lucide-react';
-import { FaChalkboardTeacher, FaPlus, FaUsers, FaCalendarAlt, FaClock, FaTimes, FaCheck } from 'react-icons/fa';
-import { useFetchWithTimeout } from '../../hooks/useFetchWithTimeout';
+import { FaCheck, FaTimes } from 'react-icons/fa';
+import { useFetchWithTimeout } from '@/hooks/useFetchWithTimeout';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
+import UnifiedSpinner from '@/components/UnifiedSpinner';
 
 interface Class {
   id: string;
@@ -26,16 +28,14 @@ const TeacherDashboard: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newClassName, setNewClassName] = useState('');
   const [newClassDesc, setNewClassDesc] = useState('');
-  const [newSessionDate, setNewSessionDate] = useState('');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { handleError } = useErrorHandler();
 
   const fetchClasses = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
       
       const response = await fetchWithTimeout(`${process.env.REACT_APP_API_URL}/classes`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -46,16 +46,10 @@ const TeacherDashboard: React.FC = () => {
         const data = await response.json();
         setClasses(data);
       } else {
-        setError('Error al cargar las clases');
+        handleError('Error al cargar las clases');
       }
     } catch (error: any) {
-      if (error.name === 'AbortError') {
-        console.log('Request aborted');
-        setError('La solicitud tardó demasiado. Inténtalo de nuevo.');
-      } else {
-        console.error('Error fetching classes:', error);
-        setError('Error de conexión');
-      }
+      handleError(error, () => fetchClasses());
     } finally {
       setLoading(false);
     }
@@ -84,11 +78,10 @@ const TeacherDashboard: React.FC = () => {
         fetchClasses();
       } else {
         const errorData = await response.json();
-        alert(`Error al crear la clase: ${errorData.error || 'Error desconocido'}`);
+        handleError(errorData.error || 'Error al crear la clase');
       }
     } catch (error) {
-      console.error('Error creating class:', error);
-      alert('Error de conexión al crear la clase');
+      handleError(error);
     }
   };
 
@@ -140,7 +133,7 @@ const TeacherDashboard: React.FC = () => {
     }
 
     try {
-      await import('../../api/tutoring').then(async mod => {
+      await import('@/api/tutoring').then(async mod => {
         const promises = selectedStudents.map(studentId => {
           const student = mockStudents.find(s => s.id === studentId);
           return mod.tutoringAPI.scheduleSession(
@@ -162,10 +155,9 @@ const TeacherDashboard: React.FC = () => {
       setTutoringDate('');
       setTutoringTime('');
       setTutoringNotes('');
-      alert('Tutorías programadas correctamente');
+      // We could use a toast here later, but for now let's keep it simple or use a global info message
     } catch (error) {
-      console.error('Error scheduling tutoring:', error);
-      alert('Error al programar las tutorías');
+      handleError(error);
     }
   };
 
@@ -195,18 +187,8 @@ const TeacherDashboard: React.FC = () => {
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-        </div>
-      ) : error ? (
-        <div className="text-center py-12 text-red-500">
-          <p>{error}</p>
-          <button 
-            onClick={fetchClasses}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Reintentar
-          </button>
+        <div className="flex justify-center items-center py-20">
+          <UnifiedSpinner size="lg" />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

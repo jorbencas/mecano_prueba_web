@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { getCombinationForKey } from '../utils/keymapping';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { FULL_KEYBOARD_LAYOUT, SIMPLE_KEYBOARD_LAYOUT } from '../constants/keyboardLayout';
+import { useTheme } from '@hooks/useTheme';
+import { getCombinationForKey } from '@/utils/keymapping';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
+import { FULL_KEYBOARD_LAYOUT, SIMPLE_KEYBOARD_LAYOUT } from '@/constants/keyboardLayout';
 
 interface KeyboardProps {
   activeKey: string;
@@ -54,7 +54,7 @@ const Keyboard: React.FC<KeyboardProps> = React.memo(({ activeKey = '', levelKey
                 aria-label={key === ' ' ? 'Space' : key}
               >
                 {key === ' '
-                  ? t('keyboard.space', 'Espacio')
+                  ? t('keyboard.space')
                   : t(`keyboard.keys.${key}`, String(key))}
               </div>
             );

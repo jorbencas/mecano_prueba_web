@@ -3,14 +3,14 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import Stats from './Stats';
 import MenuLevels from './MenuLevels';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '@hooks/useTheme';
 import InstruccionesButton from './Instrucciones';
-import { getStatsData } from '../utils/getStatsData';
-import levels from '../data/playgames.json';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { useKeyboardHandler } from '../hooks/useKeyboardHandler';
-import { useAuth } from '../context/AuthContext';
-import { useActivityTracker } from '../hooks/useActivityTracker';
+import { getStatsData } from '@utils/getStatsData';
+import levels from '@data/playgames.json';
+import { useDynamicTranslations } from '@hooks/useDynamicTranslations';
+import { useKeyboardHandler } from '@hooks/useKeyboardHandler';
+import { useActivityTracker } from '@hooks/useActivityTracker';
+import { GameSource } from '@/types/enums';
 
 interface FallingLetter {
   id: number;
@@ -113,13 +113,6 @@ const FallingLetterComponent: React.FC<{
     return () => clearInterval(id);
   }, [isPaused, onRemove, onReachBottom]);
 
-  const isColorDark = (color: string) => {
-    const rgb = color.match(/\d+/g);
-    if (!rgb) return false;
-    const [r, g, b] = rgb.map(Number);
-    return (r * 0.299 + g * 0.587 + b * 0.114) < 186;
-  };
-  const textColor = isColorDark(letter.color) ? '#fff' : '#000';
 
   return (
     <motion.div
@@ -157,7 +150,6 @@ const FallingLetterComponent: React.FC<{
 const PlayGame: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
-  const { user } = useAuth();
   const { startTracking, stopTracking } = useActivityTracker('PlayGame', 'game');
 
   const [level, setLevel] = useState(0);
@@ -349,17 +341,16 @@ const PlayGame: React.FC = () => {
   return (
     <div className="container mx-auto p-4 flex">
       <MenuLevels
-        source="PlayGame"
+        source={GameSource.PLAY_GAME}
         onLevelChange={handleLevelChange}
         currentLevel={currentLevel}
         levels={levels}
-        user={user}
       />
 
       <div className="w-full lg:w-3/4">
         <div className="text-center mb-8">
           <h1 className={`text-4xl font-extrabold mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-indigo-400 via-purple-400 to-pink-400' : 'from-indigo-600 via-purple-600 to-pink-600'}`}>
-            {t('playgame.title', 'Juego de Letras Cayendo')}
+            {t('playgame.title')}
           </h1>
         </div>
 
@@ -373,7 +364,7 @@ const PlayGame: React.FC = () => {
                   : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
               }`}
             >
-              {t('playgame.start', 'Iniciar')}
+              {t('playgame.start')}
             </button>
           )}
           {gameStarted && !gamePaused && (
@@ -385,7 +376,7 @@ const PlayGame: React.FC = () => {
                   : 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white'
               }`}
             >
-              {t('playgame.pause', 'Pausar')}
+              {t('playgame.pause')}
             </button>
           )}
           {gamePaused && (
@@ -397,7 +388,7 @@ const PlayGame: React.FC = () => {
                   : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
               }`}
             >
-              {t('playgame.resume', 'Reanudar')}
+              {t('playgame.resume')}
             </button>
           )}
           {gameStarted && (
@@ -409,7 +400,7 @@ const PlayGame: React.FC = () => {
                   : 'bg-gradient-to-r from-red-500 to-rose-500 text-white'
               }`}
             >
-              {t('playgame.stop', 'Detener')}
+              {t('playgame.stop')}
             </button>
           )}
         </div>
@@ -419,7 +410,7 @@ const PlayGame: React.FC = () => {
           <div className={`p-4 rounded-xl border backdrop-blur-md shadow-lg flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 ${
             isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/60 border-white/50'
           }`}>
-            <span className="text-sm uppercase tracking-wider opacity-70 mb-1">{t('playgame.score', 'Puntuación')}</span>
+            <span className="text-sm uppercase tracking-wider opacity-70 mb-1">{t('playgame.score')}</span>
             <span className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-600">
               {score}
             </span>
@@ -428,7 +419,7 @@ const PlayGame: React.FC = () => {
           <div className={`p-4 rounded-xl border backdrop-blur-md shadow-lg flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 ${
             isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/60 border-white/50'
           }`}>
-            <span className="text-sm uppercase tracking-wider opacity-70 mb-1">{t('playgame.errors', 'Errores')}</span>
+            <span className="text-sm uppercase tracking-wider opacity-70 mb-1">{t('playgame.errors')}</span>
             <div className="flex items-baseline gap-1">
               <span className={`text-3xl font-black ${errors > 0 ? 'text-red-500' : isDarkMode ? 'text-white' : 'text-gray-800'}`}>
                 {errors}
@@ -483,8 +474,8 @@ const PlayGame: React.FC = () => {
         </div>
 
         <InstruccionesButton
-          instructions={t('playgame.instructions', 'Presiona las teclas correctas.')}
-          source="PlayGame"
+          instructions={t('playgame.instructions')}
+          source={GameSource.PLAY_GAME}
         />
       </div>
 

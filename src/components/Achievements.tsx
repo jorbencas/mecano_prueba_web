@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { loadStats } from '../utils/saveStats';
-import { checkAchievements, Achievement } from '../utils/achievements';
+import { useTheme } from '@hooks/useTheme';
+import { useAuth } from '@/context/AuthContext';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
+import { loadStats } from '@/utils/saveStats';
+import { checkAchievements, Achievement } from '@/utils/achievements';
 
 interface AchievementsProps {
   userId?: string;
@@ -17,14 +17,12 @@ const Achievements: React.FC<AchievementsProps> = ({ userId, userEmail, readOnly
   const { t } = useDynamicTranslations();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [filter, setFilter] = useState<'all' | 'unlocked' | 'locked'>('all');
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadAchievements();
   }, [userId]);
 
   const loadAchievements = async () => {
-    setLoading(true);
     try {
       // Small delay to ensure UI updates and prevent flickering for fast operations
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -43,8 +41,6 @@ const Achievements: React.FC<AchievementsProps> = ({ userId, userEmail, readOnly
     } catch (error) {
       console.error('Error loading achievements:', error);
       setAchievements([]);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -62,7 +58,7 @@ const Achievements: React.FC<AchievementsProps> = ({ userId, userEmail, readOnly
         {!readOnly && (
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">
-              {t('achievements.title', 'Logros')}
+              {t('achievements.title')}
               {userEmail && readOnly && (
                 <span className="text-lg ml-4 opacity-75">
                   - {userEmail}
@@ -76,7 +72,7 @@ const Achievements: React.FC<AchievementsProps> = ({ userId, userEmail, readOnly
           <div className="flex justify-between items-center mb-4">
             <div>
               <div className="text-4xl font-bold">{unlockedCount}/{achievements.length}</div>
-              <div className="text-sm opacity-75">{t('achievements.unlocked', 'Logros Desbloqueados')}</div>
+              <div className="text-sm opacity-75">{t('achievements.unlocked')}</div>
             </div>
             <div className="flex gap-2">
               {['all', 'unlocked', 'locked'].map(f => (
@@ -91,7 +87,7 @@ const Achievements: React.FC<AchievementsProps> = ({ userId, userEmail, readOnly
                       : 'bg-gray-200 hover:bg-gray-300'
                   }`}
                 >
-                  {t(`achievements.filter.${f}`, f)}
+                  {t(`achievements.filter.${f}`)}
                 </button>
               ))}
             </div>
@@ -123,7 +119,7 @@ const Achievements: React.FC<AchievementsProps> = ({ userId, userEmail, readOnly
               <p className="text-sm text-center mb-4">{achievement.description}</p>
               {achievement.unlocked && achievement.unlockedDate && (
                 <div className="text-xs text-center opacity-75">
-                  {t('achievements.unlockedOn', 'Desbloqueado')}: {new Date(achievement.unlockedDate).toLocaleDateString()}
+                  {t('achievements.unlockedOn')}: {new Date(achievement.unlockedDate).toLocaleDateString()}
                 </div>
               )}
             </div>

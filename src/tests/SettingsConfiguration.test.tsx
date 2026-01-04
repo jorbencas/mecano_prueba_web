@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SettingsConfiguration from '../components/SettingsConfiguration';
-import { ThemeProvider } from '../context/ThemeContext';
+import { ThemeProvider } from '@hooks/useTheme';
 import { AuthProvider } from '../context/AuthContext';
 
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (

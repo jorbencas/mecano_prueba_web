@@ -1,39 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import TypingArea from './TypingArea';
 import Hands from './Hands';
 import BaseModal from './BaseModal';
 import Keyboard from './Keyboard';
 import Stats from './Stats';
 import MenuLevels from './MenuLevels';
 import InstruccionesButton from './Instrucciones';
-import { getStatsData } from '../utils/getStatsData';
-import sampleTexts from '../data/texts.json';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { useTheme } from '../context/ThemeContext';
-import { useActivityTracker } from '../hooks/useActivityTracker';
+import { getStatsData } from '@/utils/getStatsData';
+import sampleTexts from '@/data/texts.json';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
+import { useTheme } from '@hooks/useTheme';
+import { useActivityTracker } from '@/hooks/useActivityTracker';
+import { GameSource } from '@/types/enums';
 
-interface Level {
-  keys: string[];
-  name: string;
-  text: string;
-  wpmGoal: number;
-  errorLimit: number;
-}
 
 const CreateText: React.FC = () => {
   const { t } = useDynamicTranslations();
   const { isDarkMode } = useTheme();
-  const { startTracking, stopTracking } = useActivityTracker('CreateText', 'createText');
+  const { startTracking } = useActivityTracker('CreateText', 'createText');
   
-  const [texts, setTexts] = useState<Level[]>(sampleTexts);
+  const texts = sampleTexts;
   const [selectedText, setSelectedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [nextKey, setNextKey] = useState('');
-  const [wpm, setWpm] = useState(0);
-  const [accuracy, setAccuracy] = useState(100);
+  const [wpm] = useState(0);
+  const [accuracy] = useState(100);
   const [errors, setErrors] = useState<{ [key: number]: { expected: string; actual: string } }>({});
   const [showStatsModal, setShowStatsModal] = useState(false);
-  const [errorList, setErrorList] = useState<{ expected: string; actual: string }[]>([]);
+  const [errorList] = useState<{ expected: string; actual: string }[]>([]);
   const [currentLevel, setCurrentLevel] = useState(0);
 
   useEffect(() => {
@@ -46,68 +39,9 @@ const CreateText: React.FC = () => {
 
 
 
-  const handleKeyPress = (key: string) => {
-    if (!selectedText) return;
 
-    const expectedKey = selectedText[currentIndex].toLowerCase();
 
-    if (key.toLowerCase() === expectedKey) {
-      const newIndex = currentIndex + 1;
-      setCurrentIndex(newIndex);
-      if (newIndex < selectedText.length) {
-        setNextKey(selectedText[newIndex].toLowerCase());
-      } else {
-        setNextKey('');
-        finishInput();
-      }
-    } else {
-      setErrors(prev => ({
-        ...prev,
-        [currentIndex]: { expected: expectedKey, actual: key },
-      }));
-    }
-    updateAccuracy();
-  };
 
-  const updateAccuracy = () => {
-    const errorCount = Object.keys(errors).length;
-    setAccuracy(currentIndex > 0 ? Math.round(((currentIndex - errorCount) / currentIndex) * 100) : 100);
-  };
-
-  const finishInput = () => {
-    const errorDetails = Object.entries(errors).map(([_, error]) => ({
-      expected: error.expected,
-      actual: error.actual,
-    }));
-
-    const totalWords = selectedText.split(' ').length;
-    const timeTakenInSeconds = (currentIndex / selectedText.length) * totalWords;
-    const calculatedWPM = Math.round((totalWords / timeTakenInSeconds) || 0);
-
-    setWpm(calculatedWPM);
-    setErrorList(errorDetails);
-    
-    const errorCount = Object.keys(errors).length;
-    const finalAccuracy = currentIndex > 0 ? Math.round(((currentIndex - errorCount) / currentIndex) * 100) : 100;
-    
-    stopTracking({
-      level: currentLevel,
-      wpm: calculatedWPM,
-      accuracy: finalAccuracy,
-      errors: errorCount,
-      completed: true,
-    });
-
-    resetInput();
-    setShowStatsModal(true);
-  };
-
-  const resetInput = () => {
-    setSelectedText('');
-    setCurrentIndex(0);
-    setErrors({});
-    setNextKey('');
-  };
 
 
 
@@ -123,7 +57,7 @@ const CreateText: React.FC = () => {
   return (
     <div className="container mx-auto p-4 flex">
       <MenuLevels
-        source="CreateText"
+        source={GameSource.CREATE_TEXT}
         onLevelChange={handleLevelChange}
         currentLevel={currentLevel}
         levels={texts}
@@ -131,7 +65,7 @@ const CreateText: React.FC = () => {
 
       <div className="w-3/4">
         <h1 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-          {t('createText.title', 'Escribe el Texto Seleccionado')}
+          {t('createText.title')}
         </h1>
 
         <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
@@ -182,11 +116,8 @@ const CreateText: React.FC = () => {
 
         <Hands nextKey={nextKey} />
         <InstruccionesButton
-          instructions={t(
-            'createText.instructions',
-            'Escribe el texto seleccionado con precisión. Evita errores y mantén el ritmo.'
-          )}
-          source="CreateText"
+          instructions={t('createText.instructions')}
+          source={GameSource.CREATE_TEXT}
         />
 
         {showStatsModal && (

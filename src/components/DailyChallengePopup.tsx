@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { DailyChallenge } from '../utils/dailyChallengeUtils';
+import { useTheme } from '@hooks/useTheme';
+import { DailyChallenge } from '@/utils/dailyChallengeUtils';
 import { FaTimes, FaFire, FaRocket } from 'react-icons/fa';
 
 interface DailyChallengePopupProps {

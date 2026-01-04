@@ -44,14 +44,84 @@
         "language": "Language",
         "logout": "Logout",
         "confirmLogout": "Are you sure you want to logout?",
-        "viewProfile": "View Profile and Activity"
+        "viewProfile": "View Profile and Activity",
+        "accessibility": "Accessibility",
+        "fontSize": "Font Size",
+        "fontSizeSmall": "Small",
+        "fontSizeMedium": "Medium",
+        "fontSizeLarge": "Large",
+        "fontSizeXL": "Extra Large",
+        "highContrast": "High Contrast",
+        "highContrastOn": "Enabled",
+        "highContrastOff": "Disabled",
+        "colorblindMode": "Colorblind Mode",
+        "colorblindNone": "None",
+        "colorblindDeut": "Deuteranopia (Red-Green)",
+        "colorblindProt": "Protanopia (Red-Green)",
+        "colorblindTrit": "Tritanopia (Blue-Yellow)",
+        "reducedMotion": "Reduced Motion",
+        "reducedMotionOn": "Enabled",
+        "reducedMotionOff": "Disabled",
+        "screenReader": "Screen Reader Optimization",
+        "screenReaderOn": "Enabled",
+        "screenReaderOff": "Disabled",
+        "resetDefaults": "Reset to Defaults"
     },
     "stats": {
         "feedback": {
             "textErrors": "The text contains errors",
             "textComplete": "Text completed successfully",
             "levelComplete": "Level completed successfully!",
-            "levelFail": "Level not completed"
+            "levelFail": "Level not completed",
+            "levels": {
+                "perfect": "Perfect! You master this level",
+                "complete": "Level passed!",
+                "slowSpeed": "You need more speed",
+                "lowAccuracy": "You need more precision",
+                "tooManyErrors": "Too many errors"
+            },
+            "createtext": {
+                "perfect": "Perfect! No errors",
+                "good": "Good job, keep practicing",
+                "improve": "Check the errors and try again"
+            },
+            "playgame": {
+                "excellent": "Excellent! You exceeded the goal",
+                "complete": "Level completed!",
+                "fail": "Keep trying"
+            },
+            "precision": {
+                "perfect": "Exceptional precision!",
+                "good": "Good precision, keep improving",
+                "improve": "Focus on reducing errors"
+            },
+            "speed": {
+                "excellent": "Impressive speed!",
+                "good": "Good speed, keep practicing",
+                "improve": "Keep practicing to improve your speed"
+            },
+            "freepractice": {
+                "perfect": "Perfect practice!",
+                "good": "Good job on your practice",
+                "improve": "Keep practicing to improve"
+            },
+            "neon": {
+                "excellent": "⚡ SYSTEM OPTIMIZED ⚡",
+                "good": "✨ STABLE CONNECTION ✨",
+                "lowAccuracy": "⚠️ INTERFERENCE DETECTED",
+                "improve": "🔄 RECALIBRATING SYSTEM"
+            }
+        },
+        "suggestions": {
+            "precision": "Reduce speed and focus on precision",
+            "speed": "Practice the same characters to gain fluency",
+            "accuracy": "Reduce speed and focus on precision",
+            "errors": "Check your hand position and type calmly",
+            "neon": {
+                "excellent": "Exceptional performance in the digital protocol",
+                "accuracy": "Calibrate your precision to stabilize the system",
+                "speed": "Increase data transmission speed"
+            }
         },
         "cards": {
             "performance": "Performance",
@@ -117,7 +187,8 @@
             "progress": "Progress",
             "multiplayer": "Multiplayer",
             "classes": "Classes",
-            "community": "Community"
+            "community": "Community",
+            "forum": "Community Forum"
         },
         "classes": "Classes",
         "classesDesc": "Manage your classes and students",
@@ -150,7 +221,7 @@
         "custom": {
             "texts": "Custom Texts",
             "textsDesc": "Create your own texts",
-            "myLevels": "My Levels",
+            "myLevels": "Custom Levels",
             "levels": "Custom Levels",
             "levelsDesc": "Manage and create levels"
         },
@@ -177,6 +248,13 @@
             "createText": "Create Text",
             "settings": "Settings",
             "login": "Login"
+        },
+        "user": {
+            "profile": "My Profile",
+            "admin": "Admin Dashboard",
+            "settings": "Settings",
+            "logout": "Logout",
+            "defaultName": "User"
         }
     },
     "levels": {
@@ -249,6 +327,57 @@
         "unlimitedChars": "Unlimited practice",
         "instructions": "Practice without time or error limits. Select the keys you want to practice and start typing."
     },
+    "numbersMode": {
+        "title": "Numbers Mode",
+        "subtitle": "Practice your numerical speed",
+        "start": "Start",
+        "stop": "Stop",
+        "instructions": "Practice the numeric keypad and top row numbers. Perfect for improving speed in numerical data entry."
+    },
+    "precisionMode": {
+        "title": "Precision Mode",
+        "readyToStart": "Ready for the precision challenge?",
+        "startInstructions": "You have {{timeLimit}} seconds to type the text as accurately as possible",
+        "start": "Start Challenge",
+        "stop": "Stop",
+        "progress": "Progress",
+        "problematicKeys": "Problematic Keys",
+        "instructions": "Focus on precision. Each error is recorded and your most problematic keys are shown."
+    },
+    "speedMode": {
+        "title": "Speed Mode",
+        "instructions": "Type as fast as you can. Time is running and every word counts.",
+        "selectDuration": "Select Duration",
+        "start": "Start"
+    },
+    "zenMode": {
+        "title": "Zen Mode",
+        "subtitle": "Type without distractions",
+        "start": "Start",
+        "stop": "Stop",
+        "instructions": "Relax and type at your own pace. No timers or pressure."
+    },
+    "symbolsMode": {
+        "title": "Symbols Mode",
+        "subtitle": "Master special characters",
+        "start": "Start",
+        "stop": "Stop",
+        "instructions": "Practice the most common symbols in programming and technical writing."
+    },
+    "codeMode": {
+        "title": "Code Mode",
+        "subtitle": "Practice programming syntax",
+        "start": "Start",
+        "stop": "Stop",
+        "instructions": "Improve your speed by typing real code snippets in various languages."
+    },
+    "dictationMode": {
+        "title": "Dictation Mode",
+        "subtitle": "Listen and type",
+        "start": "Start",
+        "stop": "Stop",
+        "instructions": "Train your ear and reaction speed by typing what you hear."
+    },
     "profile": {
         "title": "User Profile",
         "notLoggedIn": "You must login to view your profile",
@@ -262,7 +391,17 @@
         "noActivity": "No activity recorded",
         "date": "Date",
         "component": "Component",
-        "duration": "Duration"
+        "duration": "Duration",
+        "wpm": "WPM",
+        "accuracy": "Accuracy",
+        "oldPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm Password",
+        "passwordsDontMatch": "Passwords do not match",
+        "passwordChanged": "Password updated successfully",
+        "updatePassword": "Update Password",
+        "language": "App Language",
+        "languageNote": "Note: Language change will be applied globally."
     },
     "challenges": {
         "title": "Daily Challenges",
@@ -318,7 +457,27 @@
             "of": "of",
             "completed": "challenges completed",
             "remaining": "Remaining"
-        }
+        },
+        "tabs": {
+            "users": "User Management",
+            "activity": "Activity & Stats",
+            "achievements": "User Achievements",
+            "tracking": "Detailed Tracking",
+            "history": "Audit History",
+            "settings": "Global Settings"
+        },
+        "globalSettings": "Global System Settings",
+        "userManagement": "User Management",
+        "trackingDetailed": "Detailed Activity Tracking",
+        "auditHistory": "Audit History",
+        "achievementsFor": "Achievements for",
+        "userAchievements": "User Achievements",
+        "table": {
+            "email": "Email",
+            "role": "Role"
+        },
+        "doubleClickToView": "Double click to view achievements",
+        "doubleClickHint": "💡 Double click any row to view user achievements"
     },
     "login": {
         "back": "Back to app",
@@ -344,7 +503,8 @@
         "or": "or",
         "loading": "Loading...",
         "error": "Login error",
-        "googleError": "Error with Google"
+        "googleError": "Error with Google",
+        "settingsUpdated": "Settings updated successfully"
     },
     "userProfile": {
         "title": "User Profile",
@@ -363,8 +523,11 @@
         "scheduled": "Scheduled",
         "tabs": {
             "profile": "Profile",
-            "stats": "Statistics"
-        }
+            "stats": "Statistics",
+            "settings": "Settings"
+        },
+        "security": "Account Security",
+        "preferences": "Preferences"
     },
     "progressDashboard": {
         "title": "Progress Dashboard",
@@ -404,8 +567,28 @@
         }
     },
     "customLevels": {
-        "myLevels": "My Levels",
-        "create": "Create / Edit"
+        "myLevels": "Custom Levels",
+        "create": "Create / Edit",
+        "totalLevels": "levels created by you",
+        "import": "Import",
+        "createNew": "New Level",
+        "noLevels": "You have no custom levels",
+        "noLevelsDesc": "Create your first level to practice the keys you want.",
+        "createFirst": "Create My First Level",
+        "play": "Play",
+        "edit": "Edit",
+        "export": "Export",
+        "delete": "Delete",
+        "table": {
+            "name": "Level Name",
+            "keys": "Keys",
+            "config": "Configuration",
+            "date": "Date",
+            "actions": "Actions",
+            "speed": "Spd",
+            "goal": "Obj",
+            "errors": "Err"
+        }
     },
     "common": {
         "back": "Back",
@@ -426,7 +609,53 @@
             "loading": "Error loading leaderboard"
         },
         "modes": {
-            "all": "General"
+            "all": "General",
+            "xp": "Total XP",
+            "time_15": "15 Seconds",
+            "time_30": "30 Seconds",
+            "time_60": "60 Seconds",
+            "words_10": "10 Words",
+            "words_25": "25 Words",
+            "words_50": "50 Words"
+        }
+    },
+    "forum": {
+        "title": "Community Forum",
+        "newPost": "New Post",
+        "loading": "Loading posts...",
+        "postBy": "By",
+        "comments": "comments",
+        "categories": {
+            "all": "All",
+            "general": "General",
+            "tips": "Tips",
+            "questions": "Questions",
+            "showcase": "Showcase"
+        },
+        "createModal": {
+            "title": "Create Post",
+            "titleLabel": "Title",
+            "titlePlaceholder": "Write an interesting title...",
+            "categoryLabel": "Category",
+            "contentLabel": "Content",
+            "contentPlaceholder": "Share your thoughts...",
+            "publish": "Publish"
+        }
+    },
+    "admin": {
+        "settings": {
+            "errorHandling": "Global Error Handling",
+            "errorHandlingDesc": "Enable or disable the error capturing system for all users."
+        }
+    },
+    "achievements": {
+        "title": "Achievements",
+        "unlocked": "Achievements Unlocked",
+        "unlockedOn": "Unlocked on",
+        "filter": {
+            "all": "All",
+            "unlocked": "Unlocked",
+            "locked": "Locked"
         }
     },
     "multiplayer": {

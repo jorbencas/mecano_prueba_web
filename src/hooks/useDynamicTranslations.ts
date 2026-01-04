@@ -1,9 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useLanguage } from '../context/LanguageContext';
-
-interface Translations {
-  [key: string]: any;
-}
+import { useEffect, useState } from 'react';
+import { useUIStore } from '@store/uiStore';
+import es from '@translations/es.json';
 
 /**
  * Hook para obtener traducciones dinámicas con soporte de interpolación
@@ -33,8 +30,8 @@ interface Translations {
  * ```
  */
 export const useDynamicTranslations = () => {
-  const { language } = useLanguage();
-  const [translations, setTranslations] = useState<Translations>({});
+  const { language } = useUIStore();
+  const [translations, setTranslations] = useState<any>(es);
   const [loading, setLoading] = useState(true);
 
   /**
@@ -42,21 +39,25 @@ export const useDynamicTranslations = () => {
    * Usa dynamic import para cargar solo el archivo JSON necesario
    */
   useEffect(() => {
-    const loadLanguage = async () => {
+    const loadTranslations = async () => {
       setLoading(true);
       try {
-        // Importación dinámica del archivo de traducciones
-        // Ej: import('../translations/es.json')
-        const module = await import(`../translations/${language}.json`);
-        setTranslations(module.default);
+        let data;
+        if (language === 'en') data = await import('../translations/en.json');
+        else if (language === 'ca') data = await import('../translations/ca.json');
+        else if (language === 'va') data = await import('../translations/va.json');
+        else data = es;
+        
+        setTranslations((data as any).default || data);
       } catch (error) {
-        console.error(`Error loading ${language} translations`, error);
+        console.error('Error loading translations:', error);
+        setTranslations(es);
       } finally {
         setLoading(false);
       }
     };
 
-    loadLanguage();
+    loadTranslations();
   }, [language]);
 
   /**

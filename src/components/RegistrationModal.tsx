@@ -1,8 +1,8 @@
 import React from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import { useTheme } from '@hooks/useTheme';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
 import { FaLock } from 'react-icons/fa';
-import BenefitsList from './BenefitsList';
+import BenefitsList from '@/components/BenefitsList';
 
 interface RegistrationModalProps {
   isOpen: boolean;

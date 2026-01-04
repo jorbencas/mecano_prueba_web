@@ -1,130 +1,56 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { useActivityTracker } from '../hooks/useActivityTracker';
-import TypingArea from './TypingArea';
-import Keyboard from './Keyboard';
-import InstruccionesButton from './Instrucciones';
-import Stats from './Stats';
-import { SavedStat } from '../utils/saveStats';
-import { FaMicrophone, FaPlay, FaStop, FaPause, FaRedo } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { useTheme } from '@hooks/useTheme';
+import { useDynamicTranslations } from '@hooks/useDynamicTranslations';
+import { GameSource } from '@/types/enums';
+import { FaMicrophone, FaPause, FaRedo, FaPlay } from 'react-icons/fa';
 import MenuLevels from './MenuLevels';
-import dictationLevels from '../data/dictationLevels.json';
-import { getStatsData } from '../utils/getStatsData';
-import { useSpeech } from '../hooks/useSpeech';
+import dictationLevels from '@data/dictationLevels.json';
+import { useTypingGame } from '@hooks/useTypingGame';
+import GameModeLayout from './GameModeLayout';
+import { useSpeech } from '@hooks/useSpeech';
 
 const DictationMode: React.FC = () => {
   const { isDarkMode } = useTheme();
-  const { user } = useAuth();
   const { t } = useDynamicTranslations();
-  const { startTracking, stopTracking } = useActivityTracker('DictationMode', 'practice');
-  const { speak, cancel, pause, resume, speaking: isSpeaking, paused: isSpeechPaused } = useSpeech();
-
+  const { speak, cancel, pause, resume, paused: isSpeechPaused } = useSpeech();
   const [level, setLevel] = useState(0);
   const [text, setText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [errors, setErrors] = useState(0);
-  const [errorList, setErrorList] = useState<{ expected: string; actual: string }[]>([]);
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [isActive, setIsActive] = useState(false);
-  const [showStats, setShowStats] = useState(false);
-  const [stats, setStats] = useState<SavedStat | null>(null);
-  const [totalKeystrokes, setTotalKeystrokes] = useState(0);
-  const [elapsedTime, setElapsedTime] = useState(0);
   const [speechRate, setSpeechRate] = useState(1);
 
   useEffect(() => {
     setText(dictationLevels[level].text);
-    setCurrentIndex(0);
-    setErrors(0);
-    setErrorList([]);
-    setTotalKeystrokes(0);
-    setIsActive(false);
-    setStartTime(null);
-    setElapsedTime(0);
     cancel();
   }, [level, cancel]);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isActive && startTime) {
-      interval = setInterval(() => {
-        setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isActive, startTime]);
+  const {
+    currentIndex,
+    errors,
+    errorList,
+    isActive,
+    elapsedTime,
+    showStats,
+    handleStart,
+    handleStop,
+    handleKeyPress,
+    handleRepeat,
+    setShowStats,
+  } = useTypingGame({
+    modeName: 'DictationMode',
+    modeType: 'practice',
+    text,
+    level: level + 1,
+    wpmGoal: dictationLevels[level].wpmGoal,
+    errorLimit: dictationLevels[level].errorLimit,
+    onComplete: () => cancel(),
+  });
 
-  const handleStart = () => {
-    setIsActive(true);
-    setStartTime(Date.now());
-    setCurrentIndex(0);
-    setErrors(0);
-    setErrorList([]);
-    setTotalKeystrokes(0);
-    setShowStats(false);
-    setElapsedTime(0);
-    startTracking();
-    speak(dictationLevels[level].text, speechRate);
+  const onStart = () => {
+    handleStart();
+    speak(text, speechRate);
   };
 
-  const handleStop = useCallback(() => {
-    if (!startTime) return;
-
-    const endTime = Date.now();
-    const finalElapsedTime = (endTime - startTime) / 1000;
-    const wordsTyped = currentIndex / 5;
-    const wpm = Math.round((wordsTyped / finalElapsedTime) * 60) || 0;
-    const accuracy = totalKeystrokes > 0 ? Math.round(((totalKeystrokes - errors) / totalKeystrokes) * 100) : 100;
-
-    const currentLevelData = dictationLevels[level];
-
-    const finalStats: SavedStat = {
-      wpm,
-      accuracy,
-      level: level + 1,
-      errors,
-      elapsedTime: finalElapsedTime,
-      levelCompleted: true,
-      wpmGoal: currentLevelData.wpmGoal || 0,
-      errorLimit: currentLevelData.errorLimit || 999,
-    };
-
-    setStats(finalStats);
-    setShowStats(true);
-    setIsActive(false);
-    stopTracking();
-    cancel();
-  }, [startTime, currentIndex, errors, totalKeystrokes, stopTracking, level, cancel]);
-
-  const handleKeyPress = (key: string) => {
-    if (!isActive || currentIndex >= text.length) return;
-
-    const expectedChar = text[currentIndex];
-    setTotalKeystrokes(prev => prev + 1);
-
-    if (key === expectedChar) {
-      setCurrentIndex(prev => prev + 1);
-      
-      if (currentIndex + 1 >= text.length) {
-        setTimeout(() => handleStop(), 100);
-      }
-    } else {
-      setErrors(prev => prev + 1);
-      setErrorList(prev => [...prev, { expected: expectedChar, actual: key }].slice(-10));
-    }
-  };
-
-  const handleRepeat = () => {
-    setShowStats(false);
-    setCurrentIndex(0);
-    setErrors(0);
-    setErrorList([]);
-    setStartTime(null);
-    setIsActive(false);
-    setTotalKeystrokes(0);
-    setElapsedTime(0);
+  const onStop = () => {
+    handleStop();
     cancel();
   };
 
@@ -135,120 +61,66 @@ const DictationMode: React.FC = () => {
     }
   };
 
-  const toggleSpeech = () => {
-    if (isSpeaking) {
-      if (isSpeechPaused) {
-        resume();
-      } else {
-        pause();
-      }
-    } else {
-      speak(text.substring(currentIndex), speechRate);
-    }
-  };
-
-  const currentChar = isActive && currentIndex < text.length ? text[currentIndex] : '';
-  const currentWpm = startTime && elapsedTime > 0 ? Math.round((currentIndex / 5) / (elapsedTime / 60)) : 0;
-  const currentAccuracy = totalKeystrokes > 0 ? Math.round(((totalKeystrokes - errors) / totalKeystrokes) * 100) : 100;
+  const currentWpm = elapsedTime > 0 ? Math.round((currentIndex / 5) / (elapsedTime / 60)) : 0;
+  const currentAccuracy = (currentIndex + errors) > 0 ? Math.round((currentIndex / (currentIndex + errors)) * 100) : 100;
 
   return (
-    <div className="container mx-auto p-4 flex">
-      <MenuLevels
-        source="DictationMode"
-        onLevelChange={setLevel}
-        currentLevel={level}
-        levels={dictationLevels}
-        user={user}
-      />
-
-      <div className="w-full lg:w-3/4 pl-0 lg:pl-8">
-        <div className="text-center mb-8">
-          <h1 className={`text-4xl font-extrabold mb-3 flex items-center justify-center gap-4 tracking-tight bg-clip-text text-transparent bg-gradient-to-r ${isDarkMode ? 'from-rose-400 via-red-400 to-orange-400' : 'from-rose-600 via-red-600 to-orange-600'}`}>
-            <FaMicrophone className={isDarkMode ? 'text-rose-400' : 'text-rose-600'} />
-            {t('dictationMode.title', 'Modo Dictado')}
-          </h1>
-          <p className={`text-lg font-medium ${isDarkMode ? 'text-rose-200/70' : 'text-rose-800/60'}`}>
-            {t('dictationMode.subtitle', 'Escribe lo que escuchas')}
-          </p>
-        </div>
-
-        <div className={`mb-8 p-6 rounded-2xl border backdrop-blur-sm shadow-xl transition-all duration-300 ${isDarkMode ? 'bg-gray-800/60 border-rose-900/30' : 'bg-white/80 border-rose-100'}`}>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-              {dictationLevels[level].name}
-            </h2>
-            <div className={`text-4xl font-black tracking-tighter ${isDarkMode ? 'text-rose-400' : 'text-rose-600'}`}>
-              {elapsedTime}s
-            </div>
-          </div>
-          
-          <div className={`flex flex-col sm:flex-row justify-between items-center p-4 rounded-xl ${isDarkMode ? 'bg-gray-900/50' : 'bg-rose-50/50'} text-lg`}>
-            <div className="flex flex-col items-center">
-              <span className={`text-sm uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>WPM</span>
-              <span className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{currentWpm}</span>
-            </div>
-            <div className="w-px h-8 bg-gray-300/20 hidden sm:block"></div>
-            <div className="flex flex-col items-center">
-              <span className={`text-sm uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('stats.labels.errors', 'Errores')}</span>
-              <span className="text-2xl font-bold text-red-500">{errors}</span>
-            </div>
-            <div className="w-px h-8 bg-gray-300/20 hidden sm:block"></div>
-            <div className="flex flex-col items-center">
-              <span className={`text-sm uppercase font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('stats.labels.accuracy', 'Precisión')}</span>
-              <span className="text-2xl font-bold text-blue-500">{currentAccuracy}%</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center gap-6 mb-8">
-          <div className="flex gap-4">
-            {!isActive ? (
-              <button
-                onClick={handleStart}
-                className={`px-10 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg shadow-rose-500/30 transition-all hover:scale-105 hover:shadow-rose-500/40 active:scale-95 ${
-                  isDarkMode 
-                    ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white' 
-                    : 'bg-gradient-to-r from-rose-500 to-red-500 text-white'
-                }`}
-              >
-                <FaPlay />
-                {t('dictationMode.start', 'Comenzar')}
-              </button>
-            ) : (
-              <>
-                <button
-                  onClick={handleStop}
-                  className={`px-10 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg shadow-red-500/30 transition-all hover:scale-105 hover:shadow-red-500/40 active:scale-95 ${
-                    isDarkMode 
-                      ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white' 
-                      : 'bg-gradient-to-r from-red-500 to-rose-500 text-white'
-                  }`}
-                >
-                  <FaStop />
-                  {t('dictationMode.stop', 'Detener')}
-                </button>
-                <button
-                  onClick={toggleSpeech}
-                  className={`px-6 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg transition-all hover:scale-105 active:scale-95 ${
-                    isDarkMode ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-yellow-500 hover:bg-yellow-600'
-                  } text-white`}
-                >
-                  {isSpeechPaused ? <FaPlay /> : <FaPause />}
-                </button>
-                <button
-                  onClick={() => speak(text.substring(currentIndex), speechRate)}
-                  className={`px-6 py-4 rounded-xl font-bold flex items-center gap-3 text-lg shadow-lg transition-all hover:scale-105 active:scale-95 ${
-                    isDarkMode ? 'bg-gray-600 hover:bg-gray-700' : 'bg-gray-500 hover:bg-gray-600'
-                  } text-white`}
-                >
-                  <FaRedo />
-                </button>
-              </>
-            )}
-          </div>
-
-          <div className={`flex items-center gap-4 p-4 rounded-xl backdrop-blur-sm ${isDarkMode ? 'bg-gray-800/40' : 'bg-white/60'}`}>
-            <span className={`font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Velocidad:</span>
+    <GameModeLayout
+      title={t('dictationMode.title')}
+      subtitle={t('dictationMode.subtitle')}
+      icon={<FaMicrophone className="text-red-400" />}
+      gradientClasses="from-red-400 via-rose-400 to-pink-400"
+      accentColorClass="text-red-400"
+      bgAccentClass="bg-red-50/50"
+      isActive={isActive}
+      showStats={showStats}
+      currentIndex={currentIndex}
+      text={text}
+      elapsedTime={elapsedTime}
+      wpm={currentWpm}
+      accuracy={currentAccuracy}
+      errors={errors}
+      errorList={errorList}
+      onStart={onStart}
+      onStop={onStop}
+      onKeyPress={handleKeyPress}
+      onRepeat={handleRepeat}
+      onNext={handleNext}
+      onCloseStats={() => setShowStats(false)}
+      source={GameSource.DICTATION_MODE}
+      sourceComponent="DictationMode"
+      instructions={t('dictationMode.instructions')}
+      level={level + 1}
+      levelName={dictationLevels[level].name}
+      wpmGoal={dictationLevels[level].wpmGoal}
+      errorLimit={dictationLevels[level].errorLimit}
+      sidebar={
+        <MenuLevels
+          source={GameSource.DICTATION_MODE}
+          onLevelChange={setLevel}
+          currentLevel={level}
+          levels={dictationLevels}
+        />
+      }
+    >
+      {isActive && (
+        <div className="flex justify-center gap-4 mt-4 mb-8">
+          <button
+            onClick={isSpeechPaused ? resume : pause}
+            className={`p-4 rounded-full shadow-lg transition-all hover:scale-110 ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}
+            title={isSpeechPaused ? t('dictationMode.resume') : t('dictationMode.pause')}
+          >
+            {isSpeechPaused ? <FaPlay /> : <FaPause />}
+          </button>
+          <button
+            onClick={() => speak(text, speechRate)}
+            className={`p-4 rounded-full shadow-lg transition-all hover:scale-110 ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-800'}`}
+            title={t('dictationMode.repeat')}
+          >
+            <FaRedo />
+          </button>
+          <div className="flex items-center gap-2 ml-4">
+            <span className="text-sm font-bold opacity-70">{t('dictationMode.speed')}:</span>
             <input
               type="range"
               min="0.5"
@@ -256,64 +128,13 @@ const DictationMode: React.FC = () => {
               step="0.1"
               value={speechRate}
               onChange={(e) => setSpeechRate(parseFloat(e.target.value))}
-              className="w-48 accent-rose-500"
+              className="w-24 accent-red-500"
             />
-            <span className={`font-mono font-bold w-12 text-right ${isDarkMode ? 'text-rose-400' : 'text-rose-600'}`}>{speechRate}x</span>
+            <span className="text-sm font-mono w-8">{speechRate}x</span>
           </div>
         </div>
-
-        {!isActive && !showStats && (
-          <>
-            <div className={`text-center p-10 rounded-2xl border backdrop-blur-sm mb-6 ${isDarkMode ? 'bg-gray-800/40 border-rose-700/50 text-gray-400' : 'bg-white/60 border-rose-100/60 text-gray-500'}`}>
-              <p className="italic text-xl">{text}</p>
-            </div>
-            <InstruccionesButton
-              instructions={t('dictationMode.instructions', 'Escucha el audio y escribe lo que oyes. Perfecto para mejorar la escritura al dictado y la comprensión auditiva.')}
-              source="DictationMode"
-            />
-          </>
-        )}
-
-        {isActive && (
-          <div className={`p-6 rounded-2xl border backdrop-blur-sm shadow-lg mb-8 ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/80 border-white/50'}`}>
-            <div className="mb-8">
-              <TypingArea
-                text={text}
-                currentIndex={currentIndex}
-                onKeyPress={handleKeyPress}
-              />
-            </div>
-
-            <div className="mb-4">
-              <Keyboard activeKey={currentChar} levelKeys={[]} />
-            </div>
-          </div>
-        )}
-
-        {showStats && stats && (
-          <Stats
-            stats={getStatsData({
-              wpm: stats.wpm,
-              accuracy: stats.accuracy,
-              level: level + 1,
-              errors: stats.errors,
-              elapsedTime: stats.elapsedTime,
-              levelCompleted: true,
-              levelData: { 
-                wpmGoal: dictationLevels[level].wpmGoal || 0, 
-                errorLimit: dictationLevels[level].errorLimit || 999 
-              },
-              text: text
-            })}
-            errorList={errorList}
-            onRepeatLevel={handleRepeat}
-            onNextLevel={handleNext}
-            sourceComponent="DictationMode"
-            onClose={() => setShowStats(false)}
-          />
-        )}
-      </div>
-    </div>
+      )}
+    </GameModeLayout>
   );
 };
 

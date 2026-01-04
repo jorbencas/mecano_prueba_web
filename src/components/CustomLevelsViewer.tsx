@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '@hooks/useTheme';
 import { FaPlay, FaEdit, FaTrash, FaFileExport, FaFileImport, FaPlus } from 'react-icons/fa';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
 
 interface CustomLevel {
   id: string;
@@ -124,28 +124,30 @@ const CustomLevelsViewer: React.FC<CustomLevelsViewerProps> = ({
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10 border-b border-blue-500/20 pb-6">
           <div>
             <h1 className={`text-3xl md:text-4xl font-black tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              {t('customLevels.myLevels', 'Mis Niveles')}
+              {t('customLevels.myLevels')}
             </h1>
             <p className={`text-sm font-medium mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              {levels.length} {t('customLevels.totalLevels', 'niveles creados por ti')}
+              {levels.length} {t('customLevels.totalLevels')}
             </p>
           </div>
           <div className="flex gap-3">
             <button
               onClick={handleImport}
+              title={t('customLevels.import')}
               className={`px-4 py-2 rounded-none border font-bold text-sm flex items-center gap-2 transition-all active:scale-95 ${
                 isDarkMode 
                   ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700' 
                   : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 shadow-sm'
               }`}
             >
-              <FaFileImport className="text-green-500" /> {t('customLevels.import', 'Importar')}
+              <FaFileImport className="text-green-500" /> {t('customLevels.import')}
             </button>
             <button
               onClick={() => onCreateNew ? onCreateNew() : (onNavigate && onNavigate('create-level'))}
+              title={t('customLevels.createNew')}
               className="px-6 py-2 rounded-none bg-blue-600 hover:bg-blue-700 text-white font-black text-sm uppercase tracking-tight shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2 active:scale-95"
             >
-              <FaPlus /> {t('customLevels.createNew', 'Nuevo Nivel')}
+              <FaPlus /> {t('customLevels.createNew')}
             </button>
           </div>
         </div>
@@ -155,15 +157,15 @@ const CustomLevelsViewer: React.FC<CustomLevelsViewerProps> = ({
             isDarkMode ? 'bg-gray-900/40 border-gray-800/50' : 'bg-white/80 border-gray-200/50 shadow-sm'
           }`}>
             <div className="text-6xl mb-6 opacity-50">📚</div>
-            <h2 className="text-2xl font-black mb-2 uppercase tracking-tight">{t('customLevels.noLevels', 'No tienes niveles personalizados')}</h2>
+            <h2 className="text-2xl font-black mb-2 uppercase tracking-tight">{t('customLevels.noLevels')}</h2>
             <p className={`text-sm font-medium uppercase tracking-widest mb-8 ${isDarkMode ? 'text-gray-500' : 'text-slate-400'}`}>
-              {t('customLevels.noLevelsDesc', 'Crea tu primer nivel para practicar las teclas que quieras.')}
+              {t('customLevels.noLevelsDesc')}
             </p>
             <button
               onClick={() => onCreateNew ? onCreateNew() : (onNavigate && onNavigate('create-level'))}
               className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-none font-black uppercase tracking-tight inline-flex items-center gap-2 shadow-xl shadow-blue-500/20 transition-all active:scale-95"
             >
-              <FaPlus /> {t('customLevels.createFirst', 'Crear Mi Primer Nivel')}
+              <FaPlus /> {t('customLevels.createNew')}
             </button>
           </div>
         ) : (
@@ -175,19 +177,19 @@ const CustomLevelsViewer: React.FC<CustomLevelsViewerProps> = ({
                 <thead>
                   <tr className={`border-b ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
                     <th className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                      {t('customLevels.table.name', 'Nombre del Nivel')}
+                      {t('customLevels.table.name')}
                     </th>
                     <th className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                      {t('customLevels.table.keys', 'Teclas')}
+                      {t('customLevels.table.keys')}
                     </th>
                     <th className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                      {t('customLevels.table.config', 'Configuración')}
+                      {t('customLevels.table.config')}
                     </th>
                     <th className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                      {t('customLevels.table.date', 'Fecha')}
+                      {t('customLevels.table.date')}
                     </th>
                     <th className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-right ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                      {t('customLevels.table.actions', 'Acciones')}
+                      {t('customLevels.table.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -229,15 +231,15 @@ const CustomLevelsViewer: React.FC<CustomLevelsViewerProps> = ({
                       <td className="px-6 py-4">
                         <div className="flex gap-4 text-[11px] font-bold uppercase tracking-wider">
                           <div className="flex flex-col">
-                            <span className="opacity-40 text-[9px]">{t('customLevels.table.speed', 'Vel')}</span>
+                            <span className="opacity-40 text-[9px]">{t('customLevels.table.speed')}</span>
                             <span className={isDarkMode ? 'text-blue-400' : 'text-blue-600'}>{level.speed}ms</span>
                           </div>
                           <div className="flex flex-col">
-                            <span className="opacity-40 text-[9px]">{t('customLevels.table.goal', 'Obj')}</span>
+                            <span className="opacity-40 text-[9px]">{t('customLevels.table.goal')}</span>
                             <span className={isDarkMode ? 'text-purple-400' : 'text-purple-600'}>{level.wpmGoal} WPM</span>
                           </div>
                           <div className="flex flex-col">
-                            <span className="opacity-40 text-[9px]">{t('customLevels.table.errors', 'Err')}</span>
+                            <span className="opacity-40 text-[9px]">{t('customLevels.table.errors')}</span>
                             <span className={isDarkMode ? 'text-red-400' : 'text-red-600'}>{level.errorLimit}</span>
                           </div>
                         </div>
@@ -249,31 +251,31 @@ const CustomLevelsViewer: React.FC<CustomLevelsViewerProps> = ({
                         <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => handlePlay(level)}
-                            title={t('customLevels.play', 'Jugar')}
-                            className="p-2 rounded-none bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-all"
+                            title={t('customLevels.play')}
+                            className="px-3 py-1.5 rounded-none bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter"
                           >
-                            <FaPlay size={12} />
+                            <FaPlay size={10} /> {t('customLevels.play')}
                           </button>
                           <button
                             onClick={() => handleEdit(level)}
-                            title={t('customLevels.edit', 'Editar')}
-                            className="p-2 rounded-none bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-all"
+                            title={t('customLevels.edit')}
+                            className="px-3 py-1.5 rounded-none bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter"
                           >
-                            <FaEdit size={12} />
+                            <FaEdit size={10} /> {t('customLevels.edit')}
                           </button>
                           <button
                             onClick={() => handleExport(level)}
-                            title={t('customLevels.export', 'Exportar')}
-                            className="p-2 rounded-none bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-white transition-all"
+                            title={t('customLevels.export')}
+                            className="px-3 py-1.5 rounded-none bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-white transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter"
                           >
-                            <FaFileExport size={12} />
+                            <FaFileExport size={10} /> {t('customLevels.export')}
                           </button>
                           <button
                             onClick={() => handleDelete(level.id)}
-                            title={t('customLevels.delete', 'Eliminar')}
-                            className="p-2 rounded-none bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                            title={t('customLevels.delete')}
+                            className="px-3 py-1.5 rounded-none bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter"
                           >
-                            <FaTrash size={12} />
+                            <FaTrash size={10} /> {t('customLevels.delete')}
                           </button>
                         </div>
                       </td>

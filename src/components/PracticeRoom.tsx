@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from 'react';
+import { useTheme } from '@hooks/useTheme';
 import { useMultiplayer } from '../context/MultiplayerContext';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
 import LiveChat from './LiveChat';
 import RoomLobby from './RoomLobby';
-import { FaCopy, FaUsers, FaSignOutAlt, FaPlay, FaLock } from 'react-icons/fa';
+import { FaCopy, FaUsers, FaPlay, FaLock } from 'react-icons/fa';
 
 const PracticeRoom: React.FC = () => {
   const { isDarkMode } = useTheme();
-  const { user } = useAuth();
   const { t } = useDynamicTranslations();
   const { currentRoom, startRace, leaveRoom } = useMultiplayer();
   const [selectedText, setSelectedText] = useState('');

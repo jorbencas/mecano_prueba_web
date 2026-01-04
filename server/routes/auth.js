@@ -104,16 +104,36 @@ router.get('/me', authenticate, async (req, res) => {
 });
 
 /**
- * POST /api/auth/logout
- * Logout (invalidate session)
+ * PUT /api/auth/profile
+ * Update user profile
  */
-router.post('/logout', authenticate, async (req, res) => {
+router.put('/profile', authenticate, async (req, res) => {
   try {
-    await logout(req.token);
-    res.json({ message: 'Logged out successfully' });
+    const { displayName, photoURL, language } = req.body;
+    const { updateProfile } = require('../auth/local');
+    
+    const result = await updateProfile(req.user.id, { displayName, photoURL, language });
+    res.json(result);
   } catch (error) {
-    console.error('Logout error:', error);
-    res.status(500).json({ error: 'Logout failed' });
+    console.error('Update profile error:', error);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
+/**
+ * POST /api/auth/change-password
+ * Change current user password
+ */
+router.post('/change-password', authenticate, async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const { changePassword } = require('../auth/local');
+    
+    const result = await changePassword(req.user.id, oldPassword, newPassword);
+    res.json(result);
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({ error: error.message || 'Failed to change password' });
   }
 });
 

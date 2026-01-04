@@ -3,7 +3,22 @@ const jwt = require('jsonwebtoken');
 const { sql } = require('../db');
 
 const SALT_ROUNDS = 10;
-const JWT_EXPIRATION = '24h';
+
+/**
+ * Get session duration from settings
+ */
+async function getSessionDuration() {
+  try {
+    const result = await sql`SELECT value FROM settings WHERE key = 'session_duration'`;
+    if (result.length > 0 && result[0].value && result[0].value.days) {
+      return result[0].value.days;
+    }
+    return 7; // Default 7 days
+  } catch (error) {
+    console.error('Error fetching session duration:', error);
+    return 7;
+  }
+}
 
 /**
  * Register a new user with email and password
@@ -40,14 +55,17 @@ async function register(email, password, displayName, role = 'student') {
     const user = result[0];
 
     // Generate token
+    const days = await getSessionDuration();
+    const expiresIn = `${days}d`;
+    
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: JWT_EXPIRATION }
+      { expiresIn }
     );
 
     // Save session
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
     await sql`
       INSERT INTO user_sessions (user_id, token, expires_at)
       VALUES (${user.id}, ${token}, ${expiresAt})
@@ -101,14 +119,17 @@ async function login(email, password) {
     `;
 
     // Generate token
+    const days = await getSessionDuration();
+    const expiresIn = `${days}d`;
+
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: JWT_EXPIRATION }
+      { expiresIn }
     );
 
     // Save session
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
     await sql`
       INSERT INTO user_sessions (user_id, token, expires_at)
       VALUES (${user.id}, ${token}, ${expiresAt})
@@ -162,6 +183,7 @@ async function getUserById(userId) {
     displayName: user.display_name,
     photoURL: user.photo_url,
     role: user.role,
+    language: user.language,
     provider: user.google_id ? 'google' : 'email',
   };
 }
@@ -176,10 +198,86 @@ async function logout(token) {
   `;
 }
 
+/**
+ * Update user profile
+ */
+async function updateProfile(userId, { displayName, photoURL, language }) {
+  try {
+    const result = await sql`
+      UPDATE users
+      SET 
+        display_name = COALESCE(${displayName}, display_name),
+        photo_url = COALESCE(${photoURL}, photo_url),
+        language = COALESCE(${language}, language),
+        updated_at = NOW()
+      WHERE id = ${userId}
+      RETURNING id, email, display_name, photo_url, role, language
+    `;
+
+    if (result.length === 0) {
+      throw new Error('User not found');
+    }
+
+    const user = result[0];
+    return {
+      id: user.id,
+      email: user.email,
+      displayName: user.display_name,
+      photoURL: user.photo_url,
+      role: user.role,
+      provider: 'email', // Default for local auth
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Change user password
+ */
+async function changePassword(userId, oldPassword, newPassword) {
+  try {
+    // Get current password hash
+    const users = await sql`
+      SELECT password_hash FROM users WHERE id = ${userId}
+    `;
+
+    if (users.length === 0) {
+      throw new Error('User not found');
+    }
+
+    const user = users[0];
+
+    // Verify old password
+    if (user.password_hash) {
+      const isValid = await bcrypt.compare(oldPassword, user.password_hash);
+      if (!isValid) {
+        throw new Error('Invalid old password');
+      }
+    }
+
+    // Hash new password
+    const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+    // Update password
+    await sql`
+      UPDATE users
+      SET password_hash = ${passwordHash}, updated_at = NOW()
+      WHERE id = ${userId}
+    `;
+
+    return { message: 'Password updated successfully' };
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   register,
   login,
   verifyToken,
   getUserById,
   logout,
+  updateProfile,
+  changePassword,
 };

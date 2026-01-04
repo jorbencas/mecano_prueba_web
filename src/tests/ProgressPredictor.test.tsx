@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ProgressPredictor from '../components/ProgressPredictor';
-import { ThemeProvider } from '../context/ThemeContext';
+import { ThemeProvider } from '@hooks/useTheme';
 
 import { AuthProvider } from '../context/AuthContext';
 import { statsAPI } from '../api/stats';

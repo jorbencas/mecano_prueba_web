@@ -2,8 +2,8 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import TypingArea from '../components/TypingArea';
-import { ThemeProvider } from '../context/ThemeContext';
-import { LanguageProvider } from '../context/LanguageContext';
+import { ThemeProvider } from '@hooks/useTheme';
+import { LanguageProvider } from '@hooks/useLanguage';
 
 const renderWithProviders = (component: React.ReactElement) => {
   return render(
@@ -51,7 +51,7 @@ describe('TypingArea Component', () => {
     expect(hElement).toHaveClass('text-green-500');
   });
 
-  test('displays stats when not standalone', () => {
+  test('does not display stats when standalone is true', () => {
     renderWithProviders(
       <TypingArea
         text="Hello"
@@ -59,10 +59,22 @@ describe('TypingArea Component', () => {
         wpm={50}
         accuracy={90}
         errors={2}
+        standalone={true}
       />
     );
-    expect(screen.getByText(/WPM: 50/i)).toBeInTheDocument();
-    expect(screen.getByText(/Precisión: 90%/i)).toBeInTheDocument();
-    expect(screen.getByText(/Errores: 2/i)).toBeInTheDocument();
+    expect(screen.queryByText(/WPM: 50/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Precisión: 90%/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Errores: 2/i)).not.toBeInTheDocument();
+  });
+
+  test('handles long text without crashing', () => {
+    const longText = 'a'.repeat(1000);
+    renderWithProviders(
+      <TypingArea
+        text={longText}
+        currentIndex={0}
+      />
+    );
+    expect(screen.getAllByText('a').length).toBeGreaterThan(0);
   });
 });

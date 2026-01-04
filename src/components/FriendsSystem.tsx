@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { FaUserPlus, FaUserCheck, FaUserTimes, FaCircle } from 'react-icons/fa';
+import { useTheme } from '@hooks/useTheme';
+import { FaUserPlus, FaUserCheck, FaCircle } from 'react-icons/fa';
 
 interface Friend {
   id: string;
@@ -12,13 +11,12 @@ interface Friend {
   isOnline?: boolean;
 }
 
-import { useFetchWithTimeout } from '../hooks/useFetchWithTimeout';
+import { useFetchWithTimeout } from '@/hooks/useFetchWithTimeout';
 
 // ... imports
 
 const FriendsSystem: React.FC = () => {
   const { isDarkMode } = useTheme();
-  const { user } = useAuth();
   const fetchWithTimeout = useFetchWithTimeout();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [searchEmail, setSearchEmail] = useState('');

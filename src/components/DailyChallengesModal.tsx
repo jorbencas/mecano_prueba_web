@@ -1,8 +1,6 @@
 import React from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { challengesAPI } from '../api/challenges';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import { useTheme } from '@hooks/useTheme';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
 import { FaFire, FaTimes } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChallengeItem, Challenge } from './ChallengeItem';
@@ -11,12 +9,36 @@ interface DailyChallengesModalProps {
   isOpen: boolean;
   onClose: () => void;
   challenges: Challenge[];
-  onSelectChallenge?: (challenge: Challenge) => void;
+  onStartChallenges?: (challenges: Challenge[]) => void;
 }
 
-const DailyChallengesModal: React.FC<DailyChallengesModalProps> = ({ isOpen, onClose, challenges, onSelectChallenge }) => {
+const DailyChallengesModal: React.FC<DailyChallengesModalProps> = ({ isOpen, onClose, challenges, onStartChallenges }) => {
   const { isDarkMode } = useTheme();
   const { t } = useDynamicTranslations();
+  const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
+
+  const toggleSelection = (challenge: Challenge) => {
+    if (challenge.completed) return;
+    setSelectedIds(prev => 
+      prev.includes(challenge.id) 
+        ? prev.filter(id => id !== challenge.id)
+        : [...prev, challenge.id]
+    );
+  };
+
+  const handleStart = () => {
+    if (onStartChallenges) {
+      const selectedChallenges = challenges.filter(c => selectedIds.includes(c.id));
+      if (selectedChallenges.length > 0) {
+        onStartChallenges(selectedChallenges);
+      } else {
+        // If none selected, start the first incomplete one
+        const firstIncomplete = challenges.find(c => !c.completed);
+        if (firstIncomplete) onStartChallenges([firstIncomplete]);
+      }
+      onClose();
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -85,15 +107,12 @@ const DailyChallengesModal: React.FC<DailyChallengesModalProps> = ({ isOpen, onC
                 >
                   <ChallengeItem
                     challenge={challenge}
-                    onClick={(c) => {
-                      if (onSelectChallenge) {
-                        onSelectChallenge(c);
-                        onClose();
-                      }
-                    }}
+                    onClick={toggleSelection}
                     isDarkMode={isDarkMode}
                     t={t}
                     variant="list"
+                    selected={selectedIds.includes(challenge.id)}
+                    selectable={!challenge.completed}
                   />
                 </motion.div>
               ))}
@@ -104,22 +123,16 @@ const DailyChallengesModal: React.FC<DailyChallengesModalProps> = ({ isOpen, onC
               isDarkMode ? 'border-gray-700/50 bg-gray-800/50' : 'border-gray-100 bg-gray-50/50'
             }`}>
               <button
-                onClick={() => {
-                  if (onSelectChallenge && challenges.length > 0) {
-                    const firstIncomplete = challenges.find(c => !c.completed) || challenges[0];
-                    onSelectChallenge(firstIncomplete);
-                    onClose();
-                  } else {
-                    onClose();
-                  }
-                }}
+                onClick={handleStart}
                 className={`w-full py-4 rounded-none font-black text-lg uppercase tracking-tight transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg ${
                   isDarkMode
                     ? 'bg-blue-600 text-white hover:bg-blue-500'
                     : 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/20'
                 }`}
               >
-                {t('challenges.modal.start')}
+                {selectedIds.length > 0 
+                  ? `${t('challenges.modal.start')} (${selectedIds.length})`
+                  : t('challenges.modal.start')}
               </button>
               
               <p className={`text-center mt-4 text-[9px] font-bold tracking-[0.2em] uppercase ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}>

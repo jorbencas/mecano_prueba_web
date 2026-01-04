@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import FollowButton from '../components/social/FollowButton';
-import { AuthProvider } from '../context/AuthContext';
 import { socialAPI } from '../api/social';
 
 // Mock socialAPI

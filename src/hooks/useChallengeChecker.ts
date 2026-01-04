@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { challengesAPI } from '../api/challenges';
+import { useAuth } from '@/context/AuthContext';
+import { challengesAPI } from '@/api/challenges';
 
 interface SessionData {
   wpm?: number;

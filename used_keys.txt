@@ -1,0 +1,677 @@
+
++
+,
+@
+ 
+120s
+20 actividades
+30 actividades
+30s
+50 actividades
+60
+60s
+95%
+a
+A
+Access Denied
+achievements.title
+achievements.unlocked
+achievements.unlockedOn
+adminDashboard.achievementsFor
+adminDashboard.auditHistory
+adminDashboard.doubleClickHint
+adminDashboard.doubleClickToView
+adminDashboard.globalSettings
+adminDashboard.table.email
+adminDashboard.table.role
+adminDashboard.tabs.achievements
+adminDashboard.tabs.activity
+adminDashboard.tabs.history
+adminDashboard.tabs.settings
+adminDashboard.tabs.tracking
+adminDashboard.tabs.users
+adminDashboard.trackingDetailed
+adminDashboard.userAchievements
+adminDashboard.userManagement
+admin.settings.errorHandling
+admin.settings.errorHandlingDesc
+alerts.auditLogsError
+alerts.linkCopied
+alerts.noChanges
+alerts.postCreateError
+alerts.roleUpdated
+alerts.roleUpdateError
+alerts.roomNameRequired
+alerts.settingsUpdated
+alerts.userDeleted
+alerts.userDeleteError
+alerts.userUpdated
+alerts.userUpdateError
+alice@test.com
+@/api/tutoring
+applies color coding based on error rates
+blocks key selector during active practice
+bob@test.com
+calculates and displays prediction
+calculates correct statistics
+calls API and toggles state on click
+calls onChange when option is selected
+calls onClose when cancel button is clicked
+calls onComplete after animation
+calls onLevelChange when level is clicked
+calls onNextLevel when button clicked
+calls onShowLogin when login button is clicked
+can switch to register mode
+challenges.allTitle
+challenges.available
+challenges.completed
+challenges.daily
+challenges.difficulty.easy
+challenges.difficulty.hard
+challenges.difficulty.medium
+challenges.infoBar.completed
+challenges.infoBar.progressTitle
+challenges.infoBar.remaining
+challenges.loading
+challenges.modal.start
+challenges.modal.subtitle
+challenges.modal.tip
+challenges.modal.title
+challenges.noChallenges
+challenges.noChallengesDesc
+challenges.notLoggedIn
+challenges.offline.accuracy.desc
+challenges.offline.accuracy.title
+challenges.offline.consistency.desc
+challenges.offline.consistency.title
+challenges.offline.speed.desc
+challenges.offline.speed.title
+challenges.stats.completed
+challenges.stats.points
+challenges.stats.streak
+challenges.stats.today
+challenges.subtitle
+challenges.title
+chat:message
+clears all logs for user
+codeMode.instructions
+codeMode.start
+codeMode.stop
+codeMode.subtitle
+codeMode.title
+common.back
+common.cancel
+common.close
+common.info
+common.play
+common.retry
+common.viewAll
+confirmations.deleteUser
+confirmations.leaveRoom
+content-type
+creates activity with correct properties
+createText.noTextSelected
+createText.progress
+createText.title
+Ctrl
+customLevels.createNew
+customLevels.createTitle
+customLevels.delete
+customLevels.edit
+customLevels.editTitle
+customLevels.export
+customLevels.import
+customLevels.myLevels
+customLevels.noLevels
+customLevels.noLevelsDesc
+customLevels.play
+customLevels.table.actions
+customLevels.table.config
+customLevels.table.date
+customLevels.table.errors
+customLevels.table.goal
+customLevels.table.keys
+customLevels.table.name
+customLevels.table.speed
+customLevels.totalLevels
+dark
+dictationMode.instructions
+dictationMode.start
+dictationMode.stop
+dictationMode.subtitle
+dictationMode.title
+displays accuracy stats
+displays achievement progress
+displays all data items
+displays benefits list
+displays character limit info for non-authenticated users
+displays correct stats
+displays create room button or input
+displays error message on fetch failure
+displays error rates and suggestions
+displays feature name
+displays history table
+displays instructions
+displays key selector
+displays key selector with all alphabet keys
+displays keyboard component
+displays level menu
+displays level selector
+displays loading state
+displays recent activity table
+displays stats when not standalone
+displays stats (WPM, accuracy, errors)
+displays summary cards
+displays table headers
+displays time by component with progress bars
+displays time in minutes and seconds
+displays user statistics when authenticated
+div
+does not render when isOpen is false
+e
+Error al cargar la información de la clase
+Error al enviar solicitud
+Error al exportar datos
+Error al exportar resumen
+Error al guardar preferencias
+Error al importar el nivel. Verifica que el archivo sea válido.
+errors.generic
+expired
+faq.answers.custom_levels
+faq.answers.earn_xp
+faq.answers.modes_diff
+faq.answers.races_work
+faq.answers.register_needed
+faq.answers.start_practice
+faq.footer_tip
+faq.title
+fetches class details and assignments on mount
+filters by date range
+filters options when searchable
+filters users by search term
+formats duration correctly
+forum.comments
+forum.createModal.categoryLabel
+forum.createModal.contentLabel
+forum.createModal.contentPlaceholder
+forum.createModal.publish
+forum.createModal.title
+forum.createModal.titleLabel
+forum.createModal.titlePlaceholder
+forum.loading
+forum.newPost
+forum.postBy
+forum.title
+FreePractice
+freePractice.configSaved
+freePractice.instructions
+freePractice.keysLocked
+freePractice.keysSelected
+freePractice.limitInfo
+freePractice.readyToStart
+freePractice.reset
+freePractice.saved
+freePractice.selectKeys
+freePractice.session
+freePractice.start
+freePractice.startInstructions
+freePractice.stop
+freePractice.title
+freePractice.unlimitedChars
+Funcionalidad de juego próximamente. Por ahora puedes usar el modo Práctica Libre.
+groups by component correctly
+H
+handles keyboard navigation
+handles non-existent activity gracefully
+handles shift combination
+hands.hands.left
+hands.hands.right
+hands.title
+has category filters
+has filter buttons
+has filter dropdown
+has instructions button
+has save and export buttons
+has start button
+highlights active key
+highlights correct finger for "a" (left pinky)
+highlights correct fingers for "A" (Shift + a)
+highlights current character
+highlights current level
+highlights level keys
+highlights typed characters
+input
+instructions.createtext.detailed
+instructions.levels.detailed
+instructions.playgame.detailed
+instructions.shortcuts.pause
+instructions.shortcuts.restart
+instructions.shortcuts.title
+instructions.tips.createtext.custom
+instructions.tips.createtext.goals
+instructions.tips.createtext.length
+instructions.tips.createtext.practice
+instructions.tips.levels.goal
+instructions.tips.levels.hands
+instructions.tips.levels.keys
+instructions.tips.levels.strategy
+instructions.tips.playgame.catch
+instructions.tips.playgame.errors
+instructions.tips.playgame.focus
+instructions.tips.playgame.speed
+instructions.tips.title
+keyboard.space
+leaderboard.accuracy
+leaderboard.games
+leaderboard.noData
+leaderboard.player
+leaderboard.title
+leaderboard.wpm
+Level 1
+Level 2
+Level 3
+levelCreator.errorLimit
+levelCreator.export
+levelCreator.instructions
+levelCreator.name
+levelCreator.namePlaceholder
+levelCreator.preview
+levelCreator.previewText
+levelCreator.save
+levelCreator.saved
+levelCreator.selectKeys
+levelCreator.settings
+levelCreator.speed
+levelCreator.title
+levelCreator.wpmGoal
+levels.errors.cannotAdvance
+levels.instructions
+levels.title
+li
+light
+limits logs to 1000 entries
+login.back
+login.benefit1
+login.benefit2
+login.benefit3
+login.benefit4
+login.benefit5
+login.benefits
+login.displayName
+login.displayNamePlaceholder
+login.email
+login.error.generic
+login.error.invalidCredentials
+login.error.network
+login.error.sessionExpired
+login.error.userExists
+login.googleButton
+login.inviteText
+login.loading
+login.loginButton
+login.loginTab
+login.or
+login.password
+login.passwordHint
+login.registerTab
+login.welcome
+menu.classesDesc
+menu.communityDesc
+menu.custom.levelsDesc
+menu.custom.textsDesc
+menu.games.falling
+menu.games.fallingDesc
+menu.items.game
+menu.items.login
+menu.items.settings
+menuLevels.loadingProgress
+menuLevels.title.code
+menuLevels.title.dictation
+menuLevels.title.levels
+menuLevels.title.numbers
+menuLevels.title.symbols
+menuLevels.title.texts
+menuLevels.title.zen
+menu.multiplayer.friendsDesc
+menu.multiplayer.practiceDesc
+menu.multiplayer.raceDesc
+menu.practice.codeDesc
+menu.practice.dictationDesc
+menu.practice.freeDesc
+menu.practice.guidedDesc
+menu.practice.numbersDesc
+menu.practice.precisionDesc
+menu.practice.speedDesc
+menu.practice.symbolsDesc
+menu.practice.zenDesc
+menu.progress.achievementsDesc
+menu.progress.challengesDesc
+menu.progress.leaderboardDesc
+menu.sections.classes
+menu.sections.community
+menu.sections.custom
+menu.sections.games
+menu.sections.multiplayer
+menu.sections.practice
+menu.sections.progress
+menu.title
+menu.user.admin
+menu.user.defaultName
+menu.user.logout
+menu.user.profile
+menu.user.settings
+multiplayer.create.maxPlayers
+multiplayer.create.privateRoom
+multiplayer.create.roomName
+multiplayer.create.roomNamePlaceholder
+multiplayer.create.submit
+multiplayer.create.title
+multiplayer.lobby.beFirst
+multiplayer.lobby.createdBy
+multiplayer.lobby.createRoom
+multiplayer.lobby.join
+multiplayer.lobby.noRooms
+multiplayer.lobby.players
+multiplayer.lobby.practiceTitle
+Nivel importado correctamente
+No hay datos disponibles
+numbersMode.instructions
+numbersMode.start
+numbersMode.stop
+numbersMode.subtitle
+numbersMode.title
+opens dropdown on click
+Option 1
+Option 2
+Option 3
+pauses game
+PlayGame
+playgame.accuracy
+playgame.errors
+playgame.instructions
+playgame.pause
+playgame.resume
+playgame.score
+playgame.start
+playgame.stop
+playgame.title
+Por favor selecciona al menos un estudiante.
+practiceRoom.leave
+precisionMode.instructions
+precisionMode.problematicKeys
+precisionMode.progress
+precisionMode.readyToStart
+precisionMode.start
+precisionMode.startInstructions
+precisionMode.stop
+precisionMode.title
+profile.accuracy
+profile.averageWPM
+profile.completed
+profile.component
+profile.confirmPassword
+profile.date
+profile.language
+profile.languageNote
+profile.newPassword
+profile.noActivity
+profile.notLoggedIn
+profile.oldPassword
+profile.passwordChanged
+profile.passwordsDontMatch
+profile.recentActivity
+profile.title
+profile.totalActivities
+profile.totalTime
+profile.updatePassword
+profile.wpm
+progressDashboard.charts.levelProgress
+progressDashboard.charts.modeDistribution
+progressDashboard.charts.modePerformance
+progressDashboard.charts.wpmProgression
+progressDashboard.labels.bestWpm
+progressDashboard.labels.completedLevels
+progressDashboard.labels.sessions
+progressDashboard.labels.stars
+progressDashboard.loading
+progressDashboard.loginRequired
+progressDashboard.recentSessions.accuracy
+progressDashboard.recentSessions.date
+progressDashboard.recentSessions.duration
+progressDashboard.recentSessions.level
+progressDashboard.recentSessions.mode
+progressDashboard.recentSessions.title
+progressDashboard.recentSessions.wpm
+progressDashboard.stats.avgWpm
+progressDashboard.stats.maxWpm
+progressDashboard.stats.totalSessions
+progressDashboard.stats.totalTime
+progressDashboard.tabs.analytics
+progressDashboard.tabs.export
+progressDashboard.tabs.overview
+progressDashboard.title
+q
+Q
+race:finish
+raceMode.instruction
+raceMode.instructions
+raceMode.ready
+race:progress
+race:start
+registrationModal.cancel
+registrationModal.featureBlocked
+registrationModal.loginButton
+registrationModal.title
+renders accessibility section
+renders Achievements component
+renders all benefits
+renders app without crashing
+renders benefits title
+renders chart with title
+renders component
+renders component with title
+renders correctly when following
+renders correctly when not following
+renders current WPM and goal input
+renders error patterns
+renders FreePractice component
+renders full keyboard when isFullKeyboard is true
+renders hands
+renders in compact mode
+renders in normal mode by default
+renders keyboard layout
+renders language selector
+renders Leaderboard component
+renders level list correctly
+renders LevelCreator component
+renders Levels component
+renders lobby interface
+renders login form
+renders login message when not authenticated
+renders particles at specified position
+renders PlayGame component
+renders PrecisionMode component
+renders ProgressDashboard component
+renders recommendations title
+renders settings title
+renders simple keyboard by default
+renders SpeedMode component
+renders Stats component
+renders text correctly
+renders theme toggle buttons
+renders user statistics when data is loaded
+renders when isOpen is true
+renders with placeholder
+reset button resets practice session
+returns a unique activity ID
+returns all logs for user
+returns empty array when no logs exist
+returns most recent activities
+returns zero stats when no logs exist
+room:join
+room:leave
+S
+saves activity log with duration
+saves log to localStorage
+Search...
+Seguir
+settings.accessibility
+settings.colorblindDeut
+settings.colorblindMode
+settings.colorblindNone
+settings.colorblindProt
+settings.colorblindTrit
+settings.darkMode
+settings.fontSize
+settings.fontSizeLarge
+settings.fontSizeMedium
+settings.fontSizeSmall
+settings.fontSizeXL
+settings.highContrast
+settings.highContrastOff
+settings.language
+settings.lightMode
+settings.reducedMotion
+settings.reducedMotionOff
+settings.resetDefaults
+settings.screenReader
+settings.screenReaderOff
+settings.theme
+settings.title
+Shift
+shows access denied for non-admin users
+shows activity counts
+shows balanced performance message when stats are good
+shows charts
+shows configuration panel
+shows duration selector
+shows Google login button
+shows keyboard and hands components
+shows lock icon for locked levels when not authenticated
+shows login message when user is not authenticated
+shows message when no data
+shows next level button when level completed
+shows no activity message when no logs exist
+shows no patterns message when performance is good
+shows race mode title or interface
+shows repeat level button
+shows reset button
+shows start button
+shows text to type
+shows typing area
+shows warning message when keys are locked
+Siguiendo
+¡Solicitud de amistad enviada!
+SpeedMode
+speedMode.instructions
+speedMode.selectDuration
+speedMode.start
+speedMode.title
+starts game when start button is clicked
+stats.buttons.next
+stats.buttons.repeat
+stats.cards.details
+stats.cards.performance
+stats.congrats
+stats.errors.actual
+stats.errors.expected
+stats.errors.title
+stats.feedback.createtext.good
+stats.feedback.createtext.improve
+stats.feedback.createtext.perfect
+stats.feedback.freepractice.good
+stats.feedback.freepractice.improve
+stats.feedback.freepractice.perfect
+stats.feedback.levels.complete
+stats.feedback.levels.lowAccuracy
+stats.feedback.levels.perfect
+stats.feedback.levels.slowSpeed
+stats.feedback.levels.tooManyErrors
+stats.feedback.neon.excellent
+stats.feedback.neon.good
+stats.feedback.neon.improve
+stats.feedback.neon.lowAccuracy
+stats.feedback.playgame.complete
+stats.feedback.playgame.excellent
+stats.feedback.playgame.fail
+stats.feedback.precision.good
+stats.feedback.precision.improve
+stats.feedback.precision.perfect
+stats.feedback.speed.excellent
+stats.feedback.speed.good
+stats.feedback.speed.improve
+stats.highlighted.title
+stats.highlighted.tooltip
+statsHistory.clear
+statsHistory.columns
+statsHistory.columns.accuracy
+statsHistory.columns.errors
+statsHistory.columns.wpm
+statsHistory.confirmClear
+statsHistory.noData
+statsHistory.title
+stats.labels.accuracy
+stats.labels.currentWpm
+stats.labels.errors
+stats.labels.goalWpm
+stats.labels.level
+stats.labels.time
+stats.requirements.accuracy
+stats.requirements.errors
+stats.requirements.title
+stats.requirements.wpm
+stats.suggestions.accuracy
+stats.suggestions.errors
+stats.suggestions.neon.accuracy
+stats.suggestions.neon.excellent
+stats.suggestions.neon.speed
+stats.suggestions.precision
+stats.suggestions.speed
+stats.title
+stops game
+suggests practice based on performance
+symbolsMode.instructions
+symbolsMode.start
+symbolsMode.stop
+symbolsMode.subtitle
+symbolsMode.title
+T
+Test Chart
+Test Class
+token
+tracks WPM and accuracy
+@/translations/es.json
+typingArea.stats.accuracy
+typingArea.stats.errors
+typingArea.stats.wpm
+updates prediction when goal changes
+updates stats when typing
+user1@test.com
+userProfile.achievements
+userProfile.activityHeatmap
+userProfile.challengesToday
+userProfile.challengesTotal
+userProfile.copyLink
+userProfile.level
+userProfile.preferences
+userProfile.progress
+userProfile.publicProfile
+userProfile.scheduled
+userProfile.security
+userProfile.student
+userProfile.tabs.profile
+userProfile.tabs.settings
+userProfile.tabs.stats
+userProfile.teacherLabel
+userProfile.upcomingTutoring
+userProfile.xpToNext
+uses custom color when provided
+validates email input
+validates password length
+web-vitals
+Z
+zenMode.instructions
+zenMode.start
+zenMode.stop
+zenMode.subtitle
+zenMode.title

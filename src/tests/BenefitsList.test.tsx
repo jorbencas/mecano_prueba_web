@@ -1,8 +1,7 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import BenefitsList from '../components/BenefitsList';
-import { ThemeProvider } from '../context/ThemeContext';
-import { LanguageProvider } from '../context/LanguageContext';
+import { ThemeProvider } from '@hooks/useTheme';
+import { LanguageProvider } from '@hooks/useLanguage';
 
 const renderBenefitsList = (props = {}) => {
   return render(

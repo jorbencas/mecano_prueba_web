@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { useAuth } from './AuthContext';
+import { useAuth } from '@/context/AuthContext';
 
 interface Player {
   id: string;
@@ -116,7 +116,7 @@ export const MultiplayerProvider: React.FC<{ children: ReactNode }> = ({ childre
       });
     });
 
-    newSocket.on('race:finished', ({ results }) => {
+    newSocket.on('race:finished', () => {
       setCurrentRoom(prev => prev ? { ...prev, state: 'finished' } : null);
     });
 

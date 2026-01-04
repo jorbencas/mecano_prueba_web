@@ -1,13 +1,9 @@
 import React from "react";
-import { useTheme } from '../context/ThemeContext';
-import { useDynamicTranslations } from "../hooks/useDynamicTranslations";
+import { useTheme } from '@hooks/useTheme';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
 import { FaKeyboard, FaHandPaper, FaBullseye, FaLightbulb } from 'react-icons/fa';
-
-interface InstruccionesButtonProps {
-  instructions?: string;
-  source?: 'Levels' | 'PlayGame' | 'CreateText' | 'LevelCreator' | 'FreePractice' | 'SpeedMode' | 'PrecisionMode' | 'ZenMode' | 'NumbersMode' | 'SymbolsMode' | 'CodeMode' | 'DictationMode' | 'RaceMode';
-  showKeyboardShortcuts?: boolean;
-}
+import { GameSource } from '@/types/enums';
+import { InstruccionesButtonProps } from '@/types/interfaces';
 
 const InstruccionesButton: React.FC<InstruccionesButtonProps> = ({
   instructions,
@@ -19,7 +15,7 @@ const InstruccionesButton: React.FC<InstruccionesButtonProps> = ({
 
   const getComponentTips = () => {
     switch (source) {
-      case 'Levels':
+      case GameSource.LEVELS:
         return [
           { 
             icon: <FaBullseye />, 
@@ -38,7 +34,7 @@ const InstruccionesButton: React.FC<InstruccionesButtonProps> = ({
             text: t('instructions.tips.levels.strategy', 'Empieza despacio priorizando precisión. La velocidad vendrá con la práctica')
           },
         ];
-      case 'PlayGame':
+      case GameSource.PLAY_GAME:
         return [
           { 
             icon: <FaBullseye />, 
@@ -57,7 +53,7 @@ const InstruccionesButton: React.FC<InstruccionesButtonProps> = ({
             text: t('instructions.tips.playgame.focus', 'Mantén la vista en la pantalla, no en el teclado. Usa la memoria muscular')
           },
         ];
-      case 'CreateText':
+      case GameSource.CREATE_TEXT:
         return [
           { 
             icon: <FaKeyboard />, 
@@ -92,21 +88,21 @@ const InstruccionesButton: React.FC<InstruccionesButtonProps> = ({
 
   const getDetailedInstructions = () => {
     switch (source) {
-      case 'Levels':
+      case GameSource.LEVELS:
         return instructions || t('instructions.levels.detailed', 
           'Los Niveles Guiados te enseñan mecanografía paso a paso. Cada nivel introduce nuevas teclas mientras refuerzas las anteriores. ' +
           'Debes alcanzar el objetivo de WPM (palabras por minuto) y mantener una precisión superior al 95% para avanzar. ' +
           'Las teclas del nivel actual se resaltan en naranja en el teclado. Observa las manos animadas para aprender la posición correcta de cada dedo. ' +
           'No mires el teclado físico - confía en la memoria muscular y las guías visuales.'
         );
-      case 'PlayGame':
+      case GameSource.PLAY_GAME:
         return instructions || t('instructions.playgame.detailed',
           'El Juego de Letras Cayendo es una forma divertida de practicar mecanografía bajo presión. ' +
           'Las letras caen desde la parte superior de la pantalla y debes presionar la tecla correcta antes de que lleguen al fondo. ' +
           'Cada nivel aumenta la velocidad y el número de letras simultáneas. Tienes un límite de errores - si lo superas, debes reintentar el nivel. ' +
           'Este modo mejora tu velocidad de reacción y te ayuda a desarrollar automatismos en la escritura.'
         );
-      case 'CreateText':
+      case GameSource.CREATE_TEXT:
         return instructions || t('instructions.createtext.detailed',
           'El modo Textos Personalizados te permite practicar con contenido real de tu día a día. ' +
           'Puedes crear textos personalizados copiando fragmentos de documentos, emails, código o cualquier contenido que escribas frecuentemente. ' +

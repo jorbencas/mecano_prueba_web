@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { getCombinationForKey } from '../utils/keymapping';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { FINGER_MAP } from '../constants/fingerMap';
+import { useTheme } from '@hooks/useTheme';
+import { getCombinationForKey } from '@/utils/keymapping';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
+import { FINGER_MAP } from '@/constants/fingerMap';
 
 interface HandsProps { nextKey: string; }
 

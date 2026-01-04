@@ -1,4 +1,4 @@
-/* CSS Custom Properties for Accessibility */
+@import "./styles/designTokens.css";
 :root {
   /* Font Size Variables */
   --font-size-base: 16px;

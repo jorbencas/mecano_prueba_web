@@ -2,9 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import RaceMode from '../components/RaceMode';
-import { ThemeProvider } from '../context/ThemeContext';
+import { ThemeProvider } from '@hooks/useTheme';
 import { AuthProvider } from '../context/AuthContext';
-import { LanguageProvider } from '../context/LanguageContext';
+import { LanguageProvider } from '@hooks/useLanguage';
 import { MultiplayerProvider } from '../context/MultiplayerContext';
 
 const renderWithProviders = (component: React.ReactElement) => {

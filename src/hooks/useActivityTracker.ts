@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { startActivity, endActivity, ActivityLog } from '../utils/activityTracker';
+import { useAuth } from '@/context/AuthContext';
+import { startActivity, endActivity, ActivityLog } from '@/utils/activityTracker';
 
 /**
  * Hook personalizado para rastrear la actividad del usuario

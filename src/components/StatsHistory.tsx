@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { loadStats, clearStats, SavedStat } from '../utils/saveStats';
+import { loadStats, clearStats, SavedStat } from '@utils/saveStats';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '@hooks/useTheme';
 import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { SourceComponent } from '../constants/sourceComponents';
+import { SourceComponent } from '@constants/sourceComponents';
 
 const FILTER_KEY = 'statsFilter';
 
@@ -46,7 +46,7 @@ const StatsHistory: React.FC = () => {
           onChange={(e) => handleFilterChange(e.target.value as SourceComponent)}
           className={`p-2 border rounded ${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-black'}`}
         >
-          {Object.values(SourceComponent).map((key) => (
+          {(Object.values(SourceComponent) as SourceComponent[]).map((key) => (
             <option key={key} value={key}>
               {t(`statsHistory.filters.${key}`)}
             </option>
@@ -91,7 +91,7 @@ const StatsHistory: React.FC = () => {
             {filteredStats.length === 0 ? (
               <tr>
                 <td colSpan={7} className="p-4 text-center text-gray-500">
-                  {t('statsHistory.noData', 'No hay datos disponibles')}
+                  {t('statsHistory.noData')}
                 </td>
               </tr>
             ) : (

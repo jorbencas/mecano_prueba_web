@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { motion } from 'framer-motion';
 import { BookOpen, User, ArrowRight } from 'lucide-react';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
+import UnifiedSpinner from '@/components/UnifiedSpinner';
 
 interface Class {
   id: string;
@@ -18,7 +20,7 @@ const StudentClasses: React.FC = () => {
   const [classes, setClasses] = useState<Class[]>([]);
   const [inviteCode, setInviteCode] = useState('');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { handleError } = useErrorHandler();
   const [success, setSuccess] = useState('');
 
   useEffect(() => {
@@ -35,10 +37,10 @@ const StudentClasses: React.FC = () => {
         const data = await response.json();
         setClasses(data);
       } else {
-        console.error('Failed to fetch classes');
+        handleError('Error al cargar las clases');
       }
     } catch (error) {
-      console.error('Error fetching classes:', error);
+      handleError(error, () => fetchClasses());
     } finally {
       setLoading(false);
     }
@@ -46,7 +48,6 @@ const StudentClasses: React.FC = () => {
 
   const handleJoinClass = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setSuccess('');
 
     try {
@@ -66,10 +67,10 @@ const StudentClasses: React.FC = () => {
         setInviteCode('');
         fetchClasses();
       } else {
-        setError(data.error || 'Error al unirse a la clase');
+        handleError(data.error || 'Error al unirse a la clase');
       }
     } catch (error) {
-      setError('Error de conexión');
+      handleError(error);
     }
   };
 
@@ -84,8 +85,8 @@ const StudentClasses: React.FC = () => {
         {/* Main Content - Class List */}
         <div className="lg:col-span-2 space-y-4">
           {loading ? (
-             <div className="flex justify-center items-center py-12">
-               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+             <div className="flex justify-center items-center py-20">
+               <UnifiedSpinner size="lg" />
              </div>
           ) : (
             <>
@@ -142,12 +143,6 @@ const StudentClasses: React.FC = () => {
                   maxLength={6}
                 />
               </div>
-              
-              {error && (
-                <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-lg">
-                  {error}
-                </div>
-              )}
               
               {success && (
                 <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-sm rounded-lg">

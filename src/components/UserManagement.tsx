@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { usersAPI } from '../api/users';
+import { useTheme } from '@hooks/useTheme';
+import { useAuth } from '@context/AuthContext';
+import { useDynamicTranslations } from '@hooks/useDynamicTranslations';
+import { UserRole } from '@/types/enums';
+import { usersAPI } from '@api/users';
 import { FaUserShield, FaUserGraduate, FaTrash, FaEdit, FaTimes, FaHistory } from 'react-icons/fa';
 
 interface User {
@@ -10,20 +11,20 @@ interface User {
   email: string;
   display_name: string | null;
   photo_url: string | null;
-  role: 'admin' | 'student';
+  role: UserRole;
   created_at: string;
   last_login: string | null;
 }
 
 const UserManagement: React.FC = () => {
   const { isDarkMode } = useTheme();
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, isAdmin } = useAuth();
   const { t } = useDynamicTranslations();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [editForm, setEditForm] = useState({ email: '', display_name: '', role: 'student' as 'admin' | 'student' });
+  const [editForm, setEditForm] = useState({ email: '', display_name: '', role: UserRole.STUDENT as UserRole });
   const [showAuditLogs, setShowAuditLogs] = useState(false);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
 
@@ -132,7 +133,7 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  if (currentUser?.role !== 'admin') {
+  if (!isAdmin) {
     return (
       <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
         <p>No tienes permisos para acceder a esta página.</p>
@@ -196,7 +197,7 @@ const UserManagement: React.FC = () => {
                 >
                   <td className="p-3">
                     <div className="flex items-center gap-2">
-                      {user.role === 'admin' ? (
+                      {user.role === UserRole.ADMIN ? (
                         <FaUserShield className="text-blue-500" />
                       ) : (
                         <FaUserGraduate className="text-green-500" />
@@ -208,12 +209,12 @@ const UserManagement: React.FC = () => {
                   <td className="p-3">
                     <span
                       className={`px-2 py-1 rounded text-sm ${
-                        user.role === 'admin'
+                        user.role === UserRole.ADMIN
                           ? 'bg-blue-500 bg-opacity-20 text-blue-500'
                           : 'bg-green-500 bg-opacity-20 text-green-500'
                       }`}
                     >
-                      {user.role === 'admin' ? 'Administrador' : 'Estudiante'}
+                      {user.role === UserRole.ADMIN ? 'Administrador' : 'Estudiante'}
                     </span>
                   </td>
                   <td className="p-3 text-sm">
@@ -251,7 +252,7 @@ const UserManagement: React.FC = () => {
         </div>
 
         <div className="mt-6 text-sm opacity-75">
-          Total de usuarios: {users.length} ({users.filter(u => u.role === 'admin').length} administradores, {users.filter(u => u.role === 'student').length} estudiantes)
+          Total de usuarios: {users.length} ({users.filter(u => u.role === UserRole.ADMIN).length} administradores, {users.filter(u => u.role === UserRole.STUDENT).length} estudiantes)
         </div>
       </div>
 
@@ -302,15 +303,15 @@ const UserManagement: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Rol</label>
                 <select
                   value={editForm.role}
-                  onChange={(e) => setEditForm({ ...editForm, role: e.target.value as 'admin' | 'student' })}
+                  onChange={(e) => setEditForm({ ...editForm, role: e.target.value as UserRole })}
                   className={`w-full px-3 py-2 rounded border ${
                     isDarkMode 
                       ? 'bg-gray-700 border-gray-600 text-white' 
                       : 'bg-white border-gray-300 text-black'
                   }`}
                 >
-                  <option value="student">Estudiante</option>
-                  <option value="admin">Administrador</option>
+                  <option value={UserRole.STUDENT}>Estudiante</option>
+                  <option value={UserRole.ADMIN}>Administrador</option>
                 </select>
               </div>
 

@@ -30,7 +30,8 @@ async function initializeSchema() {
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW(),
         last_login TIMESTAMP,
-        role VARCHAR(20) DEFAULT 'student'
+        role VARCHAR(20) DEFAULT 'student',
+        language VARCHAR(10) DEFAULT 'es'
       )
     `;
 
@@ -39,6 +40,13 @@ async function initializeSchema() {
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'student'`;
     } catch (error) {
       console.log('Role column might already exist or error adding it:', error.message);
+    }
+
+    // Add language column if it doesn't exist (migration)
+    try {
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS language VARCHAR(10) DEFAULT 'es'`;
+    } catch (error) {
+      console.log('Language column might already exist or error adding it:', error.message);
     }
 
     // Create indexes for users
@@ -346,6 +354,24 @@ async function initializeSchema() {
       )
     `;
     await sql`CREATE INDEX IF NOT EXISTS idx_assignment_results_student ON assignment_results(student_id)`;
+    
+    // Global Settings Table
+    await sql`
+      CREATE TABLE IF NOT EXISTS settings (
+        key VARCHAR(100) PRIMARY KEY,
+        value JSONB NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    // Initialize default settings if they don't exist
+    const sessionDuration = await sql`SELECT key FROM settings WHERE key = 'session_duration'`;
+    if (sessionDuration.length === 0) {
+      await sql`
+        INSERT INTO settings (key, value)
+        VALUES ('session_duration', '{"days": 7}')
+      `;
+    }
 
     console.log('✅ Database schema initialized');
   } catch (error) {

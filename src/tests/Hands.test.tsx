@@ -1,9 +1,8 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Hands from '../components/Hands';
 
 // Mock hooks
-jest.mock('../context/ThemeContext', () => ({
+jest.mock('@hooks/useTheme', () => ({
   useTheme: () => ({ isDarkMode: false }),
 }));
 
@@ -18,8 +17,33 @@ describe('Hands Component', () => {
     expect(screen.getByText('hands.hands.right')).toBeInTheDocument();
   });
 
+  test('highlights correct finger for "f" (left index)', () => {
+    render(<Hands nextKey="f" />);
+    expect(screen.getByText(/f/)).toBeInTheDocument();
+  });
+
+  test('highlights correct finger for "j" (right index)', () => {
+    render(<Hands nextKey="j" />);
+    expect(screen.getByText(/j/)).toBeInTheDocument();
+  });
+
+  test('highlights correct finger for space bar (thumb)', () => {
+    render(<Hands nextKey=" " />);
+    // Space bar should highlight thumbs
+    expect(screen.getByText(/Espacio/i)).toBeInTheDocument();
+  });
+
+  test('renders correctly for special characters', () => {
+    const specialChars = [',', '.', ';', '/'];
+    specialChars.forEach(char => {
+      const { unmount } = render(<Hands nextKey={char} />);
+      expect(screen.getByText(new RegExp(char, 'i'))).toBeInTheDocument();
+      unmount();
+    });
+  });
+
   test('highlights correct finger for "a" (left pinky)', () => {
-    const { container } = render(<Hands nextKey="a" />);
+    render(<Hands nextKey="a" />);
     // We need to check if the pinky circle on the left hand is highlighted
     // This is a bit tricky with SVG, but we can check for the fill color
     // Left hand pinky is the first circle in the first g

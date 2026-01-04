@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useMultiplayer } from '../context/MultiplayerContext';
+import { useTheme } from '@hooks/useTheme';
+import { useMultiplayer } from '@/context/MultiplayerContext';
 import { FaPaperPlane } from 'react-icons/fa';
 
 const LiveChat: React.FC = () => {

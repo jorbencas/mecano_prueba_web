@@ -1,12 +1,12 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { ThemeProvider } from '../context/ThemeContext';
-import { LanguageProvider } from '../context/LanguageContext';
-import { AuthProvider } from '../context/AuthContext';
+import { ThemeProvider } from '@hooks/useTheme';
+import { LanguageProvider } from '@hooks/useLanguage';
+import { AuthProvider } from '@context/AuthContext';
 import { BrowserRouter } from 'react-router-dom';
 
 // Mock ThemeContext to avoid matchMedia issues
-jest.mock('../context/ThemeContext', () => ({
+jest.mock('@hooks/useTheme', () => ({
   ThemeProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   useTheme: () => ({ isDarkMode: false, toggleTheme: jest.fn() }),
 }));

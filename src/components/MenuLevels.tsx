@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { progressAPI } from '../api/progress';
+import { useTheme } from '@hooks/useTheme';
+import { useAuth } from '@/context/AuthContext';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
+import { progressAPI } from '@/api/progress';
 import { FaLock, FaStar, FaCheckCircle } from 'react-icons/fa';
+import { GameSource } from '@/types/enums';
 
 interface Level {
   name: string;
@@ -23,11 +24,10 @@ interface LevelProgress {
 }
 
 interface MenuLevelsProps {
-  source: 'Levels' | 'PlayGame' | 'CreateText' | 'ZenMode' | 'NumbersMode' | 'SymbolsMode' | 'CodeMode' | 'DictationMode';
+  source: GameSource;
   onLevelChange: (level: number) => void;
   currentLevel: number;
   levels: Level[];
-  user?: any;
 }
 
 const MenuLevels: React.FC<MenuLevelsProps> = ({
@@ -35,7 +35,6 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
   onLevelChange,
   currentLevel,
   levels,
-  user,
 }) => {
   const [levelProgress, setLevelProgress] = useState<LevelProgress[]>([]);
   const [loading, setLoading] = useState(false);
@@ -65,14 +64,14 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
       }
 
       const modeMap: Record<string, string> = {
-        'Levels': 'levels',
-        'PlayGame': 'game',
-        'ZenMode': 'zen',
-        'NumbersMode': 'numbers',
-        'SymbolsMode': 'symbols',
-        'CodeMode': 'code',
-        'DictationMode': 'dictation',
-        'CreateText': 'levels' // Default to levels for CreateText for now
+        [GameSource.LEVELS]: 'levels',
+        [GameSource.PLAY_GAME]: 'game',
+        [GameSource.ZEN_MODE]: 'zen',
+        [GameSource.NUMBERS_MODE]: 'numbers',
+        [GameSource.SYMBOLS_MODE]: 'symbols',
+        [GameSource.CODE_MODE]: 'code',
+        [GameSource.DICTATION_MODE]: 'dictation',
+        [GameSource.CREATE_TEXT]: 'levels' // Default to levels for CreateText for now
       };
 
       const mode = modeMap[source] || 'levels';
@@ -134,17 +133,17 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
   return (
     <div className="w-1/4 pr-4 rounded-lg p-6 ">
       <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-        {source === 'CreateText' ? t('menuLevels.title.texts') : 
-         source === 'ZenMode' ? t('menuLevels.title.zen', 'Temas Zen') :
-         source === 'NumbersMode' ? t('menuLevels.title.numbers', 'Niveles Numéricos') :
-         source === 'SymbolsMode' ? t('menuLevels.title.symbols', 'Niveles de Símbolos') :
-         source === 'CodeMode' ? t('menuLevels.title.code', 'Lenguajes de Código') :
-         source === 'DictationMode' ? t('menuLevels.title.dictation', 'Ejercicios de Dictado') :
+        {source === GameSource.CREATE_TEXT ? t('menuLevels.title.texts') : 
+         source === GameSource.ZEN_MODE ? t('menuLevels.title.zen', 'Temas Zen') :
+         source === GameSource.NUMBERS_MODE ? t('menuLevels.title.numbers', 'Niveles Numéricos') :
+         source === GameSource.SYMBOLS_MODE ? t('menuLevels.title.symbols', 'Niveles de Símbolos') :
+         source === GameSource.CODE_MODE ? t('menuLevels.title.code', 'Lenguajes de Código') :
+         source === GameSource.DICTATION_MODE ? t('menuLevels.title.dictation', 'Ejercicios de Dictado') :
          t('menuLevels.title.levels')}
       </h2>
 
       {loading && (
-        <div className="text-center py-4 opacity-75">{t('menuLevels.loadingProgress', 'Cargando progreso...')}</div>
+        <div className="text-center py-4 opacity-75">{t('menuLevels.loadingProgress')}</div>
       )}
 
       <ul className="space-y-2 overflow-y-auto overflow-x-hidden max-h-[80vh]">
@@ -152,7 +151,7 @@ const MenuLevels: React.FC<MenuLevelsProps> = ({
           const isUnlocked = isLevelUnlocked(index);
           const stars = getLevelStars(index);
           const completed = isLevelCompleted(index);
-          const isPlayGameLocked = source === 'PlayGame' && index > currentLevel;
+          const isPlayGameLocked = source === GameSource.PLAY_GAME && index > currentLevel;
           const isLocked = !isUnlocked || isPlayGameLocked;
 
           return (

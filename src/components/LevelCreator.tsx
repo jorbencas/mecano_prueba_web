@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import { useTheme } from '@hooks/useTheme';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
 import { FaSave, FaDownload } from 'react-icons/fa';
 import InstruccionesButton from './Instrucciones';
+import { GameSource } from '@/types/enums';
 
 interface LevelCreatorProps {
   onSaved?: () => void;
@@ -114,7 +115,7 @@ const LevelCreator: React.FC<LevelCreatorProps> = ({ onSaved, onCancel }) => {
               'Puedes guardar tus niveles para practicar más tarde o exportarlos para compartirlos. ' +
               'Esto es ideal para practicar combinaciones específicas de teclas o para crear ejercicios adaptados a tus necesidades.'
             )}
-            source="LevelCreator"
+            source={GameSource.LEVEL_CREATOR}
           />
         </div>
 
@@ -125,8 +126,9 @@ const LevelCreator: React.FC<LevelCreatorProps> = ({ onSaved, onCancel }) => {
             
             <div className="space-y-4">
               <div>
-                <label className="block mb-2">{t('levelCreator.name', 'Nombre del Nivel')}</label>
+                <label htmlFor="level-name" className="block mb-2">{t('levelCreator.name', 'Nombre del Nivel')}</label>
                 <input
+                  id="level-name"
                   type="text"
                   value={levelName}
                   onChange={(e) => setLevelName(e.target.value)}
@@ -136,8 +138,9 @@ const LevelCreator: React.FC<LevelCreatorProps> = ({ onSaved, onCancel }) => {
               </div>
 
               <div>
-                <label className="block mb-2">{t('levelCreator.speed', 'Velocidad')} (ms)</label>
+                <label htmlFor="level-speed" className="block mb-2">{t('levelCreator.speed', 'Velocidad')} (ms)</label>
                 <input
+                  id="level-speed"
                   type="number"
                   value={speed}
                   onChange={(e) => setSpeed(parseInt(e.target.value))}
@@ -149,8 +152,9 @@ const LevelCreator: React.FC<LevelCreatorProps> = ({ onSaved, onCancel }) => {
               </div>
 
               <div>
-                <label className="block mb-2">{t('levelCreator.errorLimit', 'Límite de Errores')}</label>
+                <label htmlFor="level-error-limit" className="block mb-2">{t('levelCreator.errorLimit', 'Límite de Errores')}</label>
                 <input
+                  id="level-error-limit"
                   type="number"
                   value={errorLimit}
                   onChange={(e) => setErrorLimit(parseInt(e.target.value))}
@@ -161,8 +165,9 @@ const LevelCreator: React.FC<LevelCreatorProps> = ({ onSaved, onCancel }) => {
               </div>
 
               <div>
-                <label className="block mb-2">{t('levelCreator.wpmGoal', 'Objetivo WPM')}</label>
+                <label htmlFor="level-wpm-goal" className="block mb-2">{t('levelCreator.wpmGoal', 'Objetivo WPM')}</label>
                 <input
+                  id="level-wpm-goal"
                   type="number"
                   value={wpmGoal}
                   onChange={(e) => setWpmGoal(parseInt(e.target.value))}

@@ -1,4 +1,24 @@
-export { useAccessibility } from '../context/AccessibilityContext';
+import React from 'react';
+import { useUIStore } from '@store/uiStore';
+
+export const useAccessibility = () => {
+  const ui = useUIStore();
+  return {
+    fontSize: ui.fontSize,
+    setFontSize: ui.setFontSize,
+    highContrast: ui.highContrast,
+    toggleHighContrast: ui.toggleHighContrast,
+    colorblindMode: ui.colorblindMode,
+    setColorblindMode: ui.setColorblindMode,
+    reducedMotion: ui.reducedMotion,
+    toggleReducedMotion: ui.toggleReducedMotion,
+    screenReaderOptimized: ui.screenReaderOptimized,
+    toggleScreenReaderOptimized: ui.toggleScreenReaderOptimized,
+    resetToDefaults: ui.resetAccessibilityToDefaults,
+  };
+};
+
+export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => <>{children}</>;
 
 /**
  * Helper function to generate ARIA label for typing statistics

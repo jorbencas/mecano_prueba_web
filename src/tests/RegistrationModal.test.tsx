@@ -1,8 +1,7 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import RegistrationModal from '../components/RegistrationModal';
-import { ThemeProvider } from '../context/ThemeContext';
-import { LanguageProvider } from '../context/LanguageContext';
+import { ThemeProvider } from '@hooks/useTheme';
+import { LanguageProvider } from '@hooks/useLanguage';
 
 const renderModal = (props = {}) => {
   const defaultProps = {
@@ -59,8 +58,20 @@ describe('RegistrationModal Component', () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it('displays benefits list', () => {
+  it('displays benefits list with specific items', () => {
     renderModal();
     expect(screen.getByText(/Beneficios de registrarte/i)).toBeInTheDocument();
+    // Check for some common benefits
+    expect(screen.getByText(/Guardar tu progreso/i)).toBeInTheDocument();
+    expect(screen.getByText(/Competir en el ranking/i)).toBeInTheDocument();
+  });
+
+  it('renders correctly for different features', () => {
+    const features = ['Retos Diarios', 'Estadísticas Avanzadas', 'Multijugador'];
+    features.forEach(feature => {
+      const { unmount } = renderModal({ featureName: feature });
+      expect(screen.getByText(new RegExp(feature, 'i'))).toBeInTheDocument();
+      unmount();
+    });
   });
 });

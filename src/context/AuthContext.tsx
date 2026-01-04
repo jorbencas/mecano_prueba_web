@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { authAPI } from '../api/auth';
+import { authAPI } from '@/api/auth';
+import { UserRole } from '@/types/enums';
 
 interface User {
   id: string;
@@ -7,7 +8,7 @@ interface User {
   displayName: string | null;
   photoURL: string | null;
   provider: 'google' | 'email';
-  role?: 'admin' | 'student' | 'teacher';
+  role?: UserRole;
 }
 
 interface AuthContextType {
@@ -15,10 +16,16 @@ interface AuthContextType {
   token: string | null;
   loading: boolean;
   error: string | null;
+  isAdmin: boolean;
+  isTeacher: boolean;
+  isStudent: boolean;
+  hasAdminAccess: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, displayName: string) => Promise<void>;
   loginWithGoogle: () => void;
   logout: () => Promise<void>;
+  updateUser: (profile: { displayName?: string; photoURL?: string; language?: string }) => Promise<void>;
+  changePassword: (oldPassword: string, newPassword: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -114,6 +121,31 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const updateUser = async (profile: { displayName?: string; photoURL?: string; language?: string }) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error('No auth token');
+      
+      const updatedUser = await authAPI.updateProfile(token, profile);
+      setUser(updatedUser);
+    } catch (error: any) {
+      setError(error.message || 'Failed to update user');
+      throw error;
+    }
+  };
+
+  const changePassword = async (oldPassword: string, newPassword: string) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) throw new Error('No auth token');
+      
+      await authAPI.changePassword(token, oldPassword, newPassword);
+    } catch (error: any) {
+      setError(error.message || 'Failed to change password');
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -121,10 +153,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         token,
         loading,
         error,
+        isAdmin: user?.role === UserRole.ADMIN,
+        isTeacher: user?.role === UserRole.TEACHER,
+        isStudent: user?.role === UserRole.STUDENT,
+        hasAdminAccess: user?.role === UserRole.ADMIN || user?.role === UserRole.TEACHER,
         login,
         register,
         loginWithGoogle,
         logout,
+        updateUser,
+        changePassword,
       }}
     >
       {children}

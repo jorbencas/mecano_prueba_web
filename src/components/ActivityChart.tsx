@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '@hooks/useTheme';
 
 interface ActivityChartProps {
   data: Array<{ component: string; count: number; time: number }>;

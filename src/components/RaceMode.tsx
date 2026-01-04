@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useMultiplayer } from '../context/MultiplayerContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import { useAuth } from '../context/AuthContext';
+import { useTheme } from '@hooks/useTheme';
+import { useMultiplayer } from '@/context/MultiplayerContext';
+import { useDynamicTranslations } from '@/hooks/useDynamicTranslations';
+import { GameSource } from '@/types/enums';
 import Keyboard from './Keyboard';
 import InstruccionesButton from './Instrucciones';
 import LiveChat from './LiveChat';
 import RoomLobby from './RoomLobby';
-import { FaFlagCheckered, FaTrophy, FaUserFriends, FaClock, FaCheckCircle } from 'react-icons/fa';
+import { 
+  FaTrophy, FaCheckCircle
+} from 'react-icons/fa';
 
 const RaceMode: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -110,7 +112,7 @@ const RaceMode: React.FC = () => {
             <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">Jugadores</h2>
               <div className="space-y-3">
-                {currentRoom?.players.map((player, index) => (
+                {currentRoom?.players.map((player) => (
                   <div key={player.id} className="space-y-1">
                     <div className="flex justify-between text-sm">
                       <span className="flex items-center gap-2">
@@ -180,7 +182,7 @@ const RaceMode: React.FC = () => {
           </div>
           <InstruccionesButton
             instructions={t('raceMode.instructions', 'Compite contra el tiempo escribiendo el texto completo. Ideal para practicar velocidad bajo presión.')}
-            source="RaceMode"
+            source={GameSource.RACE_MODE}
           />
         </>
       )}

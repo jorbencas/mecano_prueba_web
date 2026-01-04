@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
+import { useTheme } from '@hooks/useTheme';
+import { useDynamicTranslations } from '@hooks/useDynamicTranslations';
 import CustomLevelsViewer from './CustomLevelsViewer';
 import LevelCreator from './LevelCreator';
 import { FaList, FaPlus, FaArrowLeft } from 'react-icons/fa';
@@ -49,13 +49,13 @@ const CustomLevelsManager: React.FC<CustomLevelsManagerProps> = ({ onNavigate })
                   <span className="p-2 rounded-xl bg-blue-500/10 text-blue-500">
                     <FaList size={24} />
                   </span>
-                  {t('customLevels.myLevels', 'Mis Niveles')}
+                  {t('customLevels.myLevels')}
                 </h1>
                 <button
                   onClick={handleCreateNew}
                   className="px-6 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2 active:scale-95"
                 >
-                  <FaPlus /> {t('customLevels.createNew', 'Crear Nuevo Nivel')}
+                  <FaPlus /> {t('customLevels.createNew')}
                 </button>
               </div>
 

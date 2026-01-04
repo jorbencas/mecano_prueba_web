@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { statsAPI } from '../api/stats';
+import { useTheme } from '@hooks/useTheme';
+import { useAuth } from '@context/AuthContext';
+import { statsAPI } from '@api/stats';
 import { FaChartLine, FaCalendar, FaFlag } from 'react-icons/fa';
 
 interface Prediction {

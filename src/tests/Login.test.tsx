@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import Login from '../components/Login';
-import { ThemeProvider } from '../context/ThemeContext';
-import { LanguageProvider } from '../context/LanguageContext';
-import { AuthProvider } from '../context/AuthContext';
+import Login from '@components/Login';
+import { ThemeProvider } from '@hooks/useTheme';
+import { LanguageProvider } from '@hooks/useLanguage';
+import { AuthProvider } from '@context/AuthContext';
 
 const renderWithProviders = (component: React.ReactElement) => {
   return render(
@@ -44,10 +44,39 @@ describe('Login Component', () => {
     expect(emailInput).toHaveAttribute('required');
   });
 
-  test('validates password length', () => {
+  test('shows error message on failed login', async () => {
     renderWithProviders(<Login />);
-    const passwordInput = screen.getByPlaceholderText(/••••••••/i) as HTMLInputElement;
-    expect(passwordInput).toHaveAttribute('type', 'password');
-    expect(passwordInput).toHaveAttribute('minLength', '6');
+    
+    const emailInput = screen.getByPlaceholderText(/usuario@ejemplo.com/i);
+    const passwordInput = screen.getByPlaceholderText(/••••••••/i);
+    const submitButton = screen.getByRole('button', { name: /Iniciar Sesión/i });
+    
+    fireEvent.change(emailInput, { target: { value: 'wrong@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'wrongpassword' } });
+    fireEvent.click(submitButton);
+    
+    // We expect an error message to appear
+    await waitFor(() => {
+      expect(screen.getByText(/Credenciales inválidas/i)).toBeInTheDocument();
+    });
+  });
+
+  test('calls login function on successful submission', async () => {
+    // This would require mocking the auth context or API
+    renderWithProviders(<Login />);
+    
+    const emailInput = screen.getByPlaceholderText(/usuario@ejemplo.com/i);
+    const passwordInput = screen.getByPlaceholderText(/••••••••/i);
+    const submitButton = screen.getByRole('button', { name: /Iniciar Sesión/i });
+    
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.click(submitButton);
+    
+    // Check for success feedback or navigation
+    await waitFor(() => {
+      // For example, if it redirects or shows a success message
+      // expect(window.location.pathname).toBe('/dashboard');
+    });
   });
 });

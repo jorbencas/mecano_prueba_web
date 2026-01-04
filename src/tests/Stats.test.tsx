@@ -2,9 +2,9 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Stats from '../components/Stats';
-import { ThemeProvider } from '../context/ThemeContext';
-import { LanguageProvider } from '../context/LanguageContext';
-import { AccessibilityProvider } from '../context/AccessibilityContext';
+import { ThemeProvider } from '@hooks/useTheme';
+import { LanguageProvider } from '@hooks/useLanguage';
+import { AccessibilityProvider } from '@hooks/useAccessibility';
 
 const renderWithProviders = (component: React.ReactElement) => {
   return render(
@@ -92,18 +92,47 @@ describe('Stats Component', () => {
     expect(screen.getByText(/Repetir Nivel/i)).toBeInTheDocument();
   });
 
-  test('calls onNextLevel when button clicked', () => {
-    const handleNextLevel = jest.fn();
+  test('displays error list correctly', () => {
     renderWithProviders(
       <Stats
         stats={mockStats}
         errorList={mockErrorList}
         onRepeatLevel={jest.fn()}
-        onNextLevel={handleNextLevel}
+        onNextLevel={jest.fn()}
         sourceComponent="Levels"
       />
     );
-    fireEvent.click(screen.getByText(/Siguiente Nivel/i));
-    expect(handleNextLevel).toHaveBeenCalled();
+    expect(screen.getByText(/Lista de Errores/i)).toBeInTheDocument();
+    expect(screen.getByText('a')).toBeInTheDocument();
+    expect(screen.getByText('s')).toBeInTheDocument();
+  });
+
+  test('calls onRepeatLevel when button clicked', () => {
+    const handleRepeatLevel = jest.fn();
+    renderWithProviders(
+      <Stats
+        stats={mockStats}
+        errorList={mockErrorList}
+        onRepeatLevel={handleRepeatLevel}
+        onNextLevel={jest.fn()}
+        sourceComponent="Levels"
+      />
+    );
+    fireEvent.click(screen.getByText(/Repetir Nivel/i));
+    expect(handleRepeatLevel).toHaveBeenCalled();
+  });
+
+  test('renders correctly for FreePractice source', () => {
+    renderWithProviders(
+      <Stats
+        stats={mockStats}
+        errorList={mockErrorList}
+        onRepeatLevel={jest.fn()}
+        onNextLevel={jest.fn()}
+        sourceComponent="FreePractice"
+      />
+    );
+    expect(screen.getByText(/Sesión Finalizada/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Siguiente Nivel/i)).not.toBeInTheDocument();
   });
 });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { motion } from 'framer-motion';
 import { Users, FileText, BarChart2, Plus, ArrowLeft, Calendar, CheckCircle, Trash2 } from 'lucide-react';
 

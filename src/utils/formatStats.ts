@@ -1,5 +1,5 @@
 // src/utils/formatStats.ts
-import type { StatsData } from './getStatsData';
+import type { StatsData } from '@/utils/getStatsData';
 
 /**
  * 🔹 Convierte segundos a formato legible (ej: "1m 23s")

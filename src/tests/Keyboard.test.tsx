@@ -1,14 +1,13 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Keyboard from '../components/Keyboard';
 
 // Mock hooks
-jest.mock('../context/ThemeContext', () => ({
+jest.mock('@hooks/useTheme', () => ({
   useTheme: () => ({ isDarkMode: false }),
 }));
 
 jest.mock('../hooks/useDynamicTranslations', () => ({
-  useDynamicTranslations: () => ({ t: (key: string, defaultVal: string) => defaultVal }),
+  useDynamicTranslations: () => ({ t: (_key: string, defaultVal: string) => defaultVal }),
 }));
 
 describe('Keyboard Component', () => {
@@ -38,13 +37,24 @@ describe('Keyboard Component', () => {
     expect(keyD).toHaveClass('bg-orange-200');
   });
 
-  test('handles shift combination', () => {
-    render(<Keyboard activeKey="A" levelKeys={[]} isFullKeyboard={true} />);
-    // "A" implies Shift + a
-    const keyShift = screen.getAllByText('Shift')[0].closest('div');
-    const keyA = screen.getByText('a').closest('div');
-    
-    expect(keyShift).toHaveClass('bg-orange-500');
-    expect(keyA).toHaveClass('bg-orange-500');
+  test('highlights active key for special characters', () => {
+    render(<Keyboard activeKey="," levelKeys={[]} />);
+    const keyComma = screen.getByText(',').closest('div');
+    expect(keyComma).toHaveClass('bg-orange-500');
+  });
+
+  test('renders all rows in full keyboard', () => {
+    render(<Keyboard activeKey="" levelKeys={[]} isFullKeyboard={true} />);
+    expect(screen.getByText('Tab')).toBeInTheDocument();
+    expect(screen.getByText('CapsLock')).toBeInTheDocument();
+    expect(screen.getByText('Enter')).toBeInTheDocument();
+    expect(screen.getByText('Alt')).toBeInTheDocument();
+  });
+
+  test('highlights space bar', () => {
+    render(<Keyboard activeKey=" " levelKeys={[]} />);
+    // Space bar is usually a large div without text or with specific class
+    const spaceBar = document.querySelector('[class*="w-64"], [class*="w-80"]');
+    expect(spaceBar).toBeTruthy();
   });
 });

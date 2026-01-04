@@ -1,30 +1,28 @@
 import React, { useState } from 'react';
-import {
-  FaKeyboard, FaGamepad, FaPen, FaCog, FaChartLine,
-  FaTrophy, FaUsers, FaChalkboardTeacher, FaUser, FaSignOutAlt, FaSignInAlt,
-  FaRunning, FaBullseye, FaSpa, FaSortNumericDown, FaCode,
-  FaMicrophone, FaHashtag, FaFlagCheckered, FaUserFriends,
-  FaChevronDown, FaChevronUp, FaGraduationCap, FaQuestionCircle,
-  FaUserCircle
+import { 
+  FaUser, FaSignOutAlt, FaCog, 
+  FaTrophy, FaKeyboard, FaGamepad, FaUsers, 
+  FaChevronDown, FaBullseye, 
+  FaRunning, FaSpa, FaSortNumericDown, FaFlagCheckered,
+  FaUserFriends, FaPen, FaChartLine, FaUserCircle,
+  FaHashtag, FaCode, FaMicrophone, FaChevronUp, FaChalkboardTeacher, FaGraduationCap, FaSignInAlt
 } from 'react-icons/fa';
-import { useTheme } from '../context/ThemeContext';
-import { useDynamicTranslations } from '../hooks/useDynamicTranslations';
-import NavigationCard from './NavigationCard';
+import { useUIStore } from '@store/uiStore';
+import { useAuth } from '@context/AuthContext';
+import { useDynamicTranslations } from '@hooks/useDynamicTranslations';
+import NavigationCard from '@components/NavigationCard';
+import { AppView } from '@/types/enums';
 
 interface HorizontalMenuProps {
-  onSelectOption: (option: string) => void;
-  currentView: string;
+  onSelectOption: (option: AppView) => void;
+  currentView: AppView;
   isAuthenticated?: boolean;
   user?: any;
 }
 
-const HorizontalMenu: React.FC<HorizontalMenuProps> = ({ 
-  onSelectOption, 
-  currentView, 
-  isAuthenticated = false, 
-  user = null 
-}) => {
-  const { isDarkMode } = useTheme();
+const HorizontalMenu: React.FC<HorizontalMenuProps> = ({ onSelectOption, currentView, isAuthenticated }) => {
+  const { isDarkMode } = useUIStore();
+  const { user, isAdmin } = useAuth();
   const { t } = useDynamicTranslations();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -41,48 +39,44 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const classesItems = [
-    { title: t('menu.classes'), description: t('menu.classesDesc'), icon: <FaChalkboardTeacher />, option: 'classes', color: 'from-indigo-500 to-purple-600', badge: 'New' },
-  ];
-
   const communityItems = [
-    { title: t('menu.community'), description: t('menu.communityDesc'), icon: <FaUsers />, option: 'community', color: 'from-pink-500 to-rose-500' },
+    { title: t('menu.community'), description: t('menu.communityDesc'), icon: <FaUsers />, option: AppView.COMMUNITY, color: 'from-pink-500 to-rose-500' },
   ];
 
   const practiceItems = [
-    { title: t('menu.practice.guided'), description: t('menu.practice.guidedDesc'), icon: <FaKeyboard />, option: 'practice', color: 'blue' },
-    { title: t('menu.practice.free'), description: t('menu.practice.freeDesc'), icon: <FaKeyboard />, option: 'free-practice', color: 'green' },
-    { title: t('menu.practice.speed'), description: t('menu.practice.speedDesc'), icon: <FaRunning />, option: 'speed-mode', color: 'red' },
-    { title: t('menu.practice.precision'), description: t('menu.practice.precisionDesc'), icon: <FaBullseye />, option: 'precision-mode', color: 'purple' },
-    { title: t('menu.practice.zen'), description: t('menu.practice.zenDesc'), icon: <FaSpa />, option: 'zen-mode', color: 'teal' },
-    { title: t('menu.practice.numbers'), description: t('menu.practice.numbersDesc'), icon: <FaSortNumericDown />, option: 'numbers-mode', color: 'orange' },
-    { title: t('menu.practice.symbols'), description: t('menu.practice.symbolsDesc'), icon: <FaHashtag />, option: 'symbols-mode', color: 'indigo' },
-    { title: t('menu.practice.code'), description: t('menu.practice.codeDesc'), icon: <FaCode />, option: 'code-mode', color: 'gray' },
-    { title: t('menu.practice.dictation'), description: t('menu.practice.dictationDesc'), icon: <FaMicrophone />, option: 'dictation-mode', color: 'pink' },
+    { title: t('menu.practice.guided'), description: t('menu.practice.guidedDesc'), icon: <FaKeyboard />, option: AppView.PRACTICE, color: 'blue' },
+    { title: t('menu.practice.free'), description: t('menu.practice.freeDesc'), icon: <FaKeyboard />, option: AppView.FREE_PRACTICE, color: 'green' },
+    { title: t('menu.practice.speed'), description: t('menu.practice.speedDesc'), icon: <FaRunning />, option: AppView.SPEED_MODE, color: 'red' },
+    { title: t('menu.practice.precision'), description: t('menu.practice.precisionDesc'), icon: <FaBullseye />, option: AppView.PRECISION_MODE, color: 'purple' },
+    { title: t('menu.practice.zen'), description: t('menu.practice.zenDesc'), icon: <FaSpa />, option: AppView.ZEN_MODE, color: 'teal' },
+    { title: t('menu.practice.numbers'), description: t('menu.practice.numbersDesc'), icon: <FaSortNumericDown />, option: AppView.NUMBERS_MODE, color: 'orange' },
+    { title: t('menu.practice.symbols'), description: t('menu.practice.symbolsDesc'), icon: <FaHashtag />, option: AppView.SYMBOLS_MODE, color: 'indigo' },
+    { title: t('menu.practice.code'), description: t('menu.practice.codeDesc'), icon: <FaCode />, option: AppView.CODE_MODE, color: 'gray' },
+    { title: t('menu.practice.dictation'), description: t('menu.practice.dictationDesc'), icon: <FaMicrophone />, option: AppView.DICTATION_MODE, color: 'pink' },
   ];
 
   const gamesItems = [
-    { title: t('menu.games.falling'), description: t('menu.games.fallingDesc'), icon: <FaGamepad />, option: 'game', color: 'purple' },
+    { title: t('menu.games.falling'), description: t('menu.games.fallingDesc'), icon: <FaGamepad />, option: AppView.GAME, color: 'purple' },
   ];
 
   const multiplayerItems = [
-    { title: t('menu.multiplayer.race'), description: t('menu.multiplayer.raceDesc'), icon: <FaFlagCheckered />, option: 'race-mode', color: 'red' },
-    { title: t('menu.multiplayer.practice'), description: t('menu.multiplayer.practiceDesc'), icon: <FaUsers />, option: 'practice-room', color: 'blue' },
-    { title: t('menu.multiplayer.friends'), description: t('menu.multiplayer.friendsDesc'), icon: <FaUserFriends />, option: 'friends', color: 'green' },
+    { title: t('menu.multiplayer.race'), description: t('menu.multiplayer.raceDesc'), icon: <FaFlagCheckered />, option: AppView.RACE_MODE, color: 'red' },
+    { title: t('menu.multiplayer.practice'), description: t('menu.multiplayer.practiceDesc'), icon: <FaUsers />, option: AppView.PRACTICE_ROOM, color: 'blue' },
+    { title: t('menu.multiplayer.friends'), description: t('menu.multiplayer.friendsDesc'), icon: <FaUserFriends />, option: AppView.FRIENDS, color: 'green' },
   ];
 
   const customItems = [
-    { title: t('menu.custom.texts'), description: t('menu.custom.textsDesc'), icon: <FaPen />, option: 'create', color: 'blue' },
-    { title: t('menu.custom.levels'), description: t('menu.custom.levelsDesc'), icon: <FaTrophy />, option: 'my-levels', color: 'purple' },
+    { title: t('menu.custom.texts'), description: t('menu.custom.textsDesc'), icon: <FaPen />, option: AppView.CREATE, color: 'blue' },
+    { title: t('menu.custom.levels'), description: t('menu.custom.levelsDesc'), icon: <FaTrophy />, option: AppView.MY_LEVELS, color: 'purple' },
   ];
 
   const progressItems = [
-    { title: t('menu.progress.achievements'), description: t('menu.progress.achievementsDesc'), icon: <FaTrophy />, option: 'achievements', color: 'yellow' },
-    { title: t('menu.progress.leaderboard'), description: t('menu.progress.leaderboardDesc'), icon: <FaTrophy />, option: 'leaderboard', color: 'orange' },
-    { title: t('menu.progress.challenges'), description: t('menu.progress.challengesDesc'), icon: <FaTrophy />, option: 'challenges', color: 'green' },
+    { title: t('menu.progress.achievements'), description: t('menu.progress.achievementsDesc'), icon: <FaTrophy />, option: AppView.ACHIEVEMENTS, color: 'yellow' },
+    { title: t('menu.progress.leaderboard'), description: t('menu.progress.leaderboardDesc'), icon: <FaTrophy />, option: AppView.LEADERBOARD, color: 'orange' },
+    { title: t('menu.progress.challenges'), description: t('menu.progress.challengesDesc'), icon: <FaTrophy />, option: AppView.CHALLENGES, color: 'green' },
   ];
 
-  const renderDropdown = (items: any[], columns: number = 3) => {
+  const renderDropdown = (items: any[]) => {
     return (
       <div 
         className={`absolute left-0 right-0 md:left-0 md:right-auto mt-2 p-3 md:p-6 rounded-xl shadow-2xl z-[60] animate-in fade-in slide-in-from-top-2 duration-200 backdrop-blur-md ${isDarkMode ? 'bg-gray-800/95 border border-gray-700' : 'bg-white/90 border border-gray-200/50'}`}
@@ -92,9 +86,9 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
         }}
       >
         <div 
-          className="grid gap-4 w-full"
+          className="grid gap-3 w-full"
           style={{
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
             width: '100%'
           }}
         >
@@ -156,7 +150,7 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
               </div>
   {activeDropdown === 'practice' ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
               </button>
-              {activeDropdown === 'practice' && renderDropdown(practiceItems, 3)}
+              {activeDropdown === 'practice' && renderDropdown(practiceItems)}
             </div>
 
             {/* Games */}
@@ -177,7 +171,7 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
               </div>
   <FaChevronDown size={12} className={`transition-transform duration-200 ${activeDropdown === 'games' ? 'rotate-180' : ''}`} />
               </button>
-              {activeDropdown === 'games' && renderDropdown(gamesItems, 1)}
+              {activeDropdown === 'games' && renderDropdown(gamesItems)}
             </div>
 
             {/* Multiplayer */}
@@ -198,7 +192,7 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
               </div>
   <FaChevronDown size={12} className={`transition-transform duration-200 ${activeDropdown === 'multiplayer' ? 'rotate-180' : ''}`} />
               </button>
-              {activeDropdown === 'multiplayer' && renderDropdown(multiplayerItems, 3)}
+              {activeDropdown === 'multiplayer' && renderDropdown(multiplayerItems)}
             </div>
 
             {/* Custom */}
@@ -219,15 +213,15 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
               </div>
   <FaChevronDown size={12} className={`transition-transform duration-200 ${activeDropdown === 'custom' ? 'rotate-180' : ''}`} />
               </button>
-              {activeDropdown === 'custom' && renderDropdown(customItems, 2)}
+              {activeDropdown === 'custom' && renderDropdown(customItems)}
             </div>
 
             {/* Classes - Only if authenticated */}
             {isAuthenticated && (
               <button 
-                onClick={() => onSelectOption('classes')}
+                onClick={() => onSelectOption(AppView.CLASSES)}
                 className={`flex items-center gap-2 px-4 py-2 rounded transition-colors ${
-                  currentView === 'classes' || currentView === 'teacher' || currentView === 'student' ? 'bg-blue-500 text-white' : isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'
+                  currentView === AppView.CLASSES ? 'bg-blue-500 text-white' : isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -255,7 +249,7 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
               </div>
   <FaChevronDown size={12} className={`transition-transform duration-200 ${activeDropdown === 'progress' ? 'rotate-180' : ''}`} />
               </button>
-              {activeDropdown === 'progress' && renderDropdown(progressItems, 2)}
+              {activeDropdown === 'progress' && renderDropdown(progressItems)}
             </div>
             
             {/* Community */}
@@ -276,7 +270,7 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
               </div>
   <FaChevronDown size={12} className={`transition-transform duration-200 ${activeDropdown === 'community' ? 'rotate-180' : ''}`} />
               </button>
-              {activeDropdown === 'community' && renderDropdown(communityItems, 1)}
+              {activeDropdown === 'community' && renderDropdown(communityItems)}
             </div>
             
             
@@ -284,8 +278,8 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
             {/* Settings or Profile */}
             {!isAuthenticated && (
               <button
-                onClick={() => onSelectOption('settings')}
-                className={`flex items-center px-4 py-2 rounded transition-colors ${currentView === 'settings' ? 'bg-blue-500 text-white' : isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'}`}
+                onClick={() => onSelectOption(AppView.SETTINGS)}
+                className={`flex items-center px-4 py-2 rounded transition-colors ${currentView === AppView.SETTINGS ? 'bg-blue-500 text-white' : isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'}`}
               >
                 <div className="flex items-center gap-2">
                 <FaCog className="text-gray-500" />
@@ -308,7 +302,7 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
                   }`}
                 >
                   {user.photoURL ? (
-                    <img src={user.photoURL} alt={user.displayName} className="w-8 h-8 rounded-full" />
+                    <img src={user.photoURL} alt={user.displayName || ''} className="w-8 h-8 rounded-full" />
                   ) : (
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isDarkMode ? 'bg-blue-600' : 'bg-blue-500'} text-white font-bold`}>
                       {(user.displayName || user.email || t('menu.user.defaultName'))[0].toUpperCase()}
@@ -322,20 +316,20 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
                       <p className="font-semibold">{user.displayName || t('menu.user.defaultName')}</p>
                       <p className="text-sm opacity-75">{user.email}</p>
                     </div>
-                    <button onClick={() => { onSelectOption('profile'); setActiveDropdown(null); }} className={`block w-full text-left px-4 py-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                    <button onClick={() => { onSelectOption(AppView.PROFILE); setActiveDropdown(null); }} className={`block w-full text-left px-4 py-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                       <FaUser className="inline mr-2" /> {t('menu.user.profile')}
                     </button>
-                    {user.role === 'admin' && (
-                      <button onClick={() => { onSelectOption('admin-dashboard'); setActiveDropdown(null); }} className={`block w-full text-left px-4 py-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                    {isAdmin && (
+                      <button onClick={() => { onSelectOption(AppView.ADMIN_DASHBOARD); setActiveDropdown(null); }} className={`block w-full text-left px-4 py-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                         <FaChartLine className="inline mr-2" /> {t('menu.user.admin')}
                       </button>
                     )}
-                    <button onClick={() => { onSelectOption('settings'); setActiveDropdown(null); }} className={`block w-full text-left px-4 py-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                    <button onClick={() => { onSelectOption(AppView.SETTINGS); setActiveDropdown(null); }} className={`block w-full text-left px-4 py-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                       <FaCog className="inline mr-2" /> {t('menu.user.settings')}
                     </button>
                     
                     <div className={`border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                      <button onClick={() => { onSelectOption('logout'); setActiveDropdown(null); }} className="block w-full text-left px-4 py-3 text-red-500 hover:bg-red-50">
+                      <button onClick={() => { onSelectOption(AppView.LOGOUT); setActiveDropdown(null); }} className="block w-full text-left px-4 py-3 text-red-500 hover:bg-red-50">
                         <FaSignOutAlt className="inline mr-2" /> {t('menu.user.logout')}
                       </button>
                     </div>
@@ -344,16 +338,15 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
               </div>
             ) : (
               <button
-                onClick={() => onSelectOption('login')}
+                onClick={() => onSelectOption(AppView.LOGIN)}
                 className={`flex items-center gap-2 px-4 py-2 rounded transition-colors whitespace-nowrap ${
-                  currentView === 'login' ? 'bg-blue-500 text-white' : isDarkMode ? 'hover:bg-gray-700 text-white' : 'hover:bg-gray-200 text-gray-800'
+                  currentView === AppView.LOGIN ? 'bg-blue-500 text-white' : isDarkMode ? 'hover:bg-gray-700 text-white' : 'hover:bg-gray-200 text-gray-800'
                 }`}
               >
                 <div className="flex items-center gap-2">
                 <FaUserCircle className="text-gray-500" />
-                <span>{user ? (user.display_name || user.email) : t('menu.items.login')}</span>
+                <span>{user ? (user.displayName || user.email) : t('menu.items.login')}</span>
               </div>
-  <span className="lg:hidden">{t('menu.loginShort')}</span>
               </button>
             )}
           </div>
@@ -405,7 +398,7 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
 
               {/* Games */}
               <div>
-                <button onClick={() => { onSelectOption('game'); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                <button onClick={() => { onSelectOption(AppView.GAME); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                   <FaGamepad className="inline mr-2" /> {t('menu.games.falling')}
                 </button>
               </div>
@@ -475,7 +468,7 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
               {/* Classes */}
               {isAuthenticated && (
                 <div>
-                  <button onClick={() => { onSelectOption('classes'); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                  <button onClick={() => { onSelectOption(AppView.CLASSES); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                     <FaGraduationCap className="inline mr-2" /> {t('menu.sections.classes')}
                   </button>
                 </div>
@@ -516,25 +509,25 @@ const HorizontalMenu: React.FC<HorizontalMenuProps> = ({
 
               {/* User Section */}
               {!isAuthenticated && (
-                <button onClick={() => { onSelectOption('login'); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                <button onClick={() => { onSelectOption(AppView.LOGIN); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                   <FaSignInAlt className="inline mr-2" /> {t('menu.items.login')}
                 </button>
               )}
 
-              {isAuthenticated && user && (
+               {isAuthenticated && user && (
                 <>
-                  <button onClick={() => { onSelectOption('profile'); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                  <button onClick={() => { onSelectOption(AppView.PROFILE); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                     <FaUser className="inline mr-2" /> {t('menu.user.profile')}
                   </button>
-                  {user.role === 'admin' && (
-                    <button onClick={() => { onSelectOption('admin-dashboard'); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                  {isAdmin && (
+                    <button onClick={() => { onSelectOption(AppView.ADMIN_DASHBOARD); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                       <FaChartLine className="inline mr-2" /> {t('menu.user.admin')}
                     </button>
                   )}
-                  <button onClick={() => { onSelectOption('settings'); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                  <button onClick={() => { onSelectOption(AppView.SETTINGS); setMobileMenuOpen(false); }} className={`w-full text-left px-4 py-2 rounded ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
                     <FaCog className="inline mr-2" /> {t('menu.user.settings')}
                   </button>
-                  <button onClick={() => { onSelectOption('logout'); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-2 rounded text-red-500">
+                  <button onClick={() => { onSelectOption(AppView.LOGOUT); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-2 rounded text-red-500">
                     <FaSignOutAlt className="inline mr-2" /> {t('menu.user.logout')}
                   </button>
                 </>

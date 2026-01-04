@@ -1,14 +1,18 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import PrecisionMode from '../components/PrecisionMode';
-import { ThemeProvider } from '../context/ThemeContext';
-import { LanguageProvider } from '../context/LanguageContext';
+import { ThemeProvider } from '@hooks/useTheme';
+import { LanguageProvider } from '@hooks/useLanguage';
+
+import { AuthProvider } from '../context/AuthContext';
 
 const renderWithProviders = (component: React.ReactElement) => {
   return render(
     <LanguageProvider>
       <ThemeProvider>
-        {component}
+        <AuthProvider>
+          {component}
+        </AuthProvider>
       </ThemeProvider>
     </LanguageProvider>
   );
@@ -22,14 +26,43 @@ describe('PrecisionMode Component', () => {
 
   test('displays accuracy stats', () => {
     renderWithProviders(<PrecisionMode />);
-    expect(screen.getByText(/Precisión/i)).toBeInTheDocument();
-    expect(screen.getByText(/Errores/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Precisión/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Errores/i).length).toBeGreaterThan(0);
   });
 
-  test('shows text to type', () => {
+  test('has start button', () => {
     renderWithProviders(<PrecisionMode />);
-    // Text should be displayed
-    const textElements = screen.getAllByText(/the/i);
-    expect(textElements.length).toBeGreaterThan(0);
+    expect(screen.getByText(/Comenzar/i)).toBeInTheDocument();
+  });
+
+  test('starts challenge and tracks errors', async () => {
+    renderWithProviders(<PrecisionMode />);
+    
+    // Start challenge
+    const startButton = screen.getByText(/Comenzar/i);
+    fireEvent.click(startButton);
+    
+    // Type a wrong key
+    fireEvent.keyDown(window, { key: 'z' });
+    
+    await waitFor(() => {
+      // Errors should be 1
+      const errorElements = screen.getAllByText(/1/);
+      expect(errorElements.length).toBeGreaterThan(0);
+    });
+  });
+
+  test('shows results after stopping', async () => {
+    renderWithProviders(<PrecisionMode />);
+    
+    // Start challenge
+    fireEvent.click(screen.getByText(/Comenzar/i));
+    
+    // Stop challenge
+    fireEvent.click(screen.getByText(/Detener/i));
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Rendimiento/i)).toBeInTheDocument();
+    });
   });
 });

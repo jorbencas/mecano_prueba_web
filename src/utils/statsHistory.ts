@@ -1,5 +1,5 @@
 // src/utils/statsHistory.ts
-import { loadStats } from './saveStats';
+import { loadStats } from '@/utils/saveStats';
 
 export interface GlobalStats {
   totalSessions: number;
